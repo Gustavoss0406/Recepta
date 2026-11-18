@@ -83,3 +83,22 @@ describe("Passar para outra recepcionista", () => {
     expect((tool.input_schema as { properties: { colega: { enum: string[] } } }).properties.colega.enum).toEqual([financeiro]);
   });
 });
+
+describe("Resumo em segundo plano", () => {
+  it("resume o começo e não sobrescreve se o cliente falou no meio", async () => {
+    const { compactarConversa } = await import("./runtime");
+    const { conversaId } = await iniciarConversa({ orgId, agenteId: financeiro, canal: "teste_texto", alvo: "rascunho" });
+    const msgs: unknown[] = [];
+    for (let i = 0; i < 15; i++) msgs.push({ role: "user", content: [{ type: "text", text: `Cliente: fala ${i}` }] }, { role: "assistant", content: [{ type: "text", text: `ok ${i}` }] });
+    const [c] = await db.select().from(schema.conversas).where(eq(schema.conversas.id, conversaId));
+    await db.update(schema.conversas).set({ estado: { ...c.estado!, mensagens: msgs } }).where(eq(schema.conversas.id, conversaId));
+
+    expect(await compactarConversa(conversaId, 29)).toBe(false); // a turn arrived meanwhile (30 ≠ 29)
+    expect(await compactarConversa(conversaId, 30)).toBe(true);
+    const [depois] = await db.select().from(schema.conversas).where(eq(schema.conversas.id, conversaId));
+    const novas = depois.estado!.mensagens as { content: { text: string }[] }[];
+    expect(novas.length).toBeLessThan(30);
+    expect(novas[0].content[0].text).toContain("Resumo do início da ligação");
+    expect(depois.estado!.resumos).toBe(1);
+  });
+});

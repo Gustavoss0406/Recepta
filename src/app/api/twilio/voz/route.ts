@@ -33,7 +33,9 @@ export async function POST(req: Request) {
   if (!n.verificadoEm) await getDb().update(schema.numeros).set({ verificadoEm: new Date() }).where(eq(schema.numeros.id, n.id));
 
   const token = assinarTokenVoz({ orgId: n.orgId, agenteId: n.agenteId, canal: "telefone", de: params.From }, 120_000);
-  // single-port deploys (npm run start:unico) serve the voice WebSocket on the same host
-  const wss = process.env.VOICE_WS_PUBLICO ?? publico.replace(/^http/, "ws");
+  // single-port deploys (npm run start:unico) serve the voice WebSocket on the same host;
+  // separate processes (npm run dev / nuvem) expose the gateway on VOICE_PORT
+  const base = publico.replace(/^http/, "ws");
+  const wss = process.env.VOICE_WS_PUBLICO ?? (process.env.VOZ_MESMA_ORIGEM === "1" ? base : `${base.replace(/:\d+$/, "")}:${process.env.VOICE_PORT ?? 3100}`);
   return twiml(`<Connect><Stream url="${wss}/twilio"><Parameter name="token" value="${token}"/></Stream></Connect>`);
 }

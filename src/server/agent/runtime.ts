@@ -1,6 +1,6 @@
 import "server-only";
 import type Anthropic from "@anthropic-ai/sdk";
-import { and, asc, eq, max } from "drizzle-orm";
+import { and, asc, eq, max, sql } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
 import type { Canal, UsoConversa } from "@/db/schema";
 import { contextoTemporal } from "@/lib/agent/agenda";
@@ -19,6 +19,7 @@ import { criarRepasse } from "./repasses";
 import { agendarSincronizacao, enviarSaida } from "@/server/integracoes/servico";
 import { ErroSemMotor } from "@/server/providers/llm-rotacao";
 import { versaoParaNovaChamada } from "./experimentos";
+import { aplicarResumo, pontoDeCorte, SYSTEM_RESUMO, transcricao } from "@/lib/agent/compactar";
 
 const CANAIS_TESTE: Canal[] = ["teste_texto", "teste_voz", "simulador", "simulacao"];
 const MAX_ITERACOES = 5;
@@ -349,7 +350,38 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
     .update(schema.conversas)
     .set({ estado: { ...estado, mensagens, transferirPara: transferirPara ?? estado.transferirPara }, uso })
     .where(eq(schema.conversas.id, conversaId));
+  // Long call: summarize the beginning in the background, while the caller listens to this answer.
+  if (!encerrar && llm.real && pontoDeCorte(mensagens) !== null) void compactarConversa(conversaId, mensagens.length).catch(() => {});
   return { falas, acoes, encerrar, transferirPara, modoDemo: !llm.real, ...(colega ? { colega } : {}) };
+}
+
+/**
+ * Replaces the oldest part of a long conversation with a summary written by the model. Only writes
+ * if no new turn arrived meanwhile (message count unchanged), so it never loses a turn.
+ */
+export async function compactarConversa(conversaId: string, esperado: number): Promise<boolean> {
+  const conv = await carregar(conversaId);
+  const msgs = (conv.estado?.mensagens ?? []) as Anthropic.MessageParam[];
+  if (msgs.length !== esperado || conv.status !== "em_andamento") return false;
+  const corte = pontoDeCorte(msgs);
+  if (corte === null) return false;
+  const llm = await getLlm();
+  const r = await llm.turno({
+    modelo: (conv.estado?.modelo ?? "claude-haiku-5-5") as LlmModel,
+    system: SYSTEM_RESUMO,
+    messages: [{ role: "user", content: [{ type: "text", text: transcricao(msgs.slice(0, corte)) }] }],
+    tools: [],
+    maxTokens: 400,
+  });
+  const resumo = textoDe(r.content);
+  if (!resumo) return false;
+  const uso = conv.uso ? { ...conv.uso, llmInput: conv.uso.llmInput + r.uso.input, llmOutput: conv.uso.llmOutput + r.uso.output } : conv.uso;
+  const feito = await getDb()
+    .update(schema.conversas)
+    .set({ estado: { ...conv.estado!, mensagens: aplicarResumo(msgs, corte, resumo), resumos: (conv.estado?.resumos ?? 0) + 1 }, uso })
+    .where(and(eq(schema.conversas.id, conversaId), sql`jsonb_array_length(${schema.conversas.estado}->'mensagens') = ${esperado}`))
+    .returning({ id: schema.conversas.id });
+  return feito.length > 0;
 }
 
 /**

@@ -90,8 +90,13 @@ export default async function AgentePage({
   const db = getDb();
   const versoes = await versoesDoAgente(s.org.id, id);
   const publicada = versoes.find((v) => v.id === agente.versaoPublicadaId);
+  // The published prompt was compiled with older conversation rules: republishing picks up the improvements.
+  const melhorias = publicada
+    ? (await db.select({ prompt: schema.agenteVersoes.prompt }).from(schema.agenteVersoes).where(eq(schema.agenteVersoes.id, publicada.id)))[0]?.prompt !== compilarPrompt(agente.rascunho) &&
+      agente.rascunhoAlteradoEm <= publicada.criadoEm
+    : false;
   const alterado = publicada
-    ? agente.rascunhoAlteradoEm > publicada.criadoEm
+    ? agente.rascunhoAlteradoEm > publicada.criadoEm || melhorias
     : true;
   const editar = pode(s.papel, "editarAgente");
   const cfg = agente.rascunho;
@@ -140,8 +145,11 @@ export default async function AgentePage({
                     {statusSelo.t}
                   </span>
                   {alterado && publicada && (
-                    <span className="rounded-[6px] bg-[#fdf6d8] px-1.5 py-0.5 text-xs font-medium text-[#7a5b00]">
-                      Alterações não publicadas
+                    <span
+                      className="rounded-[6px] bg-[#fdf6d8] px-1.5 py-0.5 text-xs font-medium text-[#7a5b00]"
+                      title={melhorias ? "A Recepta melhorou as regras de conversa. Publique de novo para esta recepcionista usar." : undefined}
+                    >
+                      {melhorias ? "Melhorias disponíveis: publique" : "Alterações não publicadas"}
                     </span>
                   )}
                 </div>
