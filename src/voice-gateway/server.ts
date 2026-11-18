@@ -278,4 +278,4 @@ http.on("upgrade", (req, socket, head) => {
 });
 
 if (process.env.VOICE_NO_LISTEN !== "1")
-  http.listen(PORTA, () => console.log(`Gateway de voz em ws://localhost:${PORTA} (tts=${ttsConfigurado()}, stt=${Boolean(process.env.DEEPGRAM_API_KEY)})`));
+  http.listen(PORTA, () => console.log(`Gateway de voz em ws://localhost:${PORTA} (tts=${ttsConfigurado()}, stt=${process.env.DEEPGRAM_API_KEY ? (process.env.STT_MODO === "rest" ? "rest" : "streaming") : "off"})`));

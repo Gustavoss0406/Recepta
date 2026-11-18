@@ -12,6 +12,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx --env-file-if-exists=.env.local src/db/migrate.ts",
     "worker": "NODE_USE_ENV_PROXY=1 tsx --conditions=react-server --env-file-if-exists=.env.local src/server/jobs/worker.ts",
+    "simular:twilio": "NODE_USE_ENV_PROXY=1 tsx --conditions=react-server --env-file-if-exists=.env.local scripts/simular-twilio.ts",
     "voice": "NODE_USE_ENV_PROXY=1 tsx --conditions=react-server --env-file-if-exists=.env.local src/voice-gateway/server.ts",
     "e2e": "playwright test",
     "local": "pglite-server --db=.data/pglite --port=5433 --max-connections=40 --include-database-url --run \"npm run local:apps\"",

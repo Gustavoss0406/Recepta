@@ -1,6 +1,6 @@
 /**
  * Twilio Media Streams transport (μ-law 8 kHz, base64 JSON frames).
- * Ready for production; not exercised end-to-end until a Twilio account is configured.
+ * Exercised end to end by scripts/simular-twilio.ts (signed webhook + Media Stream).
  * TwiML is served by /api/twilio/voz, which signs a token carried as a <Parameter>.
  */
 import type { IncomingMessage } from "node:http";
@@ -23,7 +23,12 @@ export async function aceitarTwilio(ws: WebSocket, _req: IncomingMessage) {
     stt: { sampleRate: 8000, encoding: "mulaw" },
     enviarAudio: (c) =>
       ws.readyState === ws.OPEN && ws.send(JSON.stringify({ event: "media", streamSid, media: { payload: Buffer.from(c).toString("base64") } })),
-    enviarEvento: () => {}, // phone callers only hear audio
+    enviarEvento: (e) => {
+      // phone callers only hear audio; keep errors and turns in the server log
+      const ev = e as { tipo: string; mensagem?: string; texto?: string };
+      if (ev.tipo === "erro") console.error(`[twilio ${streamSid}] erro: ${ev.mensagem}`);
+      else if (ev.tipo === "transcricao.final" || ev.tipo === "agente.texto") console.log(`[twilio ${streamSid}] ${ev.tipo}: ${ev.texto}`);
+    },
     limparAudio: () => ws.readyState === ws.OPEN && ws.send(JSON.stringify({ event: "clear", streamSid })),
     fechar: () => setTimeout(() => ws.close(1000), 500),
   };
