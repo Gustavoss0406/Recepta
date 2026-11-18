@@ -80,9 +80,11 @@ export class LlmRotativo implements Llm {
     return lista;
   }
 
-  private async rodar<R>(fn: (e: EndpointOpenAI) => Promise<R>): Promise<R> {
+  private async rodar<R>(fn: (e: EndpointOpenAI) => Promise<R>, preferirGrande = false): Promise<R> {
     const tentativas: string[] = [];
-    const cands = await this.candidatos();
+    let cands = await this.candidatos();
+    // larger models first (stable sort keeps the provider order among equals)
+    if (preferirGrande) cands = [...cands].sort((a, b) => Number(GRANDE.test(b.modelo)) - Number(GRANDE.test(a.modelo)));
     let usadas = 0;
     for (const { p, modelo } of cands) {
       if (usadas >= (this.opts.maxTentativas ?? 4)) break;
@@ -114,9 +116,11 @@ export class LlmRotativo implements Llm {
   }
 
   estruturado<T>(req: EstruturadoReq<T>): Promise<{ dados: T; uso: UsoLlm }> {
-    return this.rodar((e) => estruturadoOpenAI(e, req));
+    return this.rodar((e) => estruturadoOpenAI(e, req), req.qualidade === "maxima");
   }
 }
+
+const GRANDE = /120b|70b|super|large|405b|235b/i;
 
 /** Health snapshot for the internal admin page. */
 export function estadoRotacao() {

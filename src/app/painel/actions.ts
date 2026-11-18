@@ -243,3 +243,34 @@ export async function acaoEncerrarExperimento(agenteId: string, promover: "A" | 
   await encerrarExperimento(s.org.id, agenteId, { promover, autor: { id: s.usuario.id, papel: s.papel } });
   revalidatePath(`/painel/agentes/${agenteId}`);
 }
+
+/* ───────── Configuration assistant ───────── */
+
+export type ResultadoAssistente = { erro?: string; resumo?: string; secoes?: import("@/lib/agent/assistente").Secao[]; proposta?: unknown } | undefined;
+
+export async function acaoProporMudancas(agenteId: string, pedido: string): Promise<ResultadoAssistente> {
+  const s = await exigirPermissao("editarAgente");
+  try {
+    const { proporMudancas } = await import("@/server/agent/assistente");
+    const r = await proporMudancas(s.org.id, agenteId, pedido);
+    return r.secoes.length ? r : { erro: "Não encontrei nada para mudar com esse pedido. Tente dar mais detalhes." };
+  } catch (e) {
+    return { erro: erroDe(e) };
+  }
+}
+
+export async function acaoAplicarMudancas(agenteId: string, proposta: unknown, secoes: string[]): Promise<Resultado> {
+  const s = await exigirPermissao("editarAgente");
+  const validas = ["empresa", "saudacao", "objetivos", "regras", "dados", "horarios", "acoes"] as const;
+  const escolhidas = secoes.filter((x): x is (typeof validas)[number] => (validas as readonly string[]).includes(x));
+  if (!escolhidas.length) return { erro: "Escolha ao menos uma seção." };
+  try {
+    const { aplicarMudancas } = await import("@/server/agent/assistente");
+    await aplicarMudancas(s.org.id, agenteId, proposta, escolhidas);
+  } catch (e) {
+    return { erro: e instanceof ErroAgente ? traduzirErro(e.message) : erroDe(e) };
+  }
+  revalidatePath(`/painel/agentes/${agenteId}`);
+  revalidatePath("/painel/comecar");
+  return { ok: true, mensagem: `${escolhidas.length} seção(ões) aplicada(s) no rascunho. Teste antes de publicar.` };
+}

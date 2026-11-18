@@ -10,6 +10,7 @@ import { SecaoComportamento, SecaoEmpresa, SecaoVoz } from "@/components/painel/
 import { TestPanel } from "@/components/painel/test-panel";
 import { Desvio } from "@/components/painel/desvio";
 import { PublicarForm } from "@/components/painel/publicar";
+import { Assistente } from "@/components/painel/assistente";
 
 export const metadata = { title: "Começar" };
 
@@ -109,7 +110,8 @@ export default async function ComecarPage({ searchParams }: { searchParams: Prom
           </Etapa>
         )}
         {passo === 3 && agente && (
-          <Etapa titulo="Como a recepcionista trabalha" texto="Regras em linguagem simples. Você pode mudar tudo depois.">
+          <Etapa titulo="Como a recepcionista trabalha" texto="Conte sobre o seu negócio em poucas frases, ou ajuste as regras abaixo. Você pode mudar tudo depois.">
+            <Assistente agenteId={agente.id} modo="criar" className="mb-6" />
             <SecaoComportamento config={agente.rascunho} acao={onboardingSecao.bind(null, "comportamento", 4)} rotulo="Salvar e continuar" />
           </Etapa>
         )}

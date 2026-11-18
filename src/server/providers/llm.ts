@@ -30,6 +30,8 @@ export interface EstruturadoReq<T> {
   prompt: string;
   schema: z.ZodType<T>;
   maxTokens?: number;
+  /** "maxima": off-call tasks (configuration assistant) prefer the larger free models over latency. */
+  qualidade?: "rapida" | "maxima";
 }
 
 export interface Llm {

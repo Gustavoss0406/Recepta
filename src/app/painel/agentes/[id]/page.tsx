@@ -1,3 +1,4 @@
+import { Assistente } from "@/components/painel/assistente";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
@@ -140,6 +141,7 @@ export default async function AgentePage({ params, searchParams }: { params: Pro
         <div className={`mx-auto w-full max-w-[720px] px-4 py-6 sm:px-8 ${editar ? "" : "pointer-events-none opacity-70"}`}>
           {aba === "agente" && (
             <div className="space-y-3">
+              <Assistente agenteId={id} />
               <SecaoComportamento config={cfg} acao={acao("comportamento")} />
               <ResumoAgente orgId={s.org.id} agenteId={id} />
             </div>
