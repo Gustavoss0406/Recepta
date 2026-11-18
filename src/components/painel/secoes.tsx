@@ -191,13 +191,13 @@ export function SecaoVoz({
     setTocando(id);
     try {
       const r = await fetch(`/api/vozes/${id}/previa`);
-      if (!r.ok) throw new Error();
+      if (!r.ok) throw new Error(await r.text());
       const a = new Audio(URL.createObjectURL(await r.blob()));
       a.onended = () => setTocando(null);
       await a.play();
-    } catch {
+    } catch (e) {
       setTocando(null);
-      alert("Prévia indisponível: o motor de voz não está configurado.");
+      alert(`Prévia indisponível. ${e instanceof Error && e.message ? e.message : "Tente de novo."}`);
     }
   }
 
