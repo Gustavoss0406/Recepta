@@ -1,0 +1,48 @@
+# Render Blueprint: Dashboard › New › Blueprint › this repo. Secrets are asked on first deploy.
+services:
+  - type: web
+    name: recepta
+    runtime: docker
+    plan: free # free sleeps after 15 min idle: the first call after that takes ~1 min. Use "starter" to sell.
+    healthCheckPath: /api/saude
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: RECEPTA_URL_PUBLICA
+        sync: false
+      - key: RECEPTA_SEGREDO
+        generateValue: true
+      - key: RECEPTA_CHAVE_CRIPTO # encrypts integration credentials: never change it after the first deploy
+        generateValue: true
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: TTS_API_KEY
+        sync: false
+      - key: TTS_VOICE_MAP
+        sync: false
+      - key: TTS_MODEL_PADRAO
+        value: eleven_v4_turbo
+      - key: TTS_MODEL_ULTRA
+        value: eleven_v4
+      - key: DEEPGRAM_API_KEY
+        sync: false
+      - key: STT_MODO
+        value: rest
+      - key: LLM_MOTOR
+        value: rotacao
+      - key: LLM_PROVEDORES
+        value: groq,openrouter
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false

@@ -120,5 +120,7 @@ ${campos || "—"}
 
 # Ferramentas
 ${lista(acoes)}
-${pronuncias}${c.comportamento.instrucoesExtras.trim() ? `\n# Instruções adicionais\n${c.comportamento.instrucoesExtras.trim()}\n` : ""}`.trim();
+${pronuncias}${c.comportamento.instrucoesExtras.trim() ? `\n# Instruções adicionais\n${c.comportamento.instrucoesExtras.trim()}\n` : ""}
+# Lembrete final (mais importante)
+Responda como numa ligação: uma ou duas frases curtas e no máximo UMA pergunta. Se precisar de vários dados, peça só o próximo; os outros ficam para as respostas seguintes.`.trim();
 }

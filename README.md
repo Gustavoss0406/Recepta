@@ -48,6 +48,31 @@ npm test           # 55 testes: preços, ciclo de cobrança, runtime do agente, 
 npm run e2e        # jornada completa no navegador (precisa dos 3 processos rodando)
 ```
 
+## Publicar (deploy num servidor)
+
+Tudo roda num container só, numa porta só: o site, o gateway de voz e o worker
+(`scripts/servidor-unico.mjs`). Os WebSockets `/conversa` e `/twilio` vão para o gateway e o
+resto vai para o site. Usa cerca de 300 MB de memória.
+
+### Render (tem plano grátis)
+1. render.com › New › Blueprint › conecte este repositório (usa o `render.yaml`).
+2. Preencha as variáveis pedidas. `DATABASE_URL` é a do Supabase (pooler, porta 5432).
+   `RECEPTA_URL_PUBLICA` é a URL que o Render der (ex.: `https://recepta.onrender.com`).
+3. Depois do primeiro deploy, abra o painel › Números e clique em "Usar com a recepcionista"
+   no seu número Twilio: ele passa a apontar para `RECEPTA_URL_PUBLICA/api/twilio/voz`.
+
+O plano grátis "dorme" depois de 15 min sem acesso. A primeira ligação depois disso demora
+cerca de 1 minuto e a Twilio desiste antes. Para vender, use o plano pago mais barato, que não dorme.
+
+### Qualquer host com Docker (Koyeb, Railway, Fly, VPS)
+```bash
+docker build -t recepta .
+```
+```bash
+docker run -p 3000:3000 --env-file .env.producao recepta
+```
+As migrações rodam sozinhas ao iniciar (`MIGRAR_AO_INICIAR=0` desliga essa etapa).
+
 ## Apps OAuth ("Entrar com …")
 
 Cada plataforma exige um app registrado pela Recepta (uma vez só, vale para todos os clientes).

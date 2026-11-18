@@ -17,7 +17,9 @@
     "e2e": "playwright test",
     "local": "pglite-server --db=.data/pglite --port=5433 --max-connections=40 --include-database-url --run \"npm run local:apps\"",
     "local:apps": "tsx src/db/migrate.ts && concurrently -k -n site,voz,tarefas -c blue,magenta,gray \"next dev -p 3000\" \"tsx --conditions=react-server --env-file-if-exists=.env.local src/voice-gateway/server.ts\" \"tsx --conditions=react-server --env-file-if-exists=.env.local src/server/jobs/worker.ts\"",
-    "nuvem": "tsx --env-file-if-exists=.env.local src/db/migrate.ts && concurrently -k -n site,voz,tarefas -c blue,magenta,gray \"next dev -p 3000\" \"tsx --conditions=react-server --env-file-if-exists=.env.local src/voice-gateway/server.ts\" \"tsx --conditions=react-server --env-file-if-exists=.env.local src/server/jobs/worker.ts\""
+    "nuvem": "tsx --env-file-if-exists=.env.local src/db/migrate.ts && concurrently -k -n site,voz,tarefas -c blue,magenta,gray \"next dev -p 3000\" \"tsx --conditions=react-server --env-file-if-exists=.env.local src/voice-gateway/server.ts\" \"tsx --conditions=react-server --env-file-if-exists=.env.local src/server/jobs/worker.ts\"",
+    "build:servicos": "esbuild src/voice-gateway/server.ts src/server/jobs/worker.ts src/db/migrate.ts src/voz-e-worker.ts --bundle --platform=node --format=esm --target=node22 --packages=external --conditions=react-server --outdir=dist --out-extension:.js=.mjs && rm -rf dist/db/migrations && cp -r src/db/migrations dist/db/migrations",
+    "start:unico": "node scripts/servidor-unico.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.9.0",
@@ -68,6 +70,7 @@
     "@types/ws": "^8.18.2",
     "concurrently": "^10.0.7",
     "drizzle-kit": "^0.31.11",
+    "esbuild": "^0.28.2",
     "tailwindcss": "^4.3.5",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",

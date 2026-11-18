@@ -33,6 +33,7 @@ export async function POST(req: Request) {
   if (!n.verificadoEm) await getDb().update(schema.numeros).set({ verificadoEm: new Date() }).where(eq(schema.numeros.id, n.id));
 
   const token = assinarTokenVoz({ orgId: n.orgId, agenteId: n.agenteId, canal: "telefone", de: params.From }, 120_000);
-  const wss = process.env.VOICE_WS_PUBLICO ?? "wss://voz.recepta.ai";
+  // single-port deploys (npm run start:unico) serve the voice WebSocket on the same host
+  const wss = process.env.VOICE_WS_PUBLICO ?? publico.replace(/^http/, "ws");
   return twiml(`<Connect><Stream url="${wss}/twilio"><Parameter name="token" value="${token}"/></Stream></Connect>`);
 }
