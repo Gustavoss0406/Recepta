@@ -67,6 +67,8 @@ export const agentConfigSchema = z.object({
     recado: z.object({ ativo: z.boolean() }).optional(),
     sinalizar: z.object({ ativo: z.boolean() }).optional(),
     webhooks: z.array(webhookAcaoSchema),
+    /** Other receptionists of the same company this one can pass the call to, keeping the history. */
+    colegas: z.array(z.object({ agenteId: z.string().min(1), nome: z.string().min(1).max(60), quando: z.string().min(3).max(200) })).max(5).optional(),
   }),
   horarios: z.object({
     semana: z.array(diaSchema).length(7), // 0 = domingo

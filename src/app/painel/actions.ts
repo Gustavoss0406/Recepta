@@ -274,3 +274,27 @@ export async function acaoAplicarMudancas(agenteId: string, proposta: unknown, s
   revalidatePath("/painel/comecar");
   return { ok: true, mensagem: `${escolhidas.length} seção(ões) aplicada(s) no rascunho. Teste antes de publicar.` };
 }
+
+/* ───────── Hand-off between receptionists ───────── */
+
+export async function acaoSalvarColegas(agenteId: string, colegas: { agenteId: string; quando: string }[]): Promise<Resultado> {
+  const s = await exigirPermissao("editarAgente");
+  try {
+    const { listarAgentes } = await import("@/server/agent/agentes");
+    const todos = await listarAgentes(s.org.id);
+    const lista = colegas
+      .filter((c) => c.agenteId !== agenteId && c.quando.trim().length >= 3)
+      .slice(0, 5)
+      .map((c) => {
+        const a = todos.find((x) => x.id === c.agenteId);
+        if (!a) throw new ErroAgente("Recepcionista não encontrada");
+        return { agenteId: a.id, nome: a.rascunho.comportamento.nomeAgente, quando: c.quando.trim().slice(0, 200) };
+      });
+    const atual = (await obterAgente(s.org.id, agenteId)).rascunho.acoes;
+    await salvarRascunho(s.org.id, agenteId, { acoes: { ...atual, colegas: lista } });
+  } catch (e) {
+    return { erro: e instanceof ErroAgente ? traduzirErro(e.message) : erroDe(e) };
+  }
+  revalidatePath(`/painel/agentes/${agenteId}`);
+  return { ok: true, mensagem: "Salvo no rascunho. Publique as duas recepcionistas para valer nas ligações." };
+}

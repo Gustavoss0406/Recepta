@@ -71,15 +71,17 @@ export async function rodarPipeline(sessao: Sessao, t: Transporte) {
   const latencias: number[] = [];
   const fila: string[] = [];
 
+  // voice of whoever is on the call (changes when a colleague takes over)
+  let vozAtual = config.voz.vozId;
   async function falar(texto: string) {
     t.enviarEvento({ tipo: "agente.texto", texto });
-    if (!ttsConfigurado(config.voz.vozId)) return t.enviarEvento({ tipo: "agente.sem_audio", texto });
+    if (!ttsConfigurado(vozAtual)) return t.enviarEvento({ tipo: "agente.sem_audio", texto });
     const ctrl = new AbortController();
     falando = ctrl;
     let primeiro = true;
     try {
-      for await (const chunk of getTtsEngine(config.voz.vozId).stream({
-        voiceId: config.voz.vozId,
+      for await (const chunk of getTtsEngine(vozAtual).stream({
+        voiceId: vozAtual,
         text: texto,
         tier: config.voz.ultra ? "ultra" : "padrao",
         formato: t.formatoTts,
@@ -146,7 +148,13 @@ export async function rodarPipeline(sessao: Sessao, t: Transporte) {
         const fala = fila.splice(0).join(" ");
         const r = await responder(conversaId, fala, { offsetMs: Date.now() - inicio });
         for (const a of r.acoes) t.enviarEvento({ tipo: "acao", nome: a.nome, resultado: a.resultado });
-        for (const f of r.falas) await falar(f);
+        for (const [i, f] of r.falas.entries()) {
+          if (r.colega && i === r.colega.aPartirDe) {
+            vozAtual = r.colega.vozId;
+            t.enviarEvento({ tipo: "colega", nome: r.colega.nome });
+          }
+          await falar(f);
+        }
         if (r.encerrar) {
           if (r.transferirPara) t.enviarEvento({ tipo: "transferencia", para: r.transferirPara });
           await finalizar();

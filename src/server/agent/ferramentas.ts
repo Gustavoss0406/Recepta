@@ -30,6 +30,20 @@ const obj = (properties: Record<string, unknown>, required: string[] = []) => ({
 
 export function definirFerramentas(c: AgentConfig): Anthropic.Tool[] {
   const t: Anthropic.Tool[] = [];
+  if (c.acoes.colegas?.length)
+    t.push({
+      name: "passar_para_colega",
+      description: `Passa a ligação para outra recepcionista da empresa, que continua o atendimento com todo o histórico. Antes, avise o cliente em uma frase. Use quando: ${c.acoes.colegas
+        .map((x) => `${x.nome} (${x.agenteId}) → ${x.quando}`)
+        .join("; ")}.`,
+      input_schema: obj(
+        {
+          colega: { type: "string", enum: c.acoes.colegas.map((x) => x.agenteId), description: "Quem assume a ligação" },
+          motivo: { type: "string", description: "Resumo em uma frase do que o cliente precisa" },
+        },
+        ["colega", "motivo"],
+      ),
+    });
   if (c.acoes.agendar.ativo) {
     t.push({
       name: "consultar_horarios",

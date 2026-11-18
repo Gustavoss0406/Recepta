@@ -42,6 +42,8 @@ export interface RespostaAgente {
   encerrar: boolean;
   transferirPara?: string;
   modoDemo: boolean;
+  /** Another receptionist took over: from `aPartirDe` on, `falas` are hers and use her voice. */
+  colega?: { agenteId: string; nome: string; vozId: string; aPartirDe: number };
 }
 
 const usoVazio = (modelo: string): UsoConversa => ({
@@ -125,10 +127,12 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   const conv = await carregar(conversaId);
   if (conv.status !== "em_andamento") throw new Error("Esta conversa já foi encerrada.");
   const [org] = await db.select().from(schema.organizacoes).where(eq(schema.organizacoes.id, conv.orgId));
-  const { config, prompt } = await configParaConversa(conv.orgId, conv.agenteId, conv.versaoId ? { versaoId: conv.versaoId } : "rascunho");
+  const estado = conv.estado ?? { mensagens: [] };
+  // After a hand-off between receptionists the colleague's config drives the rest of the call.
+  const ativoId = estado.agenteAtivo ?? conv.agenteId;
+  const { config, prompt } = await configDoAtivo(conv, ativoId);
   const llm = await getLlm();
   const agora = opts.agora ?? new Date();
-  const estado = conv.estado ?? { mensagens: [] };
   const mensagens = estado.mensagens as Anthropic.MessageParam[];
   const modelo = (estado.modelo ?? "claude-haiku-5-5") as LlmModel;
   const uso = conv.uso ?? usoVazio(modelo);
@@ -177,6 +181,7 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   const acoes: AcaoExecutada[] = [];
   let encerrar = false;
   let transferirPara: string | undefined;
+  let passagem: { de: string; para: { agenteId: string; nome: string }; motivo: string; destino: Awaited<ReturnType<typeof configDoAtivo>> } | null = null;
 
   /** Applies automatic workflow steps and tells the model what to do next. */
   function aplicarEfeitos(passo: { atual: string | null; efeitos: Efeito[] }) {
@@ -252,6 +257,23 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
         resultados.push({ type: "tool_result", tool_use_id: u.id, content: JSON.stringify(res) });
         continue;
       }
+      if (u.name === "passar_para_colega") {
+        const alvo = config.acoes.colegas?.find((x) => x.agenteId === String(args.colega ?? ""));
+        let res: Record<string, unknown> = { ok: false, erro: "colega_invalido" };
+        if (alvo && alvo.agenteId !== ativoId) {
+          try {
+            const destino = await configDoAtivo(conv, alvo.agenteId);
+            passagem = { de: config.comportamento.nomeAgente, para: alvo, motivo: String(args.motivo ?? "").slice(0, 300), destino };
+            res = { ok: true, mensagem: `${alvo.nome} vai continuar o atendimento.` };
+          } catch {
+            res = { ok: false, erro: "colega_indisponivel" };
+          }
+        }
+        acoes.push({ nome: u.name, args, resultado: res });
+        await db.insert(schema.chamadasFerramenta).values({ orgId: conv.orgId, conversaId, nome: u.name, args, resultado: res });
+        resultados.push({ type: "tool_result", tool_use_id: u.id, content: JSON.stringify(res) });
+        continue;
+      }
       const ef = await executarFerramenta(u.name, args, {
         orgId: conv.orgId,
         agenteId: conv.agenteId,
@@ -276,6 +298,7 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
       }
     }
     mensagens.push({ role: "user", content: resultados });
+    if (passagem) break;
     if (encerrar && u_soEncerrar(usos)) break;
     if (encerrar && transferirPara && !usos.some((x) => x.name === "seguir_fluxo")) break;
   }
@@ -285,11 +308,58 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
     uso.ttsChars += textoAgente.length;
     await db.insert(schema.turnos).values({ orgId: conv.orgId, conversaId, ordem: ordem++, papel: "agente", texto: textoAgente });
   }
+
+  // Hand-off between receptionists: the colleague takes the call with the whole history and speaks next.
+  let colega: RespostaAgente["colega"];
+  if (passagem && !encerrar) {
+    const { destino } = passagem;
+    estado.agenteAtivo = passagem.para.agenteId;
+    estado.no = undefined; // her own workflow (if any) starts from the beginning
+    mensagens.push({
+      role: "user",
+      content: [
+        {
+          type: "text",
+          text: `[Passagem interna] Você é ${destino.config.comportamento.nomeAgente} e acabou de assumir esta ligação, passada por ${passagem.de}. Motivo: ${passagem.motivo || "não informado"}. O cliente já ouviu o aviso de gravação. Apresente-se em uma frase curta (sem repetir a saudação inteira) e continue o atendimento de onde parou.`,
+        },
+      ],
+    });
+    const aPartirDe = falas.length;
+    try {
+      const r = await llm.turno({ modelo, system: destino.prompt, messages: mensagens, tools: [], maxTokens: 300 });
+      uso.llmInput += r.uso.input;
+      uso.llmCached += r.uso.cached;
+      uso.llmOutput += r.uso.output;
+      mensagens.push({ role: "assistant", content: r.content as Anthropic.ContentBlockParam[] });
+      const t = textoDe(r.content);
+      if (t) {
+        falas.push(t);
+        uso.ttsChars += t.length;
+        await db.insert(schema.turnos).values({ orgId: conv.orgId, conversaId, ordem: ordem++, papel: "agente", texto: t });
+      }
+    } catch {
+      const t = `Oi, aqui é a ${destino.config.comportamento.nomeAgente}. Vou continuar o seu atendimento.`;
+      falas.push(t);
+      mensagens.push({ role: "assistant", content: [{ type: "text", text: t }] });
+      await db.insert(schema.turnos).values({ orgId: conv.orgId, conversaId, ordem: ordem++, papel: "agente", texto: t });
+    }
+    colega = { agenteId: passagem.para.agenteId, nome: passagem.para.nome, vozId: destino.config.voz.vozId, aPartirDe };
+  }
   await db
     .update(schema.conversas)
     .set({ estado: { ...estado, mensagens, transferirPara: transferirPara ?? estado.transferirPara }, uso })
     .where(eq(schema.conversas.id, conversaId));
-  return { falas, acoes, encerrar, transferirPara, modoDemo: !llm.real };
+  return { falas, acoes, encerrar, transferirPara, modoDemo: !llm.real, ...(colega ? { colega } : {}) };
+}
+
+/**
+ * Config of the receptionist currently on the call: the original one (pinned version, or draft in
+ * tests) or a colleague who took over (her published version; draft while testing).
+ */
+async function configDoAtivo(conv: { orgId: string; agenteId: string; versaoId: string | null; teste: boolean }, agenteId: string) {
+  if (agenteId === conv.agenteId) return configParaConversa(conv.orgId, agenteId, conv.versaoId ? { versaoId: conv.versaoId } : "rascunho");
+  if (conv.teste) return configParaConversa(conv.orgId, agenteId, "rascunho");
+  return configParaConversa(conv.orgId, agenteId, "publicado");
 }
 
 /** If the only tool in the last step was hang-up, there is nothing left to say. */
