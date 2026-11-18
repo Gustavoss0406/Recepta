@@ -1,4 +1,6 @@
 import "server-only";
+import { definicaoFerramenta } from "@/lib/agent/api-ferramenta";
+import { executarApi } from "./api-ferramentas";
 import type Anthropic from "@anthropic-ai/sdk";
 import { and, eq, gte, lt } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
@@ -109,6 +111,7 @@ export function definirFerramentas(c: AgentConfig): Anthropic.Tool[] {
         w.parametros.filter((p) => p.obrigatorio).map((p) => p.nome),
       ),
     });
+  for (const f of c.acoes.apis ?? []) t.push(definicaoFerramenta(f) as Anthropic.Tool);
   t.push({
     name: "encerrar_ligacao",
     description: "Encerra a ligação. Só use depois que o cliente se despedir ou disser que não precisa de mais nada (pergunte antes: \"Posso ajudar em mais alguma coisa?\"), ou em trote/abuso.",
@@ -246,6 +249,11 @@ export async function executarFerramenta(nome: string, input: Record<string, unk
       return { resultado: { ok: true }, encerrar: true };
     }
     default: {
+      const api = c.acoes.apis?.find((x) => x.nome === nome);
+      if (api) {
+        const r = await executarApi(ctx.orgId, api, input, { teste: ctx.teste });
+        return { resultado: r as unknown as Record<string, unknown> };
+      }
       const w = c.acoes.webhooks.find((x) => x.nome === nome);
       if (!w) return { resultado: { ok: false, erro: "ferramenta_desconhecida" } };
       if (ctx.teste) return { resultado: { ok: true, simulado: true, nota: "Em teste, webhooks não são chamados de verdade." } };

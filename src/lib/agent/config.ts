@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { workflowPadrao, workflowSchema } from "./workflow";
+import { ferramentaApiSchema } from "./api-ferramenta";
 
 export const NICHOS = ["clinica", "imobiliaria", "restaurante"] as const;
 export type Nicho = (typeof NICHOS)[number];
@@ -67,6 +68,8 @@ export const agentConfigSchema = z.object({
     recado: z.object({ ativo: z.boolean() }).optional(),
     sinalizar: z.object({ ativo: z.boolean() }).optional(),
     webhooks: z.array(webhookAcaoSchema),
+    /** Calls to the business's own systems (APIs, Supabase REST…), configured by the owner. */
+    apis: z.array(ferramentaApiSchema).max(15).optional(),
     /** Other receptionists of the same company this one can pass the call to, keeping the history. */
     colegas: z.array(z.object({ agenteId: z.string().min(1), nome: z.string().min(1).max(60), quando: z.string().min(3).max(200) })).max(5).optional(),
   }),

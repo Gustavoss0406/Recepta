@@ -298,3 +298,54 @@ export async function acaoSalvarColegas(agenteId: string, colegas: { agenteId: s
   revalidatePath(`/painel/agentes/${agenteId}`);
   return { ok: true, mensagem: "Salvo no rascunho. Publique as duas recepcionistas para valer nas ligações." };
 }
+
+/* ───────── API tools (business systems) ───────── */
+
+const RESERVADOS = ["consultar_horarios", "agendar", "transferir_para_humano", "repassar_para_equipe", "enviar_whatsapp", "encerrar_ligacao", "seguir_fluxo", "passar_para_colega", "anotar_recado", "sinalizar_revisao"];
+
+export type ResultadoApiDono = Resultado & { camposDisponiveis?: string[]; dados?: unknown; status?: number };
+
+/** Saves (creates or replaces) one API tool; the secret header is stored encrypted, apart from the config. */
+export async function acaoSalvarFerramentaApi(agenteId: string, dados: unknown, segredo?: { cabecalho: string; valor: string }): Promise<Resultado> {
+  const s = await exigirPermissao("editarAgente");
+  const { ferramentaApiSchema } = await import("@/lib/agent/api-ferramenta");
+  const p = ferramentaApiSchema.safeParse(dados);
+  if (!p.success) return { erro: p.error.issues.map((i) => i.message).join("; ") };
+  if (RESERVADOS.includes(p.data.nome)) return { erro: "Esse nome é de uma ação da própria Recepta. Escolha outro." };
+  if (!p.data.url.startsWith("https://")) return { erro: "Use um endereço https://" };
+  try {
+    const atual = (await obterAgente(s.org.id, agenteId)).rascunho.acoes;
+    const outras = (atual.apis ?? []).filter((x) => x.id !== p.data.id);
+    if (outras.some((x) => x.nome === p.data.nome) || atual.webhooks.some((w) => w.nome === p.data.nome)) return { erro: "Já existe uma ação com esse nome." };
+    if (segredo?.valor) {
+      const { salvarCredencialApi } = await import("@/server/agent/api-ferramentas");
+      await salvarCredencialApi(s.org.id, p.data.id, segredo.cabecalho || "Authorization", segredo.valor);
+    }
+    const temCredencial = Boolean(segredo?.valor) || (atual.apis ?? []).find((x) => x.id === p.data.id)?.temCredencial || false;
+    await salvarRascunho(s.org.id, agenteId, { acoes: { ...atual, apis: [...outras, { ...p.data, temCredencial }] } });
+  } catch (e) {
+    return { erro: e instanceof ErroAgente ? traduzirErro(e.message) : erroDe(e) };
+  }
+  revalidatePath(`/painel/agentes/${agenteId}`);
+  return { ok: true, mensagem: "Ferramenta salva no rascunho." };
+}
+
+export async function acaoRemoverFerramentaApi(agenteId: string, id: string): Promise<Resultado> {
+  const s = await exigirPermissao("editarAgente");
+  const atual = (await obterAgente(s.org.id, agenteId)).rascunho.acoes;
+  await salvarRascunho(s.org.id, agenteId, { acoes: { ...atual, apis: (atual.apis ?? []).filter((x) => x.id !== id) } });
+  const { salvarCredencialApi } = await import("@/server/agent/api-ferramentas");
+  await salvarCredencialApi(s.org.id, id, "Authorization", "");
+  revalidatePath(`/painel/agentes/${agenteId}`);
+  return { ok: true };
+}
+
+/** "Testar" for the owner: real call (also for "registrar", it's the owner asking), shows every field returned. */
+export async function acaoTestarFerramentaApi(agenteId: string, id: string, args: Record<string, string>): Promise<ResultadoApiDono> {
+  const s = await exigirPermissao("editarAgente");
+  const f = (await obterAgente(s.org.id, agenteId)).rascunho.acoes.apis?.find((x) => x.id === id);
+  if (!f) return { erro: "Salve a ferramenta antes de testar." };
+  const { executarApi } = await import("@/server/agent/api-ferramentas");
+  const r = await executarApi(s.org.id, f, args, { paraDono: true });
+  return r.ok ? { ok: true, mensagem: `Respondeu ${r.status}`, dados: r.dados, camposDisponiveis: r.camposDisponiveis, status: r.status } : { erro: r.erro };
+}

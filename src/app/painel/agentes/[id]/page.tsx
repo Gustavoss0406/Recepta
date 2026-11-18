@@ -22,6 +22,7 @@ import {
   versoesDoAgente,
 } from "@/server/agent/agentes";
 import { Colegas } from "@/components/painel/colegas";
+import { FerramentasApi } from "@/components/painel/ferramentas-api";
 import { compilarPrompt } from "@/lib/agent/prompt";
 import { BOTAO } from "@/components/painel/page-header";
 import { WorkflowEditor } from "@/components/painel/workflow-editor";
@@ -292,7 +293,8 @@ export default async function AgentePage({
                   ).length > 0
                 }
               />
-              <Colegas
+              <FerramentasApi agenteId={id} ferramentas={cfg.acoes.apis ?? []} />
+            <Colegas
                 agenteId={id}
                 atuais={cfg.acoes.colegas ?? []}
                 opcoes={(await listarAgentes(s.org.id))
