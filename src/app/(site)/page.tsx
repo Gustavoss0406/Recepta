@@ -276,12 +276,12 @@ export default function Home() {
           <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {(
               [
-                ["Lia", "Paulista", "mint"],
-                ["Rafael", "Carioca", "sky"],
-                ["Bia", "Mineira", "peach"],
-                ["Caio", "Nordestino", "rose"],
-                ["Helena", "Gaúcha", "lavender"],
-                ["Tomás", "Neutro", "ink"],
+                ["Lia", "Expressiva", "mint"],
+                ["Rafael", "Cordial", "sky"],
+                ["Bia", "Calma", "peach"],
+                ["Caio", "Amigável", "rose"],
+                ["Helena", "Formal", "lavender"],
+                ["Tomás", "Executivo", "ink"],
               ] as const
             ).map(([name, accent, tone]) => (
               <li key={name} className="panel flex flex-col items-center gap-3 px-3 py-6">
