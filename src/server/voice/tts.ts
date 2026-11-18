@@ -64,7 +64,14 @@ class PremiumTtsEngine implements TtsEngine {
         text: req.text,
         model_id: this.models[req.tier ?? "padrao"],
         language_code: "pt",
-        voice_settings: req.velocidade ? { speed: req.velocidade } : undefined,
+        // Lower stability + some style = more natural intonation on phone calls (defaults sound flat).
+        voice_settings: {
+          stability: Number(process.env.TTS_STABILITY ?? 0.38),
+          similarity_boost: 0.8,
+          style: Number(process.env.TTS_STYLE ?? 0.3),
+          use_speaker_boost: true,
+          ...(req.velocidade ? { speed: req.velocidade } : {}),
+        },
       }),
       signal: req.signal,
     });
