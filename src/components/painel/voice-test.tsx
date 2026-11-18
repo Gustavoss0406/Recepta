@@ -134,6 +134,7 @@ export function VoiceTest({
       c.createMediaStreamSource(media).connect(node);
 
       const sock = new WebSocket(`${url}/conversa?token=${encodeURIComponent(token)}`);
+      let abriu = false;
       sock.binaryType = "arraybuffer";
       ws.current = sock;
       node.port.onmessage = (e) => sock.readyState === WebSocket.OPEN && sock.send(e.data);
@@ -179,13 +180,19 @@ export function VoiceTest({
             break;
         }
       };
+      sock.addEventListener("open", () => {
+        abriu = true;
+      });
       sock.onclose = (e) => {
         if (e.code === 4401) setLinhas((l) => [...l, { papel: "sistema", texto: "Sessão expirada. Tente de novo." }]);
         pararMidia();
         setEstado((s) => (s === "ativo" || s === "conectando" ? "fim" : s));
       };
-      sock.onerror = () =>
-        setLinhas((l) => [...l, { papel: "sistema", texto: publico ? "Não foi possível conectar. Tente de novo em instantes." : "Não foi possível conectar ao gateway de voz (npm run voice)." }]);
+      // Browsers also fire "error" when the server closes at the end of a call: only report real connection failures.
+      sock.onerror = () => {
+        if (sock.readyState !== WebSocket.CLOSED || abriu) return;
+        setLinhas((l) => [...l, { papel: "sistema", texto: "Não foi possível conectar à voz. Tente de novo em instantes." }]);
+      };
     } catch (e) {
       setLinhas([{ papel: "sistema", texto: e instanceof Error ? e.message : "Microfone indisponível" }]);
       setEstado("parado");

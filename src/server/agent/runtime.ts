@@ -171,6 +171,13 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   blocos.push({ type: "text", text: `Cliente: ${fala}` });
   mensagens.push({ role: "user", content: blocos });
 
+  // Hang-up guard inputs (see podeEncerrar): the receptionist's previous line and whether the request was handled.
+  const anteriores = mensagens.slice(0, -1);
+  const ultimaFalaAgente =
+    [...anteriores].reverse().flatMap((m) => (m.role === "assistant" && Array.isArray(m.content) ? m.content : [])).find((b) => b.type === "text")?.text ?? "";
+  const concluiuAlgo = anteriores.some(
+    (m) => m.role === "assistant" && Array.isArray(m.content) && m.content.some((b) => b.type === "tool_use" && ["agendar", "repassar_para_equipe", "transferir_para_humano"].includes(b.name)),
+  );
   const tools = definirFerramentas(config);
   if (fluxo && estado.no && noDoFluxo(fluxo, estado.no)?.tipo === "subagente" && saidas(fluxo, estado.no).length)
     tools.push({
@@ -284,6 +291,9 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
         mockAgenda: estado.mockAgenda as "com_horarios" | "sem_horarios" | undefined,
         agora,
         de: conv.de,
+        ultimaFalaCliente: fala,
+        ultimaFalaAgente,
+        concluiuAlgo: concluiuAlgo || acoes.some((a) => ["agendar", "repassar_para_equipe", "transferir_para_humano"].includes(a.nome)),
       });
       acoes.push({ nome: u.name, args, resultado: ef.resultado });
       await db.insert(schema.chamadasFerramenta).values({ orgId: conv.orgId, conversaId, nome: u.name, args, resultado: ef.resultado });

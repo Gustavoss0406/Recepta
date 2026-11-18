@@ -18,6 +18,10 @@ export interface CtxFerramenta {
   mockAgenda?: "com_horarios" | "sem_horarios";
   agora: Date;
   de?: string | null;
+  /** For the hang-up guard: what the caller just said, the receptionist's previous line and whether something was already done. */
+  ultimaFalaCliente?: string;
+  ultimaFalaAgente?: string;
+  concluiuAlgo?: boolean;
 }
 
 export interface EfeitoFerramenta {
@@ -105,8 +109,22 @@ export function definirFerramentas(c: AgentConfig): Anthropic.Tool[] {
         w.parametros.filter((p) => p.obrigatorio).map((p) => p.nome),
       ),
     });
-  t.push({ name: "encerrar_ligacao", description: "Encerra a ligação depois da despedida.", input_schema: obj({}) });
+  t.push({
+    name: "encerrar_ligacao",
+    description: "Encerra a ligação. Só use depois que o cliente se despedir ou disser que não precisa de mais nada (pergunte antes: \"Posso ajudar em mais alguma coisa?\"), ou em trote/abuso.",
+    input_schema: obj({ motivo: { type: "string", enum: ["cliente_se_despediu", "trote_ou_abuso"], description: "Por que encerrar" } }),
+  });
   return t;
+}
+
+const DESPEDIDA = /\b(tchau|até (logo|mais|amanhã|breve)|obrigad[oa]|valeu|brigad[oa]|era (só )?isso|é só isso|só isso|falou|boa (noite|tarde)|bom dia|pode desligar|tenho que (ir|desligar)|depois (eu )?(ligo|retorno))\b/i;
+const NEGATIVA = /^\s*(não|nao|nada|tá bom|ta bom|beleza|ok|tudo certo|não,? obrigad[oa])\b/i;
+
+/** The caller said goodbye, or answered "no" to "anything else?". */
+export function podeEncerrar(ultimaFalaCliente: string, ultimaFalaAgente: string, concluiuAlgo = false): boolean {
+  if (DESPEDIDA.test(ultimaFalaCliente)) return true;
+  // "ok" / "não" closes the call only after "anything else?" or once the request was handled
+  return (concluiuAlgo || /mais alguma|algo mais|ajudar em mais|mais algum/i.test(ultimaFalaAgente)) && NEGATIVA.test(ultimaFalaCliente);
 }
 
 export async function executarFerramenta(nome: string, input: Record<string, unknown>, ctx: CtxFerramenta): Promise<EfeitoFerramenta> {
@@ -221,8 +239,12 @@ export async function executarFerramenta(nome: string, input: Record<string, unk
       await enviarSaida(ctx.orgId, { canal: "whatsapp", destino: String(input.telefone ?? ctx.de ?? ""), corpo: String(input.mensagem ?? "") }, { real: !ctx.teste });
       return { resultado: { ok: true } };
     }
-    case "encerrar_ligacao":
+    case "encerrar_ligacao": {
+      // Safety net: small models sometimes hang up mid-conversation. Only end when the caller said goodbye.
+      if (input.motivo !== "trote_ou_abuso" && !podeEncerrar(ctx.ultimaFalaCliente ?? "", ctx.ultimaFalaAgente ?? "", ctx.concluiuAlgo))
+        return { resultado: { ok: false, erro: "O cliente ainda não se despediu. Não encerre: continue o atendimento e pergunte se pode ajudar em mais alguma coisa." } };
       return { resultado: { ok: true }, encerrar: true };
+    }
     default: {
       const w = c.acoes.webhooks.find((x) => x.nome === nome);
       if (!w) return { resultado: { ok: false, erro: "ferramenta_desconhecida" } };
