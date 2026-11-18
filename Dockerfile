@@ -1,6 +1,9 @@
 # Recepta: site + voice gateway + worker on a single port (scripts/servidor-unico.mjs).
 FROM node:22-slim AS build
 WORKDIR /app
+# deploy identifier for Next.js version-skew protection (Render passes RENDER_GIT_COMMIT as a build arg)
+ARG RENDER_GIT_COMMIT=""
+ENV DEPLOYMENT_VERSION=$RENDER_GIT_COMMIT
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
@@ -9,6 +12,8 @@ RUN npm run build && npm run build:servicos && npm prune --omit=dev
 
 FROM node:22-slim
 WORKDIR /app
+ARG RENDER_GIT_COMMIT=""
+ENV DEPLOYMENT_VERSION=$RENDER_GIT_COMMIT
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000
 COPY --chown=node:node --from=build /app/package.json ./
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
