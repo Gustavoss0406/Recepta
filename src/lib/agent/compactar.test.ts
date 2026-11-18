@@ -49,3 +49,19 @@ describe("Resumo de ligações longas", () => {
     expect(JSON.stringify(novo[0].content)).toContain("Maria");
   });
 });
+
+describe("Conhecimento só na fala atual", () => {
+  it("remove os trechos do site das falas anteriores e mantém na atual", async () => {
+    const { semConhecimentoAntigo } = await import("@/server/agent/runtime");
+    const k = (t: string) => ({ type: "text" as const, text: `Conhecimento (trechos do site e documentos da empresa):\n- ${t}` });
+    const msgs: Msg[] = [
+      { role: "user", content: [k("lista antiga de imóveis"), { type: "text", text: "Cliente: quero comprar" }] },
+      agente("Me diz seu nome?"),
+      { role: "user", content: [k("trecho novo"), { type: "text", text: "Cliente: tem casa no Fidélis?" }] },
+    ];
+    const r = JSON.stringify(semConhecimentoAntigo(msgs));
+    expect(r).not.toContain("lista antiga");
+    expect(r).toContain("trecho novo");
+    expect(r).toContain("Cliente: quero comprar");
+  });
+});

@@ -167,7 +167,7 @@ export function provedoresPadrao(): Provedor[] {
         id,
         baseURL: "https://api.groq.com/openai/v1",
         chave: process.env.GROQ_API_KEY,
-        modelos: async () => lista(process.env.GROQ_MODELOS, ["openai/gpt-oss-20b", "openai/gpt-oss-120b"]),
+        modelos: async () => lista(process.env.GROQ_MODELOS, ["openai/gpt-oss-20b", "openai/gpt-oss-120b", "qwen/qwen3.8-27b"]),
         timeoutMs: 8000,
       });
     if (id === "openrouter" && process.env.OPENROUTER_API_KEY)

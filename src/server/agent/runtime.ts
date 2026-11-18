@@ -166,8 +166,11 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   }
   const etapa = fluxo && estado.no ? contextoEtapa(fluxo, estado.no) : null;
   if (etapa) blocos.push({ type: "text", text: etapa });
-  const trechos = await buscarConhecimento(conv.agenteId, fala, 3);
-  if (trechos.length) blocos.push({ type: "text", text: `Conhecimento (trechos do site e documentos da empresa):\n${trechos.map((t) => `- ${t.texto.replace(/\n+/g, " ")}`).join("\n")}` });
+  // Knowledge: only for real questions (not "oi", a name or "sim"), trimmed, and only in the current turn
+  // (see semConhecimentoAntigo) — free engines have ~8k tokens per minute.
+  const trechos = fala.trim().split(/\s+/).length >= 3 ? await buscarConhecimento(ativoId, fala, 2) : [];
+  if (trechos.length)
+    blocos.push({ type: "text", text: `${PREFIXO_CONHECIMENTO}\n${trechos.map((t) => `- ${t.texto.replace(/\s+/g, " ").slice(0, 700)}`).join("\n")}` });
   blocos.push({ type: "text", text: `Cliente: ${fala}` });
   mensagens.push({ role: "user", content: blocos });
 
@@ -224,9 +227,10 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   for (let i = 0; i < MAX_ITERACOES; i++) {
     let r;
     try {
-      r = await llm.turno({ modelo, system: prompt, messages: mensagens, tools, maxTokens: 600 });
+      r = await llm.turno({ modelo, system: prompt, messages: semConhecimentoAntigo(mensagens), tools, maxTokens: 400 });
     } catch (e) {
       if (!(e instanceof ErroSemMotor)) throw e;
+      console.error(`[conversa ${conversaId}] sem motor de resposta: ${e.message}`);
       // Every engine is rate-limited or down: never leave the caller in silence.
       falas.push("Desculpe, estou com uma instabilidade aqui agora. Já passei o seu pedido para a equipe, e alguém vai te retornar em breve. Obrigada pela ligação!");
       if (!conv.teste)
@@ -402,6 +406,16 @@ async function configDoAtivo(conv: { orgId: string; agenteId: string; versaoId: 
   if (agenteId === conv.agenteId) return configParaConversa(conv.orgId, agenteId, conv.versaoId ? { versaoId: conv.versaoId } : "rascunho");
   if (conv.teste) return configParaConversa(conv.orgId, agenteId, "rascunho");
   return configParaConversa(conv.orgId, agenteId, "publicado");
+}
+
+const PREFIXO_CONHECIMENTO = "Conhecimento (trechos do site e documentos da empresa):";
+
+/** Knowledge excerpts of earlier turns are dropped from the request: they were only needed for that answer. */
+export function semConhecimentoAntigo(msgs: Anthropic.MessageParam[]): Anthropic.MessageParam[] {
+  const ultimaFala = msgs.findLastIndex((m) => m.role === "user" && Array.isArray(m.content) && m.content.some((b) => b.type === "text" && b.text.startsWith("Cliente: ")));
+  return msgs.map((m, i) =>
+    i >= ultimaFala || m.role !== "user" || !Array.isArray(m.content) ? m : { ...m, content: m.content.filter((b) => !(b.type === "text" && b.text.startsWith(PREFIXO_CONHECIMENTO))) },
+  );
 }
 
 /** If the only tool in the last step was hang-up, there is nothing left to say. */
