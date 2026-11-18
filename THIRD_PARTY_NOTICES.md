@@ -46,3 +46,15 @@ from Fish Audio (business@fish.audio) is required beyond those limits.
 
 openbmb/VoxCPM2 model weights, Apache License 2.0. VoiceStudio (the serving application) is AGPL-3.0
 and runs as a separate, unmodified service.
+
+## Fotos (public/fotos)
+
+Fotos do Pexels, usadas sob a Licença Pexels (https://www.pexels.com/license/): uso gratuito, inclusive comercial, sem atribuição obrigatória. Não é permitido vender as fotos sem modificação nem sugerir endosso das pessoas retratadas.
+
+| Arquivo | Foto no Pexels |
+|---|---|
+| clinica.jpg | https://www.pexels.com/photo/4269203/ |
+| odontologia.jpg | https://www.pexels.com/photo/3845983/ |
+| restaurante.jpg | https://www.pexels.com/photo/6612691/ |
+| salao.jpg | https://www.pexels.com/photo/8834022/ |
+| imobiliaria.jpg | https://www.pexels.com/photo/8482517/ |

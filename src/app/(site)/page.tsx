@@ -6,16 +6,10 @@ import {
   FileCheck,
   FlaskConical,
   GitBranch,
-  House,
   Lock,
   MessageCircle,
   PhoneForwarded,
-  Scale,
   ShieldCheck,
-  ShoppingBag,
-  Stethoscope,
-  UtensilsCrossed,
-  Wrench,
 } from "lucide-react";
 import { VoiceCarousel } from "@/components/site/voice-carousel";
 import { LiveCallDemo } from "@/components/site/live-call-demo";
@@ -24,15 +18,16 @@ import { CodeBlock } from "@/components/site/code-block";
 import { Faq } from "@/components/site/faq";
 import { Orb } from "@/components/ui/orb";
 import { PLANS } from "@/lib/pricing/plans";
+import { CONECTORES } from "@/lib/integracoes/catalogo";
 import { formatBRLRound, formatInt } from "@/lib/format";
 
+/** Photos: Pexels (free license, pexels.com/license). Each card shows what the receptionist did on a real call. */
 const NICHES = [
-  { icon: Stethoscope, label: "Clínicas e consultórios" },
-  { icon: House, label: "Imobiliárias" },
-  { icon: UtensilsCrossed, label: "Restaurantes" },
-  { icon: Wrench, label: "Oficinas e serviços" },
-  { icon: Scale, label: "Escritórios" },
-  { icon: ShoppingBag, label: "E-commerce" },
+  { foto: "/fotos/clinica.jpg", label: "Clínicas e consultórios", fala: "Consulta marcada para quinta, 9h30", alt: "Recepcionista sorrindo atrás do balcão de uma clínica" },
+  { foto: "/fotos/odontologia.jpg", label: "Odontologia", fala: "Confirmou o convênio e a avaliação", alt: "Dentista conversando com paciente no consultório" },
+  { foto: "/fotos/restaurante.jpg", label: "Restaurantes e cafés", fala: "Mesa para quatro às 20h, reservada", alt: "Atendente de café falando ao telefone com um tablet na mão" },
+  { foto: "/fotos/salao.jpg", label: "Salões e estética", fala: "Corte e escova sábado às 10h", alt: "Cabeleireira arrumando a bancada do salão" },
+  { foto: "/fotos/imobiliaria.jpg", label: "Imobiliárias", fala: "Visita ao apartamento passada ao corretor", alt: "Corretor de imóveis falando ao celular com uma prancheta" },
 ];
 
 const RESOLUTION = {
@@ -41,18 +36,9 @@ const RESOLUTION = {
   v1: [66.0, 64.8, 67.3, 65.1, 63.9, 66.4, 64.2, 65.5],
 };
 
-const INTEGRATIONS = [
-  "Google Agenda",
-  "WhatsApp Business",
-  "RD Station",
-  "Pipedrive",
-  "HubSpot",
-  "Bling",
-  "iClinic",
-  "Feegow",
-  "Webhooks",
-  "Zapier",
-];
+const INTEGRATIONS = ["google", "whatsapp", "twilio", "hubspot", "pipedrive", "rd_station", "kommo", "zendesk", "salesforce", "outlook", "make", "n8n"]
+  .map((id) => CONECTORES.find((c) => c.id === id)!)
+  .filter(Boolean);
 
 const API_EXAMPLE = `import { Recepta } from "@recepta/sdk";
 
@@ -122,19 +108,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Niches strip */}
-      <section id="nichos" className="rule-t rule-b">
-        <div className="container-page flex items-center justify-between py-6">
-          <h2 className="lead text-ink">Feito para quem vive do telefone</h2>
-          <Link href="/criar-conta" className="btn btn-sm btn-secondary hidden sm:inline-flex">
+      {/* Niches: photo cards */}
+      <section id="nichos" className="rule-t">
+        <div className="container-page flex flex-wrap items-end justify-between gap-4 pt-20 pb-8">
+          <div>
+            <p className="eyebrow">Para quem vive do telefone</p>
+            <h2 className="mt-3 display-section max-w-xl">Uma recepcionista pronta para o seu tipo de negócio</h2>
+          </div>
+          <Link href="/criar-conta" className="btn btn-sm btn-secondary">
             Ver modelos prontos
           </Link>
         </div>
-        <ul className="container-page grid grid-cols-2 border-t border-hairline sm:grid-cols-3 lg:grid-cols-6">
-          {NICHES.map(({ icon: Icon, label }) => (
-            <li key={label} className="flex h-24 flex-col items-center justify-center gap-2 border-hairline text-body max-sm:border-b max-sm:odd:border-r sm:max-lg:border-b sm:max-lg:[&:not(:nth-child(3n))]:border-r lg:[&:not(:last-child)]:border-r">
-              <Icon size={20} strokeWidth={1.5} className="text-ink" />
-              <span className="text-center text-[0.8125rem]">{label}</span>
+        <ul className="container-page flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto pb-20 [scrollbar-width:none] lg:grid lg:grid-cols-5 lg:overflow-visible">
+          {NICHES.map((n) => (
+            <li key={n.label} className="group relative aspect-[4/5] w-[72%] shrink-0 snap-start overflow-hidden rounded-[20px] bg-strong sm:w-[42%] lg:w-auto">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={n.foto} alt={n.alt} loading="lazy" className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" aria-hidden />
+              <div className="absolute inset-x-3 bottom-3 space-y-2">
+                <p className="px-1 text-[0.9375rem] font-medium text-white">{n.label}</p>
+                <div className="flex items-start gap-2 rounded-[14px] bg-white/90 p-2 shadow-[0_1px_2px_rgba(0,0,0,0.08)] backdrop-blur-md">
+                  <Orb tom="mint" tamanho={20} className="mt-px" />
+                  <span className="text-[0.75rem] leading-snug text-ink">{n.fala}</span>
+                </div>
+              </div>
             </li>
           ))}
         </ul>
@@ -266,8 +263,8 @@ export default function Home() {
             <p className="eyebrow">Vozes</p>
             <h2 className="mt-3 display-section max-w-md">Vozes brasileiras que ninguém mais tem</h2>
             <p className="mt-6 lead max-w-md text-body">
-              Nosso catálogo foi gravado por dubladores de diferentes regiões do país. Sotaque, ritmo e simpatia de
-              quem atende de verdade, e a leitura certa de CPF, CEP, datas e valores.
+              Vozes nativas do português do Brasil, com entonação de quem atende de verdade e leitura certa de CPF,
+              CEP, datas e valores. Escolha a que combina com a sua marca e ouça antes de publicar.
             </p>
             <Link href="/" className="btn btn-sm btn-secondary mt-8">
               Ouvir as vozes
@@ -305,13 +302,14 @@ export default function Home() {
               Ver integrações
             </Link>
           </div>
-          <ul className="grid grid-cols-2 gap-x-8 gap-y-4">
-            {INTEGRATIONS.map((name) => (
-              <li key={name} className="flex items-center gap-3 text-sm text-ink">
-                <span className="grid size-7 place-items-center rounded-[8px] bg-strong font-mono text-[0.7rem] text-body">
-                  {name.slice(0, 1)}
+          <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {INTEGRATIONS.map((c) => (
+              <li key={c.id} className="panel flex items-center gap-3 px-3 py-3 text-sm text-ink">
+                <span className="grid size-8 shrink-0 place-items-center rounded-[9px] border border-hairline bg-white">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={c.logo} alt="" width={18} height={18} className="object-contain" />
                 </span>
-                {name}
+                <span className="truncate">{c.nome}</span>
               </li>
             ))}
           </ul>
