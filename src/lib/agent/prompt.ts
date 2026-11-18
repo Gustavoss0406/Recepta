@@ -37,7 +37,7 @@ export function compilarPrompt(c: AgentConfig): string {
   const acoes: string[] = [];
   if (c.acoes.agendar.ativo)
     acoes.push(
-      "Para agendar: primeiro use `consultar_horarios`; ofereça no máximo duas opções; só use `agendar` depois que o cliente escolher e você tiver os dados obrigatórios. Nunca invente um horário que a ferramenta não retornou.",
+      "Para agendar: pergunte os dados UM DE CADA VEZ, em respostas separadas (primeiro o nome; na próxima resposta o próximo dado). Use `consultar_horarios`; ofereça no máximo duas opções; só use `agendar` depois que o cliente escolher e você tiver os dados obrigatórios. Nunca invente um horário que a ferramenta não retornou.",
     );
   if (c.acoes.transferir.ativo)
     acoes.push(
