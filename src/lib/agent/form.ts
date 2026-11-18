@@ -99,7 +99,7 @@ export function patchDeForm(secao: Secao, fd: FormData, atual: AgentConfig): Par
             fim: s(fd, `fim_${d}`) || "18:00",
           })),
           feriados: linhas(fd.get("feriados")).filter((l) => /^\d{4}-\d{2}-\d{2}$/.test(l)),
-          foraDoHorario: (s(fd, "foraDoHorario") || "recado") as "recado" | "atender",
+          foraDoHorario: (s(fd, "foraDoHorario") || "atender") as "recado" | "atender",
         },
       };
     case "dados": {

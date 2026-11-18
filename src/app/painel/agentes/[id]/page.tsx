@@ -24,6 +24,7 @@ import {
 import { Colegas } from "@/components/painel/colegas";
 import { FerramentasApi } from "@/components/painel/ferramentas-api";
 import { compilarPrompt } from "@/lib/agent/prompt";
+import { workflowCompleto } from "@/lib/agent/workflow-completo";
 import { BOTAO } from "@/components/painel/page-header";
 import { WorkflowEditor } from "@/components/painel/workflow-editor";
 import {
@@ -218,6 +219,7 @@ export default async function AgentePage({
               agenteId={id}
               inicial={cfg.workflow}
               podeEditar={editar}
+              modeloCompleto={workflowCompleto(cfg)}
               ferramentasExtras={[
                 ...(cfg.acoes.apis ?? []).map((f): [string, string] => [f.nome, `${f.nome} (seu sistema)`]),
                 ...cfg.acoes.webhooks.map((w): [string, string] => [w.nome, `${w.nome} (webhook)`]),

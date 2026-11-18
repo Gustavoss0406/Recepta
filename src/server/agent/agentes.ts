@@ -5,11 +5,14 @@ import type { Papel } from "@/db/schema";
 import { agentConfigSchema, type AgentConfig, type Nicho } from "@/lib/agent/config";
 import { compilarPrompt } from "@/lib/agent/prompt";
 import { getNicho } from "@/lib/niches";
+import { workflowCompleto } from "@/lib/agent/workflow-completo";
 
 export class ErroAgente extends Error {}
 
-export async function criarAgente(orgId: string, nicho: Nicho, empresa: { nome: string; cidade?: string }) {
-  const config = getNicho(nicho).padrao(empresa);
+export async function criarAgente(orgId: string, nicho: Nicho, empresa: { nome: string; cidade?: string }, opts: { fluxoCompleto?: boolean } = {}) {
+  const base = getNicho(nicho).padrao(empresa);
+  // new receptionists start with the full service flow (questions, booking, complaints, after hours…)
+  const config = opts.fluxoCompleto === false ? base : { ...base, workflow: workflowCompleto(base) };
   const [a] = await getDb()
     .insert(schema.agentes)
     .values({ orgId, nome: `Recepção ${empresa.nome}`, nicho, rascunho: config })

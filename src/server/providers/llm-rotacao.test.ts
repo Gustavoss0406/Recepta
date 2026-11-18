@@ -79,3 +79,15 @@ describe("Rotação", () => {
     await expect(new LlmRotativo([prov("a", ["m1"]), prov("b", ["m2"])]).turno(req)).rejects.toBeInstanceOf(ErroSemMotor);
   });
 });
+
+describe("Limites por modelo (Groq)", () => {
+  it("limite por minuto ou por dia de um modelo pausa só aquele modelo", async () => {
+    const { classificarErro } = await import("./llm-rotacao");
+    const { ErroProvedor } = await import("./llm-openai");
+    const tpm = classificarErro(new ErroProvedor("Rate limit reached for model `openai/gpt-oss-120b` in organization `org_x` on tokens per minute (TPM): Limit 8000", 429, 7000), 0);
+    expect(tpm).toMatchObject({ escopo: "modelo", ate: 7000 });
+    const tpd = classificarErro(new ErroProvedor("Rate limit reached for model `openai/gpt-oss-20b` on tokens per day (TPD)", 429), 0);
+    expect(tpd.escopo).toBe("modelo");
+    expect(classificarErro(new ErroProvedor("Too many requests", 429), 0).escopo).toBe("provedor");
+  });
+});

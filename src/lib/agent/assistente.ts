@@ -117,7 +117,7 @@ const linhas: Record<IdSecao, (c: AgentConfig) => string[]> = {
   dados: (c) => c.dados.campos.map((f) => `${f.rotulo}${f.obrigatorio ? " (obrigatório)" : ""}`),
   horarios: (c) => [
     ...c.horarios.semana.map((d, i) => `${DIAS[i]}: ${d.aberto ? `${d.inicio}–${d.fim}` : "fechado"}`),
-    `Fora do horário: ${c.horarios.foraDoHorario === "recado" ? "passa o caso para a equipe" : "atende normalmente"}`,
+    `Fora do horário: ${c.horarios.foraDoHorario === "recado" ? "só anota o recado" : "resolve o que puder e passa o resto para a equipe"}`,
   ],
   acoes: (c) => [
     `Agendamento: ${c.acoes.agendar.ativo ? "ligado" : "desligado"}`,

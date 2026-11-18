@@ -141,7 +141,19 @@ function deRF(ativo: boolean, nos: NoRF[], arestas: ArestaRF[]): Workflow {
 let seq = 0;
 const novoId = (p: string) => `${p}${Date.now().toString(36)}${(seq++).toString(36)}`;
 
-function Editor({ agenteId, inicial, podeEditar, ferramentasExtras = [] }: { agenteId: string; inicial: Workflow; podeEditar: boolean; ferramentasExtras?: [string, string][] }) {
+function Editor({
+  agenteId,
+  inicial,
+  podeEditar,
+  ferramentasExtras = [],
+  modeloCompleto,
+}: {
+  agenteId: string;
+  inicial: Workflow;
+  podeEditar: boolean;
+  ferramentasExtras?: [string, string][];
+  modeloCompleto?: Workflow;
+}) {
   const ferramentas = useMemo(() => [...FERRAMENTAS, ...ferramentasExtras], [ferramentasExtras]);
   const base = useMemo(() => paraRF(inicial), [inicial]);
   const [nos, setNos, onNodesChange] = useNodesState<NoRF>(base.nos);
@@ -212,6 +224,22 @@ function Editor({ agenteId, inicial, podeEditar, ferramentasExtras = [] }: { age
             </button>
           );
         })}
+        {modeloCompleto && podeEditar && (
+          <button
+            type="button"
+            onClick={() => {
+              if (!confirm("Trocar o fluxo atual pelo modelo de atendimento completo? Você ainda precisa salvar.")) return;
+              const m = paraRF(modeloCompleto);
+              setNos(m.nos);
+              setArestas(m.arestas);
+              setAtivo(true);
+              setSel(null);
+            }}
+            className="flex h-7 items-center gap-1 rounded-[8px] bg-foreground px-2.5 text-[0.8125rem] text-white hover:bg-foreground/85"
+          >
+            Usar modelo completo
+          </button>
+        )}
         <div className="ml-auto flex items-center gap-2">
           {msg && <span className={cn("text-sm", msg.ok ? "text-[#147a3d]" : "text-[#b42318]")}>{msg.texto}</span>}
           <button type="button" onClick={salvar} disabled={salvando || !podeEditar} className="h-8 rounded-full bg-foreground px-4 text-sm font-medium text-white hover:bg-foreground/85 disabled:opacity-40">
@@ -375,7 +403,7 @@ function Editor({ agenteId, inicial, podeEditar, ferramentasExtras = [] }: { age
   );
 }
 
-export function WorkflowEditor(props: { agenteId: string; inicial: Workflow; podeEditar: boolean; ferramentasExtras?: [string, string][] }) {
+export function WorkflowEditor(props: { agenteId: string; inicial: Workflow; podeEditar: boolean; ferramentasExtras?: [string, string][]; modeloCompleto?: Workflow }) {
   return (
     <ReactFlowProvider>
       <Editor {...props} />

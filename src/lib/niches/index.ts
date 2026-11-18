@@ -135,7 +135,7 @@ export const NICHOS_DEF: Record<Nicho, NichoDef> = {
         repassar: { notificar: "ambos" },
         webhooks: [],
       },
-      horarios: { semana: semanaComercial("08:00", "18:00", { inicio: "08:00", fim: "12:00" }), feriados: [], foraDoHorario: "recado" },
+      horarios: { semana: semanaComercial("08:00", "18:00", { inicio: "08:00", fim: "12:00" }), feriados: [], foraDoHorario: "atender" },
       dados: {
         campos: [
           { chave: "nome", rotulo: "Nome do paciente", tipo: "texto", obrigatorio: true },
@@ -181,7 +181,7 @@ export const NICHOS_DEF: Record<Nicho, NichoDef> = {
         repassar: { notificar: "ambos" },
         webhooks: [],
       },
-      horarios: { semana: semanaComercial("09:00", "18:00", { inicio: "09:00", fim: "13:00" }), feriados: [], foraDoHorario: "recado" },
+      horarios: { semana: semanaComercial("09:00", "18:00", { inicio: "09:00", fim: "13:00" }), feriados: [], foraDoHorario: "atender" },
       dados: {
         campos: [
           { chave: "nome", rotulo: "Nome", tipo: "texto", obrigatorio: true },
@@ -231,7 +231,7 @@ export const NICHOS_DEF: Record<Nicho, NichoDef> = {
       horarios: {
         semana: [0, 1, 2, 3, 4, 5, 6].map((d) => ({ aberto: d !== 1, inicio: "11:30", fim: "23:00" })),
         feriados: [],
-        foraDoHorario: "recado",
+        foraDoHorario: "atender",
       },
       dados: {
         campos: [

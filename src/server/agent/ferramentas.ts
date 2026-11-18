@@ -2,6 +2,7 @@ import "server-only";
 import { definicaoFerramenta } from "@/lib/agent/api-ferramenta";
 import { executarApi } from "./api-ferramentas";
 import { identificarCliente } from "./identificar";
+import { buscarConhecimento } from "./conhecimento";
 import { agendamentosDoCliente, atualizarEvento, cancelarEvento, criarEvento, ErroAgenda } from "@/server/agenda/agenda";
 import type Anthropic from "@anthropic-ai/sdk";
 import { and, eq, gte, lt } from "drizzle-orm";
@@ -142,6 +143,12 @@ export function definirFerramentas(c: AgentConfig): Anthropic.Tool[] {
       ),
     });
   for (const f of c.acoes.apis ?? []) t.push(definicaoFerramenta(f) as Anthropic.Tool);
+  t.push({
+    name: "consultar_conhecimento",
+    description:
+      "Procura nas informações da empresa (site, documentos e textos cadastrados) a resposta para uma dúvida do cliente. Use SEMPRE antes de dizer que não sabe, com uma pergunta curta e objetiva.",
+    input_schema: obj({ pergunta: { type: "string", description: "O que procurar, ex.: 'aceita cartão de crédito', 'estacionamento', 'preço do clareamento'" } }, ["pergunta"]),
+  });
   t.push({
     name: "consultar_cadastro_cliente",
     description:
@@ -284,6 +291,16 @@ export async function executarFerramenta(nome: string, input: Record<string, unk
     case "enviar_whatsapp": {
       await enviarSaida(ctx.orgId, { canal: "whatsapp", destino: String(input.telefone ?? ctx.de ?? ""), corpo: String(input.mensagem ?? "") }, { real: !ctx.teste });
       return { resultado: { ok: true } };
+    }
+    case "consultar_conhecimento": {
+      const q = String(input.pergunta ?? "").trim();
+      if (!q) return { resultado: { trechos: [] } };
+      const achados = await buscarConhecimento(ctx.agenteId, q, 3);
+      return {
+        resultado: achados.length
+          ? { trechos: achados.map((t) => t.texto.replace(/\s+/g, " ").slice(0, 600)) }
+          : { trechos: [], nota: "Nada encontrado. Não invente: diga que vai confirmar com a equipe e use repassar_para_equipe se o cliente precisar da resposta." },
+      };
     }
     case "consultar_cadastro_cliente": {
       const tel = String(input.telefone ?? "").trim() || ctx.de || "";

@@ -41,9 +41,12 @@ export function classificarErro(e: unknown, agora = Date.now()): { escopo: "prov
   if (e instanceof ErroProvedor) {
     const msg = e.message.toLowerCase();
     // Aggregators (OpenRouter) report a single saturated upstream model as 429 "provider returned error".
-    const doModelo = /(provider returned error|upstream|temporarily rate-limited)/.test(msg);
-    if (e.status === 429 && /(per day|daily|rpd|tokens per day|free-models-per-day|quota)/.test(msg)) return { escopo: "provedor", ate: proximoDiaUtc(agora), motivo: "cota diária" };
-    if (e.status === 429 && doModelo) return { escopo: "modelo", ate: agora + (e.tentarDepoisMs ?? 60_000), motivo: "modelo saturado" };
+    // Groq limits each model separately ("Rate limit reached for model `x` … tokens per minute"):
+    // pause only that model so the next one (with its own budget) is tried.
+    const doModelo = /(provider returned error|upstream|temporarily rate-limited|for model)/.test(msg);
+    if (e.status === 429 && /(per day|daily|rpd|tokens per day|free-models-per-day|quota)/.test(msg))
+      return { escopo: doModelo ? "modelo" : "provedor", ate: proximoDiaUtc(agora), motivo: "cota diária" };
+    if (e.status === 429 && doModelo) return { escopo: "modelo", ate: agora + (e.tentarDepoisMs ?? 60_000), motivo: /per minute|tpm|rpm/.test(msg) ? "limite por minuto do modelo" : "modelo saturado" };
     if (e.status === 429) return { escopo: "provedor", ate: agora + (e.tentarDepoisMs ?? 30_000), motivo: "limite por minuto" };
     if (e.status === 402) return { escopo: "provedor", ate: agora + 3_600_000, motivo: "sem saldo/limite" };
     if (e.status === 401 || (e.status === 403 && /(key|auth|unauthori|credential)/.test(msg))) return { escopo: "provedor", ate: agora + 3_600_000, motivo: "credencial" };

@@ -112,7 +112,11 @@ ${servicos}
 
 Horário de atendimento:
 ${descreverHorarios(c.horarios)}
-Fora do horário: ${c.horarios.foraDoHorario === "recado" ? "explique que a equipe está fora do horário e passe o caso para a equipe com repassar_para_equipe." : "atenda normalmente, mas não transfira a ligação."}
+Fora do horário: ${
+    c.horarios.foraDoHorario === "recado"
+      ? "explique que a equipe está fora do horário, diga quando ela volta e passe o caso para a equipe com repassar_para_equipe."
+      : "você continua resolvendo TUDO o que não depende de uma pessoa: tire dúvidas, marque, remarque e cancele horários, consulte os sistemas. Não diga só que está fechado. O que precisar de alguém da equipe (decisão, exceção, falar com uma pessoa), registre com repassar_para_equipe e diga ao cliente quando a equipe volta (está no contexto da ligação). Não transfira a ligação fora do horário."
+  }
 
 Outras informações vêm em mensagens marcadas como "Conhecimento". Use só o que estiver lá; se a resposta não estiver, diga que vai verificar com a equipe e use repassar_para_equipe.
 

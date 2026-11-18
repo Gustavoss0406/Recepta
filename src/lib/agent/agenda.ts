@@ -96,11 +96,37 @@ export function gerarHorarios(opts: {
   return out;
 }
 
+/** When the team is back: the next opening (skips closed days and holidays), up to two weeks ahead. */
+export function proximaAbertura(h: AgentConfig["horarios"], agora: Date): Date | null {
+  for (let i = 0; i < 15; i++) {
+    const p = partesLocais(new Date(agora.getTime() + i * 86_400_000));
+    const d = h.semana[p.diaSemana];
+    if (!d.aberto || h.feriados.includes(p.data)) continue;
+    const abre = hhmmParaMin(d.inicio);
+    if (i === 0 && partesLocais(agora).minutos >= abre) continue;
+    return localParaUtc(p.data, abre);
+  }
+  return null;
+}
+
+/** "amanhã às 08:00", "segunda-feira, 23/11 às 08:00" — how the receptionist says when the team is back. */
+export function rotuloRetorno(d: Date, agora: Date): string {
+  const p = partesLocais(d);
+  const hoje = partesLocais(agora);
+  const amanha = partesLocais(new Date(agora.getTime() + 86_400_000));
+  const hora = `${String(Math.floor(p.minutos / 60)).padStart(2, "0")}:${String(p.minutos % 60).padStart(2, "0")}`;
+  if (p.data === hoje.data) return `hoje às ${hora}`;
+  if (p.data === amanha.data) return `amanhã às ${hora}`;
+  return rotuloHorario(d);
+}
+
 export function contextoTemporal(h: AgentConfig["horarios"], agora: Date): string {
   const p = partesLocais(agora);
   const hh = String(Math.floor(p.minutos / 60)).padStart(2, "0");
   const mm = String(p.minutos % 60).padStart(2, "0");
+  const dentro = dentroDoHorario(h, agora);
+  const volta = dentro ? null : proximaAbertura(h, agora);
   return `Agora é ${DIAS_SEMANA[p.diaSemana]}, ${String(p.dia).padStart(2, "0")}/${String(p.mes).padStart(2, "0")}/${p.ano}, ${hh}:${mm} (horário de Brasília). ${
-    dentroDoHorario(h, agora) ? "Estamos dentro do horário de atendimento." : "Estamos FORA do horário de atendimento."
+    dentro ? "Estamos dentro do horário de atendimento." : `Estamos FORA do horário de atendimento; a equipe volta ${volta ? rotuloRetorno(volta, agora) : "no próximo dia útil"}.`
   }`;
 }

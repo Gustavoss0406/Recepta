@@ -365,8 +365,8 @@ export function SecaoHorarios({ config, acao }: { config: AgentConfig; acao: Aca
       </Grupo>
       <Grupo titulo="Fora do horário">
         <select name="foraDoHorario" defaultValue={h.foraDoHorario} className="field">
-          <option value="recado">Avisar e passar o caso para a equipe</option>
-          <option value="atender">Atender normalmente (sem transferir)</option>
+          <option value="atender">Resolver tudo o que puder (dúvidas, agenda, consultas) e passar o resto para a equipe</option>
+          <option value="recado">Só anotar o recado e passar para a equipe</option>
         </select>
       </Grupo>
     </Form>

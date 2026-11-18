@@ -206,7 +206,13 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   const concluiuAlgo = anteriores.some(
     (m) => m.role === "assistant" && Array.isArray(m.content) && m.content.some((b) => b.type === "tool_use" && ["agendar", "repassar_para_equipe", "transferir_para_humano"].includes(b.name)),
   );
-  const tools = definirFerramentas(config);
+  let tools = definirFerramentas(config);
+  // A workflow step that names its tools only gets those (+ the essentials): fewer tokens, fewer mix-ups.
+  const passo = fluxo && estado.no ? noDoFluxo(fluxo, estado.no) : undefined;
+  if (passo?.tipo === "subagente") {
+    const citadas = tools.filter((t) => passo.texto.includes(t.name)).map((t) => t.name);
+    if (citadas.length) tools = tools.filter((t) => citadas.includes(t.name) || ESSENCIAIS.includes(t.name));
+  }
   if (fluxo && estado.no && noDoFluxo(fluxo, estado.no)?.tipo === "subagente" && saidas(fluxo, estado.no).length)
     tools.push({
       name: "seguir_fluxo",
@@ -435,6 +441,9 @@ async function configDoAtivo(conv: { orgId: string; agenteId: string; versaoId: 
   if (conv.teste) return configParaConversa(conv.orgId, agenteId, "rascunho");
   return configParaConversa(conv.orgId, agenteId, "publicado");
 }
+
+/** Always available inside a workflow step. */
+const ESSENCIAIS = ["repassar_para_equipe", "consultar_conhecimento", "consultar_cadastro_cliente", "encerrar_ligacao", "transferir_para_humano", "passar_para_colega"];
 
 const PREFIXO_CONHECIMENTO = "Conhecimento (trechos do site e documentos da empresa):";
 
