@@ -43,6 +43,13 @@
       "when": 1794971678192,
       "tag": "0005_experimentos",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795042986991,
+      "tag": "0006_agenda_sincronia",
+      "breakpoints": true
     }
   ]
 }

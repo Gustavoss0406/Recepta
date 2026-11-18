@@ -7,10 +7,12 @@ import { getDb, schema } from "@/db/client";
 import { fecharCiclosVencidos, processarInadimplencia } from "@/server/billing/faturamento";
 import { aplicarRetencao, entregarWebhook, reivindicarJobs } from "./tarefas";
 import { executarSincronizacao } from "@/server/integracoes/servico";
+import { importarTodasAgendas, sincronizarEvento } from "@/server/agenda/agenda";
 
 const HANDLERS: Record<string, (p: Record<string, unknown>) => Promise<unknown>> = {
   "webhook.entregar": (p) => entregarWebhook(String(p.entregaId)),
   "integracao.sincronizar": (p) => executarSincronizacao(p as Parameters<typeof executarSincronizacao>[0]),
+  "agenda.sincronizar": (p) => sincronizarEvento(p as { eventoId: string; tentativa?: number }),
 };
 
 async function rodarFila() {
@@ -34,6 +36,7 @@ const periodicas: { nome: string; aCada: number; ultimo: number; f: () => Promis
   { nome: "faturamento.fechar_ciclos", aCada: 60_000, ultimo: 0, f: () => fecharCiclosVencidos() },
   { nome: "faturamento.inadimplencia", aCada: 10 * 60_000, ultimo: 0, f: () => processarInadimplencia() },
   { nome: "lgpd.retencao", aCada: 60 * 60_000, ultimo: 0, f: () => aplicarRetencao() },
+  { nome: "agenda.importar_google", aCada: 5 * 60_000, ultimo: 0, f: () => importarTodasAgendas() },
 ];
 
 async function ciclo() {

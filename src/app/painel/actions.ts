@@ -301,7 +301,7 @@ export async function acaoSalvarColegas(agenteId: string, colegas: { agenteId: s
 
 /* ───────── API tools (business systems) ───────── */
 
-const RESERVADOS = ["consultar_cadastro_cliente", "consultar_horarios", "agendar", "transferir_para_humano", "repassar_para_equipe", "enviar_whatsapp", "encerrar_ligacao", "seguir_fluxo", "passar_para_colega", "anotar_recado", "sinalizar_revisao"];
+const RESERVADOS = ["consultar_agendamentos", "remarcar_agendamento", "cancelar_agendamento", "consultar_cadastro_cliente", "consultar_horarios", "agendar", "transferir_para_humano", "repassar_para_equipe", "enviar_whatsapp", "encerrar_ligacao", "seguir_fluxo", "passar_para_colega", "anotar_recado", "sinalizar_revisao"];
 
 export type ResultadoApiDono = Resultado & { camposDisponiveis?: string[]; dados?: unknown; status?: number };
 

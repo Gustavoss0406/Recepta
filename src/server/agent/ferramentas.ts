@@ -2,13 +2,14 @@ import "server-only";
 import { definicaoFerramenta } from "@/lib/agent/api-ferramenta";
 import { executarApi } from "./api-ferramentas";
 import { identificarCliente } from "./identificar";
+import { agendamentosDoCliente, atualizarEvento, cancelarEvento, criarEvento, ErroAgenda } from "@/server/agenda/agenda";
 import type Anthropic from "@anthropic-ai/sdk";
 import { and, eq, gte, lt } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
 import type { AgentConfig } from "@/lib/agent/config";
 import { dentroDoHorario, gerarHorarios, rotuloHorario } from "@/lib/agent/agenda";
 import { urlPublicaSegura } from "@/server/crawler/seguranca";
-import { criarEventoGoogle, ocupadosGoogle } from "@/server/integracoes/google";
+import { ocupadosGoogle } from "@/server/integracoes/google";
 import { criarRepasse, type Urgencia } from "./repasses";
 import { enviarSaida } from "@/server/integracoes/servico";
 
@@ -72,6 +73,34 @@ export function definirFerramentas(c: AgentConfig): Anthropic.Tool[] {
           observacao: { type: "string" },
         },
         ["inicio", "nome"],
+      ),
+    });
+    t.push({
+      name: "consultar_agendamentos",
+      description: "Lista os próximos agendamentos do cliente (pelo telefone de quem liga, ou pelo que ele informar). Use antes de remarcar ou cancelar.",
+      input_schema: obj({ telefone: { type: "string", description: "Telefone com DDD, se o cliente informou outro" } }),
+    });
+    t.push({
+      name: "remarcar_agendamento",
+      description: "Muda um agendamento do cliente para um novo horário livre (de consultar_horarios). Confirme o novo horário com o cliente antes.",
+      input_schema: obj(
+        {
+          agendamento_id: { type: "string", description: "id vindo de consultar_agendamentos" },
+          novo_inicio: { type: "string", description: "Novo início em ISO 8601, exatamente como veio de consultar_horarios" },
+          telefone: { type: "string", description: "Telefone informado pelo cliente, se não for o de quem liga" },
+        },
+        ["agendamento_id", "novo_inicio"],
+      ),
+    });
+    t.push({
+      name: "cancelar_agendamento",
+      description: "Cancela um agendamento do cliente. Confirme com ele antes de cancelar e ofereça remarcar.",
+      input_schema: obj(
+        {
+          agendamento_id: { type: "string", description: "id vindo de consultar_agendamentos" },
+          telefone: { type: "string", description: "Telefone informado pelo cliente, se não for o de quem liga" },
+        },
+        ["agendamento_id"],
       ),
     });
   }
@@ -156,8 +185,8 @@ export async function executarFerramenta(nome: string, input: Record<string, unk
             ...(ctx.teste ? [] : [eq(schema.agendaEventos.simulado, false)]),
           ),
         );
-      const usarGoogle = c.acoes.agendar.agenda === "google" && !ctx.teste;
-      const google = usarGoogle ? await ocupadosGoogle(ctx.orgId, ctx.agora, fimJanela) : null;
+      // Google events are imported into the internal agenda; free/busy covers changes since the last import.
+      const google = ctx.teste ? null : await ocupadosGoogle(ctx.orgId, ctx.agora, fimJanela).catch(() => null);
       const horarios = gerarHorarios({
         horarios: c.horarios,
         ocupados: [...ocupados, ...(google ?? [])],
@@ -172,43 +201,50 @@ export async function executarFerramenta(nome: string, input: Record<string, unk
     case "agendar": {
       const inicio = new Date(String(input.inicio));
       if (Number.isNaN(inicio.getTime())) return { resultado: { ok: false, erro: "horario_invalido" } };
-      const fim = new Date(inicio.getTime() + c.acoes.agendar.duracaoPadraoMin * 60_000);
-      const conflito = await db
-        .select({ id: schema.agendaEventos.id })
-        .from(schema.agendaEventos)
-        .where(
-          and(
-            eq(schema.agendaEventos.orgId, ctx.orgId),
-            eq(schema.agendaEventos.status, "confirmado"),
-            lt(schema.agendaEventos.inicio, fim),
-            gte(schema.agendaEventos.fim, new Date(inicio.getTime() + 1)),
-            ...(ctx.teste ? [] : [eq(schema.agendaEventos.simulado, false)]),
-          ),
-        )
-        .limit(1);
-      if (conflito.length) return { resultado: { ok: false, erro: "horario_ocupado" } };
-      const [ev] = await db
-        .insert(schema.agendaEventos)
-        .values({
-          orgId: ctx.orgId,
-          agenteId: ctx.agenteId,
-          inicio,
-          fim,
-          titulo: String(input.servico ?? c.empresa.servicos[0]?.nome ?? "Atendimento"),
-          clienteNome: String(input.nome ?? ""),
-          clienteTelefone: String(input.telefone ?? ctx.de ?? ""),
-          conversaId: ctx.conversaId,
-          simulado: ctx.teste,
-        })
-        .returning();
-      if (c.acoes.agendar.agenda === "google" && !ctx.teste)
-        await criarEventoGoogle(ctx.orgId, {
-          titulo: `${ev.titulo} · ${ev.clienteNome}`,
-          descricao: `Agendado pela Recepta. Telefone: ${ev.clienteTelefone || "—"}. ${String(input.observacao ?? "")}`,
-          inicio,
-          fim,
-        });
-      return { resultado: { ok: true, eventoId: ev.id, rotulo: rotuloHorario(inicio) } };
+      try {
+        const e = await criarEvento(
+          ctx.orgId,
+          {
+            inicio,
+            fim: new Date(inicio.getTime() + c.acoes.agendar.duracaoPadraoMin * 60_000),
+            titulo: String(input.servico ?? "").trim() || c.empresa.servicos[0]?.nome || "Atendimento",
+            clienteNome: String(input.nome ?? ""),
+            clienteTelefone: String(input.telefone ?? "").trim() || ctx.de || "",
+            observacao: String(input.observacao ?? ""),
+            agenteId: ctx.agenteId,
+            conversaId: ctx.conversaId,
+          },
+          { simulado: ctx.teste },
+        );
+        return { resultado: { ok: true, eventoId: e.id, rotulo: rotuloHorario(inicio) } };
+      } catch (e) {
+        return { resultado: { ok: false, erro: e instanceof ErroAgenda ? e.message : "nao_foi_possivel_agendar" } };
+      }
+    }
+    case "consultar_agendamentos": {
+      const tel = String(input.telefone ?? "").trim() || ctx.de || "";
+      const lista = await agendamentosDoCliente(ctx.orgId, tel, { incluirSimulados: ctx.teste });
+      return { resultado: { agendamentos: lista.map((a) => ({ id: a.id, servico: a.titulo, quando: rotuloHorario(a.inicio), inicio: a.inicio.toISOString(), nome: a.clienteNome })) } };
+    }
+    case "remarcar_agendamento":
+    case "cancelar_agendamento": {
+      // only the caller's own appointments (same phone)
+      const tel = String(input.telefone ?? "").trim() || ctx.de || "";
+      const meus = await agendamentosDoCliente(ctx.orgId, tel, { incluirSimulados: ctx.teste });
+      const alvo = meus.find((a) => a.id === String(input.agendamento_id ?? ""));
+      if (!alvo) return { resultado: { ok: false, erro: "Agendamento não encontrado para este telefone. Use consultar_agendamentos." } };
+      try {
+        if (nome === "cancelar_agendamento") {
+          await cancelarEvento(ctx.orgId, alvo.id);
+          return { resultado: { ok: true, cancelado: rotuloHorario(alvo.inicio) } };
+        }
+        const novo = new Date(String(input.novo_inicio));
+        if (Number.isNaN(novo.getTime())) return { resultado: { ok: false, erro: "horario_invalido" } };
+        const e = await atualizarEvento(ctx.orgId, alvo.id, { inicio: novo });
+        return { resultado: { ok: true, de: rotuloHorario(alvo.inicio), para: rotuloHorario(e.inicio) } };
+      } catch (e) {
+        return { resultado: { ok: false, erro: e instanceof ErroAgenda ? e.message : "falha" } };
+      }
     }
     case "transferir_para_humano": {
       const tr = c.acoes.transferir;

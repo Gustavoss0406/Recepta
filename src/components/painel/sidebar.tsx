@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
+import { CalendarDays,
   Bot,
   ChartLine,
   ChevronsUpDown,
@@ -47,6 +47,7 @@ const GRUPOS: { titulo?: string; itens: Item[] }[] = [
     itens: [
       { href: "/painel/ligacoes", label: "Ligações", icon: PhoneCall },
       { href: "/painel/pendencias", label: "Pendências", icon: Inbox, contador: "pendencias" },
+      { href: "/painel/agenda", label: "Agenda", icon: CalendarDays },
       { href: "/painel/testes", label: "Testes", icon: FlaskConical },
       { href: "/painel/analises", label: "Análises", icon: ChartLine },
     ],

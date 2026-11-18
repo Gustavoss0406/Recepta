@@ -274,6 +274,14 @@ export const agendaEventos = pgTable("agenda_eventos", {
   conversaId: text("conversa_id"),
   simulado: boolean("simulado").notNull().default(false),
   status: text("status").$type<"confirmado" | "cancelado">().notNull().default("confirmado"),
+  /** Where it was created: by the receptionist, by hand in the panel, or imported from Google. */
+  origem: text("origem").$type<"recepcionista" | "manual" | "google">().notNull().default("recepcionista"),
+  observacao: text("observacao"),
+  /** Google Calendar mirror: event id and sync state (the internal agenda is the source of truth). */
+  googleId: text("google_id"),
+  sincronia: text("sincronia").$type<"local" | "pendente" | "ok" | "erro">().notNull().default("local"),
+  sincronizadoEm: ts("sincronizado_em"),
+  atualizadoEm: ts("atualizado_em"),
   criadoEm: createdAt(),
 });
 
