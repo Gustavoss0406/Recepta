@@ -179,6 +179,10 @@ registrarAdaptador("salesforce", salesforce);
 /** Token connectors that also accept "Entrar com …": refresh the OAuth token, then reuse the token adapter. */
 function comOAuth(id: string, base: Adaptador): Adaptador {
   const pronto = async (c: Credenciais) => (c.access_token ? Object.assign(c, await acesso(id, c)) : c);
-  return { testar: async (c) => base.testar(await pronto(c)), enviar: async (c, e) => base.enviar(await pronto(c), e) };
+  return {
+    testar: async (c) => base.testar(await pronto(c)),
+    enviar: async (c, e) => base.enviar(await pronto(c), e),
+    ...(base.buscarContato ? { buscarContato: async (c: Credenciais, tel: string) => base.buscarContato!(await pronto(c), tel) } : {}),
+  };
 }
 for (const id of ["hubspot", "pipedrive"]) registrarAdaptador(id, comOAuth(id, ADAPTADORES[id]));

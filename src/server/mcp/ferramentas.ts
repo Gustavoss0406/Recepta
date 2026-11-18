@@ -86,7 +86,7 @@ export const FERRAMENTAS_MCP: FerramentaMcp[] = [
       type: "object",
       properties: {
         recepcionista_id: str("opcional"),
-        resultado: str("opcional", { enum: ["resolvido", "agendado", "repassado", "transferido", "nao_resolvido", "recado"] }),
+        resultado: str("opcional", { enum: ["resolvido", "repassado", "transferido", "recado", "nao_resolvido"] }),
         dias: num("últimos N dias (padrão 7)"),
         limite: num("máximo 50 (padrão 20)"),
       },

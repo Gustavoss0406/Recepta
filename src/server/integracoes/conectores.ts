@@ -29,9 +29,20 @@ export class ErroConector extends Error {
   }
 }
 
+/** What a CRM knows about a caller, already trimmed for the receptionist. */
+export interface ContatoCrm {
+  fonte: string;
+  nome?: string;
+  email?: string;
+  /** Short lines: stage, open deals, last notes. */
+  detalhes: string[];
+}
+
 export interface Adaptador {
   /** Validates the credential; returns a label for the connected account. */
   testar(c: Credenciais): Promise<string>;
+  /** Looks a caller up by phone (CRMs only). */
+  buscarContato?(c: Credenciais, telefone: string): Promise<ContatoCrm | null>;
   /** Sends one event; returns a short reference of what was created. */
   enviar(c: Credenciais, e: Evento): Promise<string>;
 }
@@ -61,6 +72,8 @@ async function req<T = unknown>(url: string, init: RequestInit & { json?: unknow
   }
 }
 
+/** Last 8 digits: matches "+55 11 99999-1234", "(11) 99999-1234" and "999991234". */
+export const finalTelefone = (t?: string | null) => (t ?? "").replace(/\D/g, "").slice(-8);
 const so = (t?: string | null) => (t ?? "").replace(/[^\d+]/g, "");
 const nomeOu = (e: Evento) => e.contato.nome?.trim() || (e.contato.telefone ? `Cliente ${e.contato.telefone}` : "Cliente da recepcionista");
 /** Accepts "empresa" or "empresa.kommo.com" / "empresa.zendesk.com" (with or without https://). */
@@ -77,6 +90,25 @@ const corpoNota = (e: Evento) =>
 /* ───────── HubSpot (Private App token) ───────── */
 const HS = "https://api.hubapi.com";
 const hubspot: Adaptador = {
+  async buscarContato(c, telefone) {
+    const fim = finalTelefone(telefone);
+    if (fim.length < 8) return null;
+    const h = { authorization: `Bearer ${c.access_token ?? c.token}` };
+    const r = await req<{ results: { id: string; properties: Record<string, string | null> }[] }>(`${HS}/crm/v3/objects/contacts/search`, {
+      method: "POST",
+      headers: h,
+      json: { query: fim, properties: ["firstname", "lastname", "email", "phone", "mobilephone", "lifecyclestage", "hs_lead_status", "notes_last_contacted"], limit: 3 },
+    });
+    const ct = r.results.find((x) => [x.properties.phone, x.properties.mobilephone].some((p) => finalTelefone(p) === fim));
+    if (!ct) return null;
+    const p = ct.properties;
+    return {
+      fonte: "HubSpot",
+      nome: [p.firstname, p.lastname].filter(Boolean).join(" ") || undefined,
+      email: p.email ?? undefined,
+      detalhes: [p.lifecyclestage && `Estágio: ${p.lifecyclestage}`, p.hs_lead_status && `Status do lead: ${p.hs_lead_status}`, p.notes_last_contacted && `Último contato: ${p.notes_last_contacted.slice(0, 10)}`].filter(Boolean) as string[],
+    };
+  },
   async testar(c) {
     const r = await req<{ portalId?: number; uiDomain?: string }>(`${HS}/account-info/v3/details`, { headers: { authorization: `Bearer ${(c.access_token ?? c.token)}` } });
     return r.portalId ? `Portal ${r.portalId}` : "Conta HubSpot";
@@ -118,6 +150,27 @@ function pdApi(c: Credenciais): { base: string; q: string; h: Record<string, str
   return { base: PD, q: `api_token=${encodeURIComponent(c.token)}`, h: {} };
 }
 const pipedrive: Adaptador = {
+  async buscarContato(c, telefone) {
+    const fim = finalTelefone(telefone);
+    if (fim.length < 8) return null;
+    const { base, q, h } = pdApi(c);
+    const b = await req<{ data: { items: { item: { id: number; name: string; phones?: string[]; primary_email?: string | null } }[] } }>(
+      `${base}/persons/search?${q}&term=${fim}&fields=phone&exact_match=false&limit=3`,
+      { headers: h },
+    );
+    const p = b.data?.items?.map((i) => i.item).find((i) => (i.phones ?? []).some((x) => finalTelefone(x) === fim));
+    if (!p) return null;
+    const d = await req<{ data: { title: string; status: string; value?: number; currency?: string; stage_id?: number }[] | null }>(
+      `${base}/persons/${p.id}/deals?${q}&status=open&limit=3`,
+      { headers: h },
+    ).catch(() => ({ data: null }));
+    return {
+      fonte: "Pipedrive",
+      nome: p.name,
+      email: p.primary_email ?? undefined,
+      detalhes: (d.data ?? []).map((x) => `Negócio aberto: ${x.title}${x.value ? ` (${x.currency ?? "R$"} ${x.value})` : ""}`),
+    };
+  },
   async testar(c) {
     const r = await req<{ data: { name: string; company_name?: string } }>(`${pdApi(c).base}/users/me?${pdApi(c).q}`, { headers: pdApi(c).h });
     return r.data.company_name ? `${r.data.company_name} (${r.data.name})` : r.data.name;

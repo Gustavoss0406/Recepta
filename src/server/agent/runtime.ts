@@ -20,6 +20,7 @@ import { agendarSincronizacao, enviarSaida } from "@/server/integracoes/servico"
 import { ErroSemMotor } from "@/server/providers/llm-rotacao";
 import { versaoParaNovaChamada } from "./experimentos";
 import { aplicarResumo, pontoDeCorte, SYSTEM_RESUMO, transcricao } from "@/lib/agent/compactar";
+import { contextoCliente, identificarCliente, type ClienteIdentificado } from "./identificar";
 
 const CANAIS_TESTE: Canal[] = ["teste_texto", "teste_voz", "simulador", "simulacao"];
 const MAX_ITERACOES = 5;
@@ -108,7 +109,19 @@ export async function iniciarConversa(opts: {
     ? `${config.empresa.nome}, olá! Aqui é ${config.comportamento.nomeAgente}, recepcionista virtual. A ligação é gravada. No momento a equipe vai te retornar: pode me dizer seu nome e o que precisa?`
     : config.comportamento.saudacao;
   await db.insert(schema.turnos).values({ orgId: opts.orgId, conversaId: conv.id, ordem: 0, papel: "agente", texto: saudacao });
+  // Who is calling: starts now, in parallel with the greeting, and is ready for the first answer.
+  if (opts.de) identificacoes.set(conv.id, identificarCliente(opts.orgId, opts.de, { excluirConversa: conv.id }).catch(() => null));
   return { conversaId: conv.id, saudacao, modoDemo: !llm.real, modoRecado, teste, versaoId };
+}
+
+/** Caller lookups started at the beginning of each call (same process as the call's turns). */
+const identificacoes = new Map<string, Promise<ClienteIdentificado | null>>();
+
+async function clienteDaLigacao(conversaId: string, orgId: string, de: string | null): Promise<ClienteIdentificado | null> {
+  const p = identificacoes.get(conversaId);
+  identificacoes.delete(conversaId);
+  if (p) return p;
+  return de ? identificarCliente(orgId, de, { excluirConversa: conversaId, limiteMs: 1500 }).catch(() => null) : null;
 }
 
 async function carregar(conversaId: string) {
@@ -154,6 +167,8 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
         conv.modoRecado ? "MODO RECADO: apenas colete nome, telefone e o pedido, use repassar_para_equipe e encerre com educação." : ""
       }\nVocê já disse a saudação: "${saud[0]?.texto ?? config.comportamento.saudacao}"`,
     });
+    const cliente = await clienteDaLigacao(conversaId, conv.orgId, conv.de);
+    if (cliente) blocos.push({ type: "text", text: contextoCliente(cliente) });
   }
   // Workflow: the current step's goal and exits are given to the model on every turn.
   const wf = config.workflow;

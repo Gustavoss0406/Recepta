@@ -1,6 +1,7 @@
 import "server-only";
 import { definicaoFerramenta } from "@/lib/agent/api-ferramenta";
 import { executarApi } from "./api-ferramentas";
+import { identificarCliente } from "./identificar";
 import type Anthropic from "@anthropic-ai/sdk";
 import { and, eq, gte, lt } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
@@ -112,6 +113,12 @@ export function definirFerramentas(c: AgentConfig): Anthropic.Tool[] {
       ),
     });
   for (const f of c.acoes.apis ?? []) t.push(definicaoFerramenta(f) as Anthropic.Tool);
+  t.push({
+    name: "consultar_cadastro_cliente",
+    description:
+      "Procura o cliente pelo telefone no histórico de ligações e no CRM da empresa (nome, negócios abertos, últimos contatos). Use quando ele disser que já é cliente ou ligar de outro número. Sem telefone, usa o número de quem está ligando.",
+    input_schema: obj({ telefone: { type: "string", description: "Telefone com DDD, se o cliente informou outro" } }),
+  });
   t.push({
     name: "encerrar_ligacao",
     description: "Encerra a ligação. Só use depois que o cliente se despedir ou disser que não precisa de mais nada (pergunte antes: \"Posso ajudar em mais alguma coisa?\"), ou em trote/abuso.",
@@ -241,6 +248,11 @@ export async function executarFerramenta(nome: string, input: Record<string, unk
     case "enviar_whatsapp": {
       await enviarSaida(ctx.orgId, { canal: "whatsapp", destino: String(input.telefone ?? ctx.de ?? ""), corpo: String(input.mensagem ?? "") }, { real: !ctx.teste });
       return { resultado: { ok: true } };
+    }
+    case "consultar_cadastro_cliente": {
+      const tel = String(input.telefone ?? "").trim() || ctx.de || "";
+      const r = await identificarCliente(ctx.orgId, tel, { excluirConversa: ctx.conversaId });
+      return { resultado: r ? { encontrado: true, ...r, aviso: "Confirme o nome com o cliente antes de falar dos dados." } : { encontrado: false } };
     }
     case "encerrar_ligacao": {
       // Safety net: small models sometimes hang up mid-conversation. Only end when the caller said goodbye.
