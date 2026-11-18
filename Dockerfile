@@ -10,13 +10,13 @@ RUN npm run build && npm run build:servicos && npm prune --omit=dev
 FROM node:22-slim
 WORKDIR /app
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000
-COPY --from=build /app/package.json ./
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/.next ./.next
-COPY --from=build /app/public ./public
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/scripts/servidor-unico.mjs ./scripts/servidor-unico.mjs
-COPY --from=build /app/next.config.ts ./next.config.ts
+COPY --chown=node:node --from=build /app/package.json ./
+COPY --chown=node:node --from=build /app/node_modules ./node_modules
+COPY --chown=node:node --from=build /app/.next ./.next
+COPY --chown=node:node --from=build /app/public ./public
+COPY --chown=node:node --from=build /app/dist ./dist
+COPY --chown=node:node --from=build /app/scripts/servidor-unico.mjs ./scripts/servidor-unico.mjs
+COPY --chown=node:node --from=build /app/next.config.ts ./next.config.ts
 EXPOSE 3000
 USER node
 CMD ["node", "scripts/servidor-unico.mjs"]

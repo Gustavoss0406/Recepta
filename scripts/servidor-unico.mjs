@@ -23,6 +23,13 @@ function iniciar(nome, cmd, args, env = {}) {
   filhos.push(p);
 }
 
+// Fail with a clear message instead of "ECONNREFUSED 127.0.0.1:5432" when the host has no database configured.
+const faltando = ["DATABASE_URL", "RECEPTA_SEGREDO", "RECEPTA_CHAVE_CRIPTO"].filter((k) => !process.env[k]);
+if (process.env.NODE_ENV === "production" && faltando.length) {
+  console.error(`Variáveis obrigatórias ausentes: ${faltando.join(", ")}. Configure no painel do host (Render › Environment) e faça o deploy de novo.`);
+  process.exit(1);
+}
+
 const node = process.execPath;
 const servidor = ["--conditions=react-server"];
 if (process.env.MIGRAR_AO_INICIAR !== "0") {
