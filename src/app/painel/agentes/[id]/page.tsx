@@ -98,7 +98,7 @@ export default async function AgentePage({ params, searchParams }: { params: Pro
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <a href="#testar" className={`${BOTAO.primario} xl:hidden`}>
+              <a href="#testar" className={`${BOTAO.primario} 2xl:hidden`}>
                 <AudioLines size={15} /> Testar agente
               </a>
               {pode(s.papel, "publicar") && publicada && (
@@ -258,7 +258,15 @@ export default async function AgentePage({ params, searchParams }: { params: Pro
           )}
         </div>
       </div>
-      <aside id="testar" className="sticky top-0 hidden h-dvh w-[380px] shrink-0 border-l border-border bg-surface target:fixed target:inset-0 target:z-50 target:block target:w-auto xl:block" aria-label="Testar agente">
+      {/* ≥1536 px: fixed side panel. Smaller (notebooks, phones): drawer opened by "Testar agente". */}
+      <aside
+        id="testar"
+        className="sticky top-0 hidden h-dvh w-[380px] shrink-0 border-l border-border bg-surface target:fixed target:inset-y-0 target:right-0 target:z-50 target:flex target:w-[min(420px,100vw)] target:flex-col target:shadow-[var(--shadow-float)] 2xl:block"
+        aria-label="Testar agente"
+      >
+        <a href="#" className="absolute top-3 right-3 z-10 grid size-8 place-items-center rounded-full bg-background text-muted-foreground shadow-[var(--shadow-pill)] hover:text-foreground 2xl:hidden" aria-label="Fechar teste">
+          ✕
+        </a>
         <TestPanel agenteId={id} vozDisponivel />
       </aside>
     </div>

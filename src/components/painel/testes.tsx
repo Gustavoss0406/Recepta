@@ -164,7 +164,7 @@ function Linha({ c, rodando, rodar }: { c: CasoView; rodando: string | null; rod
               <span className="truncate">{c.nome}</span>
               {c.severidade === "critico" && <span className="shrink-0 rounded-[6px] border border-[#f3c4c4] px-1 text-[0.6875rem] text-[#b42318]">Crítico</span>}
             </p>
-            <p className="truncate text-xs text-muted-foreground">
+            <p className="line-clamp-2 text-xs text-muted-foreground">
               {TIPO[c.tipo] ?? c.tipo} · {c.descricao}
             </p>
           </div>

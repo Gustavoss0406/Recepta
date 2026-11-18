@@ -90,7 +90,9 @@ export function Sidebar({ orgNome, usuarioNome, usuarioEmail, papel, pendencias,
 
   useEffect(() => {
     try {
-      setRecolhida(localStorage.getItem(CHAVE) === "1");
+      const salvo = localStorage.getItem(CHAVE);
+      // No saved choice: start collapsed on notebook-size screens so content keeps its width.
+      setRecolhida(salvo === null ? window.innerWidth < 1440 : salvo === "1");
     } catch {}
   }, []);
   useEffect(() => {

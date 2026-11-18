@@ -242,7 +242,7 @@ export default async function InicioPage({ searchParams }: { searchParams: Promi
                 <li key={p.id}>
                   <Link href={`/painel/pendencias/${p.id}`} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-accent">
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm text-foreground">{p.titulo}</p>
+                      <p className="line-clamp-2 text-sm text-foreground">{p.titulo}</p>
                       <p className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
                         <Urgencia urgencia={p.urgencia} />
                         <span>· {dataCurta(p.criadoEm)}</span>
@@ -318,7 +318,7 @@ export default async function InicioPage({ searchParams }: { searchParams: Promi
               <li key={x.id}>
                 <Link href={`/painel/ligacoes/${x.id}`} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-accent">
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm text-foreground">{x.resumo ?? x.motivo ?? "Ligação em andamento"}</p>
+                    <p className="line-clamp-2 text-sm text-foreground">{x.resumo ?? x.motivo ?? "Ligação em andamento"}</p>
                     <p className="mt-0.5 text-xs text-muted-foreground">
                       {x.de ?? "Número oculto"} · {dataCurta(x.iniciadaEm)} · {formatDuration(x.duracaoS)}
                     </p>

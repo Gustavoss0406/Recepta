@@ -13,6 +13,7 @@ import { getTtsEngine, ttsConfigurado, type FormatoAudio } from "@/server/voice/
 import { encerrarConversa, ErroLinhaOcupada, iniciarConversa, registrarUsoVoz, responder } from "@/server/agent/runtime";
 import { configParaConversa } from "@/server/agent/agentes";
 import { aceitarTwilio } from "./twilio";
+import { esperaExtraMs, juntar } from "@/lib/voz/turno";
 import { Gravador } from "@/server/audio/gravador";
 import { salvarAudio } from "@/server/audio/armazenamento";
 
@@ -158,11 +159,29 @@ export async function rodarPipeline(sessao: Sessao, t: Transporte) {
     }
   }
 
+  // Turn-taking: final utterances wait briefly when the sentence looks unfinished (src/lib/voz/turno.ts).
+  let parciais: string[] = [];
+  let esperando: ReturnType<typeof setTimeout> | null = null;
+  function liberarTurno() {
+    if (esperando) clearTimeout(esperando);
+    esperando = null;
+    const texto = juntar(parciais);
+    parciais = [];
+    if (!texto) return;
+    fila.push(texto);
+    void processarFila();
+  }
+
   let stt: StreamStt | null = null;
   try {
     stt = abrirStt(
       {
         aoComecarFala: () => {
+          // The caller resumed before we answered: keep listening and merge with what they said.
+          if (esperando) {
+            clearTimeout(esperando);
+            esperando = setTimeout(liberarTurno, 4000); // safety: the new sound may be noise
+          }
           if (falando) {
             falando.abort(); // barge-in: the customer talked over the agent
             t.limparAudio();
@@ -174,8 +193,11 @@ export async function rodarPipeline(sessao: Sessao, t: Transporte) {
           t.enviarEvento({ tipo: final ? "transcricao.final" : "transcricao.parcial", texto });
           if (fimDeFala) {
             fimFalaEm = Date.now();
-            fila.push(texto);
-            void processarFila();
+            parciais.push(texto);
+            if (esperando) clearTimeout(esperando);
+            const extra = esperaExtraMs(juntar(parciais));
+            if (extra === 0) liberarTurno();
+            else esperando = setTimeout(liberarTurno, extra);
           }
         },
         aoErro: (e) => t.enviarEvento({ tipo: "erro", mensagem: `Transcrição: ${e.message}` }),

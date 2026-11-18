@@ -153,7 +153,7 @@ export default async function PendenciasPage({ searchParams }: { searchParams: P
                 <tr key={p.id} className="group relative border-t border-border first:border-t-0 md:first:border-t">
                   <td className="py-3 pr-4 pl-4">
                     <Link href={`/painel/pendencias/${p.id}`} className="block after:absolute after:inset-0 after:content-['']">
-                      <span className="block truncate text-sm text-foreground">{p.titulo}</span>
+                      <span className="line-clamp-2 block text-sm text-foreground">{p.titulo}</span>
                       <span className="mt-0.5 block truncate text-xs text-muted-foreground">
                         <span className="font-mono">{p.id.slice(0, 12)}</span> · {dataCurta(p.criadoEm)}
                         {p.contatoTelefone && <span className="md:hidden"> · {p.contatoTelefone}</span>}

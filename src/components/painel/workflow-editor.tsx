@@ -87,7 +87,7 @@ function ArestaCondicao({ id, sourceX, sourceY, targetX, targetY, sourcePosition
         <EdgeLabelRenderer>
           <div
             className={cn(
-              "nodrag nopan pointer-events-auto absolute max-w-[220px] truncate rounded-full px-2.5 py-1 text-[0.6875rem] font-medium",
+              "nodrag nopan pointer-events-auto absolute line-clamp-2 max-w-[260px] rounded-[10px] px-2.5 py-1 text-center text-[0.6875rem] leading-snug font-medium",
               tipo === "ok" ? "bg-[#e9f7ef] text-[#147a3d]" : tipo === "falha" ? "bg-[#fdecec] text-[#b42318]" : "bg-[#0a0a0a] text-white",
               selected && "ring-2 ring-[#2563eb]/40",
             )}

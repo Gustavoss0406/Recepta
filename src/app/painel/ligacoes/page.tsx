@@ -102,7 +102,7 @@ export default async function LigacoesPage({ searchParams }: { searchParams: Pro
                     <td className="hidden px-4 py-3 whitespace-nowrap text-muted-foreground md:table-cell">{dataCurta(l.iniciadaEm)}</td>
                     <td className="px-4 py-3 md:pl-0">
                       <Link href={`/painel/ligacoes/${l.id}`} className="block after:absolute after:inset-0">
-                        <span className="block truncate text-foreground">
+                        <span className="line-clamp-2 block text-foreground">
                           {l.sinalizada && <Flag size={12} className="mr-1 inline text-[#e5484d]" aria-label="Sinalizada" />}
                           {l.resumo ?? l.motivo ?? "Em andamento"}
                         </span>

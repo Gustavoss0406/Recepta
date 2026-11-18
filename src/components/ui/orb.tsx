@@ -24,21 +24,9 @@ export const ORB_CORES: Record<OrbTom, [string, string]> = {
 
 const OrbWebGL = dynamic(() => import("@/components/elevenlabs-ui/orb").then((m) => m.Orb), { ssr: false });
 
-/** sRGB hex → the colour the shader actually shows (it writes linear values without output conversion). */
-function comoNoShader(hex: string): string {
-  const n = parseInt(hex.slice(1), 16);
-  const lin = (c: number) => {
-    const v = c / 255;
-    return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
-  };
-  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((c) => Math.round(lin(c) * 255));
-  return `rgb(${r} ${g} ${b})`;
-}
-
 /** Static stand-in drawn like the shader (three soft lobes of both colours over white): avatars, loading, reduced motion. */
 function OrbEstatico({ cores, tamanho, className }: { cores: [string, string]; tamanho: number | string; className?: string }) {
-  const a = comoNoShader(cores[0]);
-  const b = comoNoShader(cores[1]);
+  const [a, b] = cores;
   const px = typeof tamanho === "number" ? tamanho : 160;
   const lobo = (ini: number) => `${b} ${ini}deg, ${a} ${ini + 55}deg, ${b} ${ini + 88}deg, #fff ${ini + 104}deg, #fff ${ini + 112}deg`;
   return (
