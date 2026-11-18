@@ -218,6 +218,10 @@ export default async function AgentePage({
               agenteId={id}
               inicial={cfg.workflow}
               podeEditar={editar}
+              ferramentasExtras={[
+                ...(cfg.acoes.apis ?? []).map((f): [string, string] => [f.nome, `${f.nome} (seu sistema)`]),
+                ...cfg.acoes.webhooks.map((w): [string, string] => [w.nome, `${w.nome} (webhook)`]),
+              ]}
             />
           </div>
         )}

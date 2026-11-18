@@ -7,7 +7,7 @@ import { z } from "zod";
  * `seguir_fluxo` tool, and the automatic nodes after it (falar, atualizar_estado, acao,
  * transferir, fim) are resolved here, purely, so the logic is unit-testable.
  */
-export const TIPOS_NO = ["inicio", "subagente", "falar", "acao", "atualizar_estado", "transferir", "fim"] as const;
+export const TIPOS_NO = ["inicio", "subagente", "falar", "acao", "atualizar_estado", "condicao", "transferir", "fim"] as const;
 export type TipoNo = (typeof TIPOS_NO)[number];
 
 export const noSchema = z.object({
@@ -41,6 +41,7 @@ export const ROTULO_TIPO: Record<TipoNo, string> = {
   falar: "Falar",
   acao: "Ação",
   atualizar_estado: "Atualizar estado",
+  condicao: "Condição",
   transferir: "Transferir",
   fim: "Fim",
 };
@@ -87,8 +88,69 @@ export function validarWorkflow(wf: Workflow): string[] {
     if (n.tipo !== "fim" && n.tipo !== "transferir" && s.length === 0) erros.push(`"${n.titulo || ROTULO_TIPO[n.tipo]}" não tem saída.`);
     if (n.tipo === "subagente" && s.some((a) => !a.condicao.trim())) erros.push(`As saídas de "${n.titulo}" precisam de uma condição.`);
     if (n.tipo === "subagente" && !n.texto.trim()) erros.push(`Descreva o objetivo de "${n.titulo || "Subagente"}".`);
+    if (n.tipo === "condicao") {
+      const padrao = s.filter((a) => ehSenao(a.condicao));
+      if (padrao.length > 1) erros.push(`"${n.titulo || "Condição"}" tem mais de um caminho "senão".`);
+      for (const a of s) if (!ehSenao(a.condicao) && !lerExpressao(a.condicao)) erros.push(`Condição inválida em "${n.titulo || "Condição"}": ${a.condicao}`);
+    }
   }
   return erros;
+}
+
+/* ───────── Conditions on data (deterministic, no model involved) ───────── */
+
+export type Vars = Record<string, string>;
+const ehSenao = (c: string) => /^\s*(senão|senao|caso contrário|caso contrario|padrão|padrao)?\s*$/i.test(c);
+
+/** "var op valor": =, !=, >, <, >=, <=, contém; or just "var" (true when filled and not "não"/"falha"/"false"). */
+export function lerExpressao(c: string): { var: string; op: string; valor: string } | null {
+  const m = /^\s*([A-Za-z_][\w.]*)\s*(>=|<=|!=|=|>|<|contém|contem)\s*(.+?)\s*$/i.exec(c);
+  if (m) return { var: m[1], op: m[2].toLowerCase().replace("contem", "contém"), valor: m[3].replace(/^["']|["']$/g, "") };
+  const v = /^\s*([A-Za-z_][\w.]*)\s*$/.exec(c);
+  return v ? { var: v[1], op: "existe", valor: "" } : null;
+}
+
+const norm = (x: string) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase();
+const VERDADE: Record<string, string> = { sim: "sim", true: "sim", verdadeiro: "sim", nao: "nao", false: "nao", falso: "nao" };
+
+export function avaliarCondicao(c: string, vars: Vars): boolean {
+  const e = lerExpressao(c);
+  if (!e) return false;
+  const bruto = vars[e.var];
+  if (e.op === "existe") return bruto !== undefined && bruto !== "" && !["nao", "falha", "false", "0"].includes(norm(bruto));
+  if (bruto === undefined) return e.op === "!=";
+  const a = norm(bruto);
+  const b = norm(e.valor);
+  const [na, nb] = [Number(a.replace(",", ".")), Number(b.replace(",", "."))];
+  const numerico = a !== "" && b !== "" && !Number.isNaN(na) && !Number.isNaN(nb);
+  switch (e.op) {
+    case "=":
+      return numerico ? na === nb : (VERDADE[a] ?? a) === (VERDADE[b] ?? b);
+    case "!=":
+      return numerico ? na !== nb : (VERDADE[a] ?? a) !== (VERDADE[b] ?? b);
+    case ">":
+      return numerico && na > nb;
+    case "<":
+      return numerico && na < nb;
+    case ">=":
+      return numerico && na >= nb;
+    case "<=":
+      return numerico && na <= nb;
+    case "contém":
+      return a.includes(b);
+  }
+  return false;
+}
+
+/** Flattens a tool result into variables: "consultar_pedido = sucesso", "consultar_pedido.status = enviado". */
+export function varsDeResultado(ferramenta: string, resultado: Record<string, unknown>): Vars {
+  const v: Vars = { [ferramenta]: resultado.ok === false ? "falha" : "sucesso" };
+  const dados = (resultado.dados ?? resultado) as Record<string, unknown>;
+  if (dados && typeof dados === "object" && !Array.isArray(dados))
+    for (const [k, x] of Object.entries(dados))
+      if (x === null || ["string", "number", "boolean"].includes(typeof x)) v[`${ferramenta}.${k}`] = String(x).slice(0, 200);
+      else if (Array.isArray(x)) v[`${ferramenta}.${k}`] = x.slice(0, 5).map(String).join(", ").slice(0, 200);
+  return v;
 }
 
 export type Efeito =
@@ -102,8 +164,9 @@ export type Efeito =
  * Walks automatic nodes from `id` until reaching a subagent (where the conversation continues),
  * an action (which the runtime executes and then resumes with `retomarAposAcao`), or a terminal node.
  */
-export function percorrer(wf: Workflow, id: string, limite = 20): { atual: string | null; efeitos: Efeito[] } {
+export function percorrer(wf: Workflow, id: string, vars: Vars = {}, limite = 20): { atual: string | null; efeitos: Efeito[] } {
   const efeitos: Efeito[] = [];
+  const v = { ...vars };
   let atual: string | undefined = id;
   for (let i = 0; i < limite && atual; i++) {
     const n = no(wf, atual);
@@ -124,9 +187,23 @@ export function percorrer(wf: Workflow, id: string, limite = 20): { atual: strin
         if (n.texto.trim()) efeitos.push({ tipo: "falar", texto: n.texto.trim() });
         break;
       case "atualizar_estado": {
-        const [chave, ...v] = n.texto.split("=");
-        if (chave?.trim()) efeitos.push({ tipo: "estado", chave: chave.trim(), valor: v.join("=").trim() });
+        const [chave, ...resto] = n.texto.split("=");
+        if (chave?.trim()) {
+          efeitos.push({ tipo: "estado", chave: chave.trim(), valor: resto.join("=").trim() });
+          v[chave.trim()] = resto.join("=").trim();
+        }
         break;
+      }
+      case "condicao": {
+        // first matching condition wins; "senão" (empty) is the fallback
+        const s = saidas(wf, n.id);
+        const a = s.find((x) => !ehSenao(x.condicao) && avaliarCondicao(x.condicao, v)) ?? s.find((x) => ehSenao(x.condicao));
+        if (!a) {
+          efeitos.push({ tipo: "fim" });
+          return { atual: null, efeitos };
+        }
+        atual = a.para;
+        continue;
       }
     }
     atual = saidas(wf, n.id)[0]?.para;
@@ -135,24 +212,24 @@ export function percorrer(wf: Workflow, id: string, limite = 20): { atual: strin
 }
 
 /** Where the conversation starts: the first step after Início. */
-export function iniciarFluxo(wf: Workflow) {
+export function iniciarFluxo(wf: Workflow, vars: Vars = {}) {
   const inicio = wf.nos.find((n) => n.tipo === "inicio");
   const prox = inicio && saidas(wf, inicio.id)[0]?.para;
-  return prox ? percorrer(wf, prox) : { atual: null, efeitos: [] as Efeito[] };
+  return prox ? percorrer(wf, prox, vars) : { atual: null, efeitos: [] as Efeito[] };
 }
 
 /** The model chose an outgoing edge of the current subagent. */
-export function seguir(wf: Workflow, atual: string, arestaId: string) {
+export function seguir(wf: Workflow, atual: string, arestaId: string, vars: Vars = {}) {
   const a = saidas(wf, atual).find((x) => x.id === arestaId);
   if (!a) return null;
-  return percorrer(wf, a.para);
+  return percorrer(wf, a.para, vars);
 }
 
 /** After an action node ran: follow its "sucesso" / "falha" edge (or the only edge). */
-export function retomarAposAcao(wf: Workflow, noAcao: string, ok: boolean) {
+export function retomarAposAcao(wf: Workflow, noAcao: string, ok: boolean, vars: Vars = {}) {
   const s = saidas(wf, noAcao);
   const a = s.find((x) => x.condicao.trim().toLowerCase() === (ok ? "sucesso" : "falha")) ?? (s.length === 1 ? s[0] : undefined);
-  return a ? percorrer(wf, a.para) : { atual: null, efeitos: [{ tipo: "fim" }] as Efeito[] };
+  return a ? percorrer(wf, a.para, vars) : { atual: null, efeitos: [{ tipo: "fim" }] as Efeito[] };
 }
 
 /** Context block given to the model on every turn while the workflow is active. */

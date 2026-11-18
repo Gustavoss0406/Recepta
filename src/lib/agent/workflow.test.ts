@@ -61,6 +61,6 @@ describe("Workflow", () => {
         { id: "2", de: "b", para: "a", condicao: "" },
       ],
     };
-    expect(percorrer(ciclo, "a", 5).efeitos).toHaveLength(5);
+    expect(percorrer(ciclo, "a", {}, 5).efeitos).toHaveLength(5);
   });
 });

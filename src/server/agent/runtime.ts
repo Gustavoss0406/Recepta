@@ -3,7 +3,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { and, asc, eq, max, sql } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
 import type { Canal, UsoConversa } from "@/db/schema";
-import { contextoTemporal } from "@/lib/agent/agenda";
+import { contextoTemporal, dentroDoHorario } from "@/lib/agent/agenda";
 import { mascarar } from "@/lib/agent/mask";
 import { billableMinutes, costCall } from "@/lib/pricing/ledger";
 import type { LlmModel } from "@/lib/pricing/rates";
@@ -14,7 +14,7 @@ import { configParaConversa } from "./agentes";
 import { buscarConhecimento } from "./conhecimento";
 import { definirFerramentas, executarFerramenta } from "./ferramentas";
 import { analisarConversa } from "./pos-chamada";
-import { contextoEtapa, iniciarFluxo, no as noDoFluxo, retomarAposAcao, saidas, seguir, type Efeito } from "@/lib/agent/workflow";
+import { contextoEtapa, iniciarFluxo, no as noDoFluxo, retomarAposAcao, saidas, seguir, varsDeResultado, type Efeito, type Vars } from "@/lib/agent/workflow";
 import { criarRepasse } from "./repasses";
 import { agendarSincronizacao, enviarSaida } from "@/server/integracoes/servico";
 import { ErroSemMotor } from "@/server/providers/llm-rotacao";
@@ -168,14 +168,24 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
       }\nVocê já disse a saudação: "${saud[0]?.texto ?? config.comportamento.saudacao}"`,
     });
     const cliente = await clienteDaLigacao(conversaId, conv.orgId, conv.de);
-    if (cliente) blocos.push({ type: "text", text: contextoCliente(cliente) });
+    if (cliente) {
+      blocos.push({ type: "text", text: contextoCliente(cliente) });
+      estado.vars = { ...(estado.vars ?? {}), cliente_identificado: "sim", ...(cliente.nome ? { cliente_nome: cliente.nome } : {}) };
+    }
   }
   // Workflow: the current step's goal and exits are given to the model on every turn.
   const wf = config.workflow;
   const fluxo = wf?.ativo ? wf : null;
   const falasFluxo: string[] = [];
+  // Data the flow's Condition nodes can branch on: saved vars, tool results and call facts.
+  const varsFluxo = (): Vars => ({
+    dentro_do_horario: dentroDoHorario(config.horarios, agora) ? "sim" : "nao",
+    canal: conv.canal,
+    cliente_identificado: estado.vars?.cliente_identificado ?? "nao",
+    ...(estado.vars ?? {}),
+  });
   if (fluxo && estado.no === undefined) {
-    const ini = iniciarFluxo(fluxo);
+    const ini = iniciarFluxo(fluxo, varsFluxo());
     estado.no = ini.atual;
     for (const e of ini.efeitos) if (e.tipo === "falar") falasFluxo.push(e.texto);
   }
@@ -277,7 +287,7 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
     for (const u of usos) {
       const args = (u.input ?? {}) as Record<string, unknown>;
       if (u.name === "seguir_fluxo" && fluxo && estado.no) {
-        const passo = seguir(fluxo, estado.no, String(args.caminho ?? ""));
+        const passo = seguir(fluxo, estado.no, String(args.caminho ?? ""), varsFluxo());
         const res = passo ? aplicarEfeitos(passo) : { ok: false, erro: "caminho_invalido" };
         acoes.push({ nome: u.name, args, resultado: res });
         await db.insert(schema.chamadasFerramenta).values({ orgId: conv.orgId, conversaId, nome: u.name, args, resultado: res });
@@ -317,13 +327,16 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
       acoes.push({ nome: u.name, args, resultado: ef.resultado });
       await db.insert(schema.chamadasFerramenta).values({ orgId: conv.orgId, conversaId, nome: u.name, args, resultado: ef.resultado });
       resultados.push({ type: "tool_result", tool_use_id: u.id, content: JSON.stringify(ef.resultado) });
+      // every tool result becomes data for the flow ("consultar_pedido.status = enviado")
+      estado.vars = { ...(estado.vars ?? {}), ...varsDeResultado(u.name, ef.resultado) };
+      if (u.name === "consultar_cadastro_cliente" && (ef.resultado as { encontrado?: boolean }).encontrado) estado.vars.cliente_identificado = "sim";
       if (ef.encerrar) encerrar = true;
       if (ef.transferirPara) transferirPara = ef.transferirPara;
       // An action node waits for its tool: then follow its "sucesso" / "falha" exit.
       const atual = fluxo && estado.no ? noDoFluxo(fluxo, estado.no) : undefined;
       if (fluxo && atual?.tipo === "acao" && atual.texto.trim() === u.name) {
         const ok = (ef.resultado as { ok?: boolean }).ok !== false;
-        const res = aplicarEfeitos(retomarAposAcao(fluxo, atual.id, ok));
+        const res = aplicarEfeitos(retomarAposAcao(fluxo, atual.id, ok, varsFluxo()));
         resultados[resultados.length - 1] = { type: "tool_result", tool_use_id: u.id, content: JSON.stringify({ ...ef.resultado, fluxo: res }) };
       }
     }

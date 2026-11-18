@@ -23,7 +23,7 @@ import {
   type Node,
   type NodeProps,
 } from "@xyflow/react";
-import { CircleUserRound, Flag, MessageSquareText, PhoneForwarded, PhoneOff, Plus, SlidersHorizontal, Trash2, Wrench } from "lucide-react";
+import { CircleCheck, CircleUserRound, Flag, MessageSquareText, PhoneForwarded, PhoneOff, Plus, SlidersHorizontal, Split, Trash2, Wrench } from "lucide-react";
 import { acaoSalvarWorkflow } from "@/app/painel/actions";
 import { ROTULO_TIPO, validarWorkflow, type TipoNo, type Workflow } from "@/lib/agent/workflow";
 import { cn } from "@/lib/utils";
@@ -39,16 +39,27 @@ const ICONE: Record<TipoNo, typeof Flag> = {
   falar: MessageSquareText,
   acao: Wrench,
   atualizar_estado: SlidersHorizontal,
+  condicao: Split,
   transferir: PhoneForwarded,
   fim: PhoneOff,
 };
 
-const FERRAMENTAS = [
+const FERRAMENTAS: [string, string][] = [
   ["repassar_para_equipe", "Passar o caso para a equipe"],
   ["consultar_horarios", "Consultar horários"],
   ["agendar", "Agendar"],
   ["enviar_whatsapp", "Enviar WhatsApp"],
-] as const;
+  ["consultar_cadastro_cliente", "Consultar cadastro do cliente"],
+];
+
+/** Data every Condition can use (tool results add "<ferramenta>" and "<ferramenta>.<campo>"). */
+const VARS_SISTEMA = ["dentro_do_horario", "cliente_identificado", "cliente_nome", "canal"];
+
+/** Ready-made step: read the data back and only continue after the caller confirms. */
+const CONFIRMAR = {
+  titulo: "Confirmar dados",
+  texto: "Repita para o cliente os dados que ele informou (nome, data, horário, valor) e pergunte se está tudo certo. Corrija o que ele pedir antes de seguir.",
+};
 
 function NoRecepta({ data, selected }: NodeProps<NoRF>) {
   const Icon = ICONE[data.tipo];
@@ -130,7 +141,8 @@ function deRF(ativo: boolean, nos: NoRF[], arestas: ArestaRF[]): Workflow {
 let seq = 0;
 const novoId = (p: string) => `${p}${Date.now().toString(36)}${(seq++).toString(36)}`;
 
-function Editor({ agenteId, inicial, podeEditar }: { agenteId: string; inicial: Workflow; podeEditar: boolean }) {
+function Editor({ agenteId, inicial, podeEditar, ferramentasExtras = [] }: { agenteId: string; inicial: Workflow; podeEditar: boolean; ferramentasExtras?: [string, string][] }) {
+  const ferramentas = useMemo(() => [...FERRAMENTAS, ...ferramentasExtras], [ferramentasExtras]);
   const base = useMemo(() => paraRF(inicial), [inicial]);
   const [nos, setNos, onNodesChange] = useNodesState<NoRF>(base.nos);
   const [arestas, setArestas, onEdgesChange] = useEdgesState<ArestaRF>(base.arestas);
@@ -149,7 +161,7 @@ function Editor({ agenteId, inicial, podeEditar }: { agenteId: string; inicial: 
     [nos, setArestas],
   );
 
-  function adicionar(tipo: TipoNo) {
+  function adicionar(tipo: TipoNo, preset?: { titulo: string; texto: string }) {
     const id = novoId("n");
     const y = Math.max(0, ...nos.map((n) => n.position.y)) + 140;
     setNos((ns) => [
@@ -158,7 +170,7 @@ function Editor({ agenteId, inicial, podeEditar }: { agenteId: string; inicial: 
         id,
         type: "recepta",
         position: { x: 160 + (ns.length % 3) * 40, y },
-        data: { tipo, titulo: ROTULO_TIPO[tipo], texto: tipo === "acao" ? "repassar_para_equipe" : "" },
+        data: preset ? { tipo, ...preset } : { tipo, titulo: ROTULO_TIPO[tipo], texto: tipo === "acao" ? "repassar_para_equipe" : "" },
       },
     ]);
     setSel({ tipo: "no", id });
@@ -187,7 +199,11 @@ function Editor({ agenteId, inicial, podeEditar }: { agenteId: string; inicial: 
           Usar fluxo nas ligações
         </label>
         <span className="mx-1 h-5 w-px bg-border" />
-        {(["subagente", "falar", "acao", "atualizar_estado", "transferir", "fim"] as TipoNo[]).map((t) => {
+        <button type="button" disabled={!podeEditar} onClick={() => adicionar("subagente", CONFIRMAR)} className="flex h-7 items-center gap-1 rounded-[8px] border border-border px-2 text-[0.8125rem] hover:bg-accent disabled:opacity-40">
+          <Plus size={12} />
+          <CircleCheck size={13} strokeWidth={1.7} /> Confirmar dados
+        </button>
+        {(["subagente", "falar", "acao", "condicao", "atualizar_estado", "transferir", "fim"] as TipoNo[]).map((t) => {
           const Icon = ICONE[t];
           return (
             <button key={t} type="button" disabled={!podeEditar} onClick={() => adicionar(t)} className="flex h-7 items-center gap-1 rounded-[8px] border border-border px-2 text-[0.8125rem] hover:bg-accent disabled:opacity-40">
@@ -258,7 +274,7 @@ function Editor({ agenteId, inicial, podeEditar }: { agenteId: string; inicial: 
                   <label className="block">
                     <span className="mb-1 block text-xs font-medium text-muted-foreground">Ferramenta</span>
                     <select value={noSel.data.texto} onChange={(e) => mudarNo({ texto: e.target.value })} className={campo}>
-                      {FERRAMENTAS.map(([v, t]) => (
+                      {ferramentas.map(([v, t]) => (
                         <option key={v} value={v}>
                           {t}
                         </option>
@@ -266,6 +282,19 @@ function Editor({ agenteId, inicial, podeEditar }: { agenteId: string; inicial: 
                     </select>
                     <span className="mt-1 block text-xs text-muted-foreground">Ligue as saídas como Sucesso ou Falha.</span>
                   </label>
+                )}
+                {noSel.data.tipo === "condicao" && (
+                  <div className="space-y-2 text-xs text-muted-foreground">
+                    <p>Escolhe o caminho pelos dados, sem depender da conversa. Escreva a condição em cada saída; a primeira verdadeira vence, e uma saída vazia vale como &quot;senão&quot;.</p>
+                    <p>
+                      Exemplos: <code className="font-mono">dentro_do_horario = sim</code>, <code className="font-mono">consultar_pedido.status = enviado</code>,{" "}
+                      <code className="font-mono">consultar_orcamento.valor &gt; 500</code>, <code className="font-mono">cliente_identificado</code>.
+                    </p>
+                    <p>
+                      Dados disponíveis: <span className="break-all font-mono">{VARS_SISTEMA.join(", ")}</span> e o resultado de cada ferramenta (<code className="font-mono">nome_da_ferramenta</code> = sucesso/falha e{" "}
+                      <code className="font-mono">nome_da_ferramenta.campo</code>).
+                    </p>
+                  </div>
                 )}
                 {noSel.data.tipo === "atualizar_estado" && (
                   <label className="block">
@@ -308,7 +337,11 @@ function Editor({ agenteId, inicial, podeEditar }: { agenteId: string; inicial: 
                     onChange={(e) => mudarAresta(e.target.value.slice(0, 200))}
                     rows={3}
                     className={campo}
-                    placeholder="Em linguagem simples. Ex.: o cliente quer marcar um horário"
+                    placeholder={
+                      nos.find((n) => n.id === arestaSel.source)?.data.tipo === "condicao"
+                        ? "Ex.: consultar_pedido.status = enviado (vazio = senão)"
+                        : "Em linguagem simples. Ex.: o cliente quer marcar um horário"
+                    }
                   />
                 )}
                 {podeEditar && (
@@ -342,7 +375,7 @@ function Editor({ agenteId, inicial, podeEditar }: { agenteId: string; inicial: 
   );
 }
 
-export function WorkflowEditor(props: { agenteId: string; inicial: Workflow; podeEditar: boolean }) {
+export function WorkflowEditor(props: { agenteId: string; inicial: Workflow; podeEditar: boolean; ferramentasExtras?: [string, string][] }) {
   return (
     <ReactFlowProvider>
       <Editor {...props} />
