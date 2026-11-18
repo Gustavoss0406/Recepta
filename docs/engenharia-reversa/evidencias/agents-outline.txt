@@ -1,0 +1,520 @@
+[StaticText] Conheça o Eleven v4, nosso modelo mais expressivo até agora.
+[link] Saiba mais sobre o Eleven v4
+  [StaticText] Resgatar
+[link] Pular para o conteúdo
+  [StaticText] Pular para o conteúdo
+[link] ElevenLabs
+[button] Produtos
+  [StaticText] Produtos
+[button] Soluções
+  [StaticText] Soluções
+[link] Clientes
+  [StaticText] Clientes
+[button] Recursos
+  [StaticText] Recursos
+[link] Empresas
+  [StaticText] Empresas
+[link] Preços
+  [StaticText] Preços
+[link] Entrar
+  [StaticText] Entrar
+[link] Criar conta
+  [StaticText] Criar conta
+[link] ElevenAgents
+  [StaticText] ElevenAgents
+[button] Plataforma
+  [StaticText] Plataforma
+[button] Soluções
+  [StaticText] Soluções
+[link] Documentação
+  [StaticText] Documentação
+[link] Clientes
+  [StaticText] Clientes
+[link] Preços
+  [StaticText] Preços
+[heading1] Agentes conversacionais que parecem humanos
+  [StaticText] Agentes conversacionais que parecem humanos
+[link] Falar com vendas
+  [StaticText] Falar com vendas
+[link] Criar um agente IA
+  [StaticText] Criar um agente IA
+[heading2] Configure, implante e monitore agentes naturais, com vozes humanas, em mais de 90 idiomas, com alta precisão e latência ultrabaixa por voz, chat e e-mail.
+  [StaticText] Configure, implante e monitore agentes naturais, com vozes humanas, em mais de 90 idiomas, com alta precisão e latência ultrabaixa por voz, chat e e-mail.
+[button] Ativar som
+[link] Agendamento de horários Crie seu próprio agente
+  [StaticText] Agendamento de horários
+  [StaticText] Crie seu próprio agente
+[StaticText] Oi
+[StaticText] ,
+[StaticText] você
+[StaticText] ligou
+[StaticText] para
+[StaticText] a
+[StaticText] clínica
+[StaticText] .
+[StaticText] Como
+[StaticText] posso
+[StaticText] ajudar
+[StaticText] hoje
+[StaticText] ?
+[StaticText] Oi
+[StaticText] ,
+[StaticText] gostaria
+[StaticText] de
+[StaticText] marcar
+[StaticText] meu
+[StaticText] check
+[StaticText] -
+[StaticText] up
+[StaticText] anual
+[StaticText] –
+[StaticText] faz
+[StaticText] cerca
+[StaticText] de
+[StaticText] um
+[StaticText] ano
+[StaticText] desde
+[StaticText] o
+[StaticText] último
+[StaticText] .
+[StaticText] Claro
+[StaticText] .
+[StaticText] Pode
+[StaticText] me
+[StaticText] passar
+[StaticText] seu
+[StaticText] nome
+[StaticText] para
+[StaticText] eu
+[StaticText] localizar
+[StaticText] seu
+[StaticText] cadastro
+[StaticText] ?
+[button] Slide 2 de 4
+[button] Slide 3 de 4
+[button] Slide 4 de 4
+[heading2] Confiado por grandes empresas
+  [StaticText] Confiado por grandes empresas
+[link] Ler todas as histórias
+  [StaticText] Ler todas as histórias
+[link] Twilio
+  [StaticText] Twilio
+[link] The Walt Disney Studios
+  [StaticText] The Walt Disney Studios
+[link] KPN
+  [StaticText] KPN
+[link] A Stripe agora é cliente da ElevenLabs
+  [StaticText] A Stripe agora é cliente da ElevenLabs
+[link] TELUS Digital
+  [StaticText] TELUS Digital
+[link] Cisco
+  [StaticText] Cisco
+[link] A Epic Games usa ElevenLabs
+  [StaticText] A Epic Games usa ElevenLabs
+[link] Nvidia
+  [StaticText] Nvidia
+[link] Revolut
+  [StaticText] Revolut
+[link] Meta
+  [StaticText] Meta
+[link] Zoom
+  [StaticText] Zoom
+[link] Parceria Square + ElevenLabs
+  [StaticText] Parceria Square + ElevenLabs
+[link] Ramp
+  [StaticText] Ramp
+[link] IBM
+  [StaticText] IBM
+[link] Deutsche Telekom
+  [StaticText] Deutsche Telekom
+[link] Klarna
+  [StaticText] Klarna
+[link] Harvey
+  [StaticText] Harvey
+[link] Salesforce + ElevenLabs
+  [StaticText] Salesforce + ElevenLabs
+[heading2] Agentes de voz e chat criados para melhorar suporte, vendas e operações
+  [StaticText] Agentes de voz e chat criados para melhorar suporte, vendas e operações
+[heading3] Melhore a experiência do cliente
+  [StaticText] Melhore a experiência do cliente
+[StaticText] Resolva o suporte de ponta a ponta, com menor custo por atendimento. Os clientes recebem respostas instantâneas e sua equipe foca no que realmente precisa de um
+[heading3] Impulsione o crescimento em todo o funil
+  [StaticText] Impulsione o crescimento em todo o funil
+[StaticText] Qualifique leads, recupere carrinhos abandonados e faça campanhas em escala. Agentes conversacionais convertem mais do que fluxos digitais tradicionais.
+[heading3] Aumente a eficiência
+  [StaticText] Aumente a eficiência
+[StaticText] Automatize agendamentos, lembretes, cobranças e operações internas. Alcance milhares de pessoas em poucas horas e libere sua equipe para tarefas de maior impact
+[heading2] Mais de 10 milhões de conversas por semana gerando resultados
+  [StaticText] Mais de 10 milhões de conversas por semana gerando resultados
+[link] Ver estudos de caso
+  [StaticText] Ver estudos de caso
+[tab] “ No contact center, o único momento que temos para gerar confiança é quando dizemos olá. Com a qualidade de voz de ponta da ElevenLabs, os clientes nos darão u
+  [StaticText] “
+  [StaticText] No contact center, o único momento que temos para gerar confiança é quando dizemos olá. Com a qualidade de voz de ponta da ElevenLabs, os clientes nos darão uma
+  [StaticText] ”
+  [StaticText] Sahil Sakhuja
+  [StaticText] Chefe de Produtos de IA, Deutsche Telekom
+[tab] “ O futuro pertence a estados com agentes. Nossa parceria com a ElevenLabs deu voz humana aos nossos serviços digitais e os tornou mais acessíveis para todos.” 
+  [StaticText] “
+  [StaticText] O futuro pertence a estados com agentes. Nossa parceria com a ElevenLabs deu voz humana aos nossos serviços digitais e os tornou mais acessíveis para todos.
+  [StaticText] ”
+  [StaticText] Mykhailo Fedorov
+  [StaticText] Ministro da Transformação Digital da Ucrânia
+[tab] “ Tom empático e sensação humana são fundamentais no suporte. Queremos que nossos clientes se sintam compreendidos, não apenas atendidos.” Jannes Koopmann Sr. A
+  [StaticText] “
+  [StaticText] Tom empático e sensação humana são fundamentais no suporte. Queremos que nossos clientes se sintam compreendidos, não apenas atendidos.
+  [StaticText] ”
+  [StaticText] Jannes Koopmann
+  [StaticText] Sr. AI Business Owner na 3Shape
+[StaticText] A Deutsche Telekom levou a IA para o atendimento ao cliente
+[button] Anterior
+[button] Próximo
+[button] Ativar som
+[button] Reproduzir
+[slider] Buscar posição de reprodução
+[link] Ler história
+  [StaticText] Ler história
+[heading2] Configure, implemente e otimize – em todos os canais, em uma só plataforma
+  [StaticText] Configure, implemente e otimize – em todos os canais, em uma só plataforma
+[heading3] Desenhe a experiência ideal do seu agente
+  [StaticText] Desenhe a experiência ideal do seu agente
+[StaticText] Configure voz, idioma, base de conhecimento, prompt do sistema e fluxos de trabalho, depois conecte às ferramentas que sua equipe já usa – tudo em um só lugar.
+[heading3] Atenda clientes onde eles estão
+  [StaticText] Atenda clientes onde eles estão
+[StaticText] O ElevenAgents mantém todo o contexto – os clientes não precisam repetir informações pelo telefone, web, WhatsApp, SMS ou e-mail.
+[button] Iniciar chamada
+[tablist] Voz / Chat
+  [tab] Voz
+    [StaticText] Voz
+  [tab] Chat
+    [StaticText] Chat
+[heading3] Implemente com confiança
+  [StaticText] Implemente com confiança
+[StaticText] Defina limites, faça simulações e valide o comportamento do agente com testes automáticos – antes de qualquer coisa chegar ao cliente.
+[heading3] Meça resultados e otimize
+  [StaticText] Meça resultados e otimize
+[StaticText] Acompanhe taxas de sucesso, CSAT, uso de idiomas e mais com análises integradas – ou aprofunde com transcrições completas, histórico de conversas e logs de depu
+[StaticText] O ElevenAgents oferece uma plataforma única para implementar agentes IA em escala – configure como seu agente pensa e fala, atenda clientes em todos os canais, 
+[link] Modo Expressivo para Agentes
+  [StaticText] Modo Expressivo para Agentes
+[link] Primeiros passos com Agentes
+  [StaticText] Primeiros passos com Agentes
+[link] Modelos de workflow
+  [StaticText] Modelos de workflow
+[link] Histórias de clientes
+  [StaticText] Histórias de clientes
+[heading2] Dezenas de integrações com as ferramentas que você já usa
+  [StaticText] Dezenas de integrações com as ferramentas que você já usa
+[link] Explorar integrações
+  [StaticText] Explorar integrações
+[link] Zapier
+  [StaticText] Zapier
+[link] Salesforce
+  [StaticText] Salesforce
+[link] Stripe
+  [StaticText] Stripe
+[link] Hubspot
+  [StaticText] Hubspot
+[link] Shopify
+  [StaticText] Shopify
+[link] Zendesk
+  [StaticText] Zendesk
+[link] Plivo — cópia
+  [StaticText] Plivo — cópia
+[link] Twilio
+  [StaticText] Twilio
+[link] Amazon Connect
+  [StaticText] Amazon Connect
+[heading2] O ElevenAgents atende todas as áreas e casos de uso
+  [StaticText] O ElevenAgents atende todas as áreas e casos de uso
+[tablist] Categorias de demos de agentes
+  [tab] Suporte
+    [StaticText] Suporte
+  [tab] Vendas
+    [StaticText] Vendas
+  [tab] Operações
+    [StaticText] Operações
+  [tab] Marketing
+    [StaticText] Marketing
+  [tab] Talentos
+    [StaticText] Talentos
+[StaticText] Suporte
+[StaticText] Resolver e direcionar problemas
+[link] Clonar agente
+  [StaticText] Clonar agente
+[button] Reproduzir
+[tablist] Demos de Suporte
+  [tab] Suporte a pedidos Status do pedido e rastreamento
+    [StaticText] Suporte a pedidos
+    [StaticText] Status do pedido e rastreamento
+  [tab] Agente de triagem Direcionar e priorizar chamados
+    [StaticText] Agente de triagem
+    [StaticText] Direcionar e priorizar chamados
+  [tab] Agente de recepção Atendimento de chamadas recebidas
+    [StaticText] Agente de recepção
+    [StaticText] Atendimento de chamadas recebidas
+  [tab] Agente de FAQ Consulta à base de conhecimento
+    [StaticText] Agente de FAQ
+    [StaticText] Consulta à base de conhecimento
+[heading2] Armazene e gerencie dados do seu jeito, em qualquer lugar
+  [StaticText] Armazene e gerencie dados do seu jeito, em qualquer lugar
+[link] Agents para Empresas
+  [StaticText] Agents para Empresas
+[StaticText] SOC 2 Tipo II
+[StaticText] ISO 27001
+[StaticText] Residência Regional de Dados
+[StaticText] Modelo de Retenção Zero
+[StaticText] Opções on-premises
+[StaticText] ISO 42001
+[StaticText] AIUC-1
+[StaticText] Compatível com HIPAA
+[StaticText] PCI DSS Nível 1
+[link] Ver todas as certificações
+  [StaticText] Ver todas as certificações
+[heading2] Comece a usar o ElevenAgents hoje
+  [StaticText] Comece a usar o ElevenAgents hoje
+[heading3] Crie seu agente
+  [StaticText] Crie seu agente
+[StaticText] Crie seu primeiro agente em minutos – sem precisar de engenharia.
+[StaticText] 15 minutos grátis inclusos
+[StaticText] Chamadas e mensagens de texto
+[StaticText] Licença comercial inclusa
+[StaticText] Mais de 17 mil vozes em mais de 90 idiomas
+[link] Criar conta
+  [StaticText] Criar conta
+[heading3] ElevenAgents para empresas
+  [StaticText] ElevenAgents para empresas
+[StaticText] Implemente em escala com a conformidade, suporte e segurança que você precisa.
+[StaticText] Engenheiros dedicados
+[StaticText] Proteção de dados empresarial
+[StaticText] Residência de dados nos EUA, UE e Índia
+[StaticText] SLA, SSO e controles de acesso empresariais
+[link] Fale com a gente
+  [StaticText] Fale com a gente
+[heading3] APIs e SDKs do ElevenAgent
+  [StaticText] APIs e SDKs do ElevenAgent
+[StaticText] Adicione agentes de voz e chat ao seu produto com poucas linhas de código.
+[StaticText] SDKs nativos para web e mobile
+[StaticText] APIs WebSocket e REST
+[StaticText] LLM-agnóstico – use seu próprio modelo
+[StaticText] Comunidade com mais de 100 mil desenvolvedores
+[link] Ver documentação
+  [StaticText] Ver documentação
+[StaticText] import
+[StaticText] { ElevenLabsClient }
+[StaticText] from
+[StaticText] "@elevenlabs/elevenlabs-js"
+[StaticText] ;
+[StaticText] import
+[StaticText] "dotenv/config"
+[StaticText] ;
+[StaticText] const
+[StaticText] elevenlabs
+[StaticText] = new ElevenLabsClient();
+[StaticText] const
+[StaticText] agent
+[StaticText] =
+[StaticText] await
+[StaticText] elevenlabs.conversationalAi.agents.create({
+[StaticText] name:
+[StaticText] "My voice agent"
+[StaticText] ,
+[StaticText] tags:
+[StaticText] [
+[StaticText] "support"
+[StaticText] ],
+[StaticText] // List of tags to help classify and filter the agent
+[heading2] Histórias recentes
+  [StaticText] Histórias recentes
+[link] Todas as histórias
+  [StaticText] Todas as histórias
+[heading3] ElevenLabs e Deutsche Telekom apresentam o primeiro assistente de chamadas com IA integrado à rede do mundo
+  [link] ElevenLabs e Deutsche Telekom apresentam o primeiro assistente de chamadas com IA integrado à rede do mundo
+    [StaticText] ElevenLabs e Deutsche Telekom apresentam o primeiro assistente de chamadas com IA integrado à rede do mundo
+[StaticText] Categoria
+[StaticText] Histórias de clientes
+[StaticText] Data
+[StaticText] 2 de mar. de 2026
+[heading3] Klarna reduz o tempo de resolução em 10x com o ElevenAgents
+  [link] Klarna reduz o tempo de resolução em 10x com o ElevenAgents
+    [StaticText] Klarna reduz o tempo de resolução em 10x com o ElevenAgents
+[StaticText] Categoria
+[StaticText] Histórias de clientes
+[StaticText] Data
+[StaticText] 11 de fev. de 2026
+[heading3] Meesho oferece suporte ao cliente em tempo real e multilíngue com agentes de voz
+  [link] Meesho oferece suporte ao cliente em tempo real e multilíngue com agentes de voz
+    [StaticText] Meesho oferece suporte ao cliente em tempo real e multilíngue com agentes de voz
+[StaticText] Categoria
+[StaticText] Histórias de clientes
+[StaticText] Data
+[StaticText] 17 de jul. de 2025
+[heading2] Perguntas frequentes
+  [StaticText] Perguntas frequentes
+[heading3] Em quais canais posso implementar agentes?
+  [button] Em quais canais posso implementar agentes?
+    [StaticText] Em quais canais posso implementar agentes?
+[heading3] Quais idiomas e vozes o ElevenAgents oferece?
+  [button] Quais idiomas e vozes o ElevenAgents oferece?
+    [StaticText] Quais idiomas e vozes o ElevenAgents oferece?
+[heading3] Quanto tempo leva para criar e implementar um agente?
+  [button] Quanto tempo leva para criar e implementar um agente?
+    [StaticText] Quanto tempo leva para criar e implementar um agente?
+[heading3] Posso usar meu próprio LLM ou integrar as ferramentas que já uso?
+  [button] Posso usar meu próprio LLM ou integrar as ferramentas que já uso?
+    [StaticText] Posso usar meu próprio LLM ou integrar as ferramentas que já uso?
+[heading3] Quais certificações de conformidade o ElevenAgents tem?
+  [button] Quais certificações de conformidade o ElevenAgents tem?
+    [StaticText] Quais certificações de conformidade o ElevenAgents tem?
+[heading3] Como o ElevenAgents se diferencia de outras plataformas de agentes de IA?
+  [button] Como o ElevenAgents se diferencia de outras plataformas de agentes de IA?
+    [StaticText] Como o ElevenAgents se diferencia de outras plataformas de agentes de IA?
+[StaticText] Plataforma de Comunicação com IA
+[link] Falar com vendas
+  [StaticText] Falar com vendas
+[link] Crie um agente IA
+  [StaticText] Crie um agente IA
+[link] ElevenLabs
+[button] Portuguese Selecionar idioma
+  [StaticText] Portuguese
+[link] ElevenCreative
+  [StaticText] ElevenCreative
+[link] Text to Speech
+  [StaticText] Text to Speech
+[link] Speech to Text
+  [StaticText] Speech to Text
+[link] Modificador de Voz IA
+  [StaticText] Modificador de Voz IA
+[link] Efeitos Sonoros
+  [StaticText] Efeitos Sonoros
+[link] Clonar Voz com IA
+  [StaticText] Clonar Voz com IA
+[link] Isolador de Voz
+  [StaticText] Isolador de Voz
+[link] Gerador de música com IA
+  [StaticText] Gerador de música com IA
+[link] Estúdio
+  [StaticText] Estúdio
+[link] Design de voz
+  [StaticText] Design de voz
+[link] Gerador de Voz IA
+  [StaticText] Gerador de Voz IA
+[link] Gerador de imagens com IA
+  [StaticText] Gerador de imagens com IA
+[link] Gerador de vídeos com IA
+  [StaticText] Gerador de vídeos com IA
+[link] Mecanismo de anúncios
+  [StaticText] Mecanismo de anúncios
+[link] ElevenAgents
+  [StaticText] ElevenAgents
+[link] Agentes de voz
+  [StaticText] Agentes de voz
+[link] IA conversacional
+  [StaticText] IA conversacional
+[link] Integrações
+  [StaticText] Integrações
+[link] Telecomunicações
+  [StaticText] Telecomunicações
+[link] Serviços financeiros
+  [StaticText] Serviços financeiros
+[link] Saúde
+  [StaticText] Saúde
+[link] Governo
+  [StaticText] Governo
+[link] Tecnologia
+  [StaticText] Tecnologia
+[link] Varejo e e-commerce
+  [StaticText] Varejo e e-commerce
+[link] Viagens e hospitalidade
+  [StaticText] Viagens e hospitalidade
+[link] Atendimento ao cliente
+  [StaticText] Atendimento ao cliente
+[link] Chatbots
+  [StaticText] Chatbots
+[link] ElevenAPI
+  [StaticText] ElevenAPI
+[link] Referência da API
+  [StaticText] Referência da API
+[link] API de agentes
+  [StaticText] API de agentes
+[link] Mecanismo de fala
+  [StaticText] Mecanismo de fala
+[link] API de dublagem
+  [StaticText] API de dublagem
+[link] API de Text to Speech
+  [StaticText] API de Text to Speech
+[link] API de Speech to Text
+  [StaticText] API de Speech to Text
+[link] API de efeitos sonoros
+  [StaticText] API de efeitos sonoros
+[link] API de música
+  [StaticText] API de música
+[link] Chave de API
+  [StaticText] Chave de API
+[StaticText] Recursos
+[link] Blog
+  [StaticText] Blog
+[link] Marketplace Iconic
+  [StaticText] Marketplace Iconic
+[link] Programa de impacto
+  [StaticText] Programa de impacto
+[link] Bolsas para startups
+  [StaticText] Bolsas para startups
+[link] Central de ajuda
+  [StaticText] Central de ajuda
+[link] Webinars
+  [StaticText] Webinars
+[link] Documentação
+  [StaticText] Documentação
+[link] Empresas
+  [StaticText] Empresas
+[link] Central de confiança
+  [StaticText] Central de confiança
+[link] Índia
+  [StaticText] Índia
+[StaticText] Redes sociais
+[button] X
+  [StaticText] X
+[button] LinkedIn
+  [StaticText] LinkedIn
+[link] GitHub
+  [StaticText] GitHub
+[link] YouTube
+  [StaticText] YouTube
+[link] Discord
+  [StaticText] Discord
+[link] TikTok
+  [StaticText] TikTok
+[link] Instagram
+  [StaticText] Instagram
+[link] Facebook
+  [StaticText] Facebook
+[link] Reddit
+  [StaticText] Reddit
+[StaticText] Empresa
+[link] Sobre nós
+  [StaticText] Sobre nós
+[link] Carreiras
+  [StaticText] Carreiras
+[link] Segurança
+  [StaticText] Segurança
+[link] Marca e kit de imprensa
+  [StaticText] Marca e kit de imprensa
+[link] ElevenLabs Summit
+  [StaticText] ElevenLabs Summit
+[button] Políticas
+  [StaticText] Políticas
+[button] Configurações de Cookies
+  [StaticText] Configurações de Cookies
+[StaticText] Select preferred language
+[StaticText] We noticed you are browsing in
+[StaticText] Português
+[StaticText] . Would you prefer to view the site in
+[StaticText] English
+[StaticText] instead?
+[button] Fechar
+[link] Switch to English
+  [StaticText] Switch to English
+[button] Experimente um agente ElevenLabs
+  [StaticText] Experimente um agente ElevenLabs
+[region] Notifications

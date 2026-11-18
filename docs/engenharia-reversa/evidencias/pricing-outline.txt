@@ -1,0 +1,444 @@
+[StaticText] Ganhe seu primeiro mês por apenas $1
+[link] Assinar
+  [StaticText] Assinar
+[link] Pular para o conteúdo
+  [StaticText] Pular para o conteúdo
+[link] ElevenLabs
+[button] Produtos
+  [StaticText] Produtos
+[button] Soluções
+  [StaticText] Soluções
+[link] Clientes
+  [StaticText] Clientes
+[button] Recursos
+  [StaticText] Recursos
+[link] Empresas
+  [StaticText] Empresas
+[link] Preços
+  [StaticText] Preços
+[link] Entrar
+  [StaticText] Entrar
+[link] Criar conta
+  [StaticText] Criar conta
+[heading1] Preços flexíveis para suas necessidades
+  [StaticText] Preços flexíveis para suas necessidades
+[link] ElevenCreative
+  [StaticText] ElevenCreative
+[link] ElevenAgents
+  [StaticText] ElevenAgents
+[link] ElevenAPI
+  [StaticText] ElevenAPI
+[button] Cobrança mensal
+  [StaticText] Cobrança mensal
+[heading3] Grátis
+  [StaticText] Grátis
+[StaticText] $ 0
+[StaticText] /mês
+[link] Comece agora - é grátis
+  [StaticText] Comece agora - é grátis
+[StaticText] 15 minutos
+[StaticText] de chamadas inclusos
+[StaticText] 4 chamadas simultâneas
+[StaticText] Configurações do Realtime
+[StaticText] Construtor de workflows
+[StaticText] Base de conhecimento
+[StaticText] Multilíngue
+[StaticText] Widget
+[heading3] Starter
+  [StaticText] Starter
+[StaticText] $ 1
+[StaticText] primeiro mês
+[StaticText] Depois, $ 6 por mês
+[link] Escolha Starter
+  [StaticText] Escolha Starter
+[StaticText] Tudo no grátis, mais
+[StaticText] 75 minutos
+[StaticText] de chamadas inclusos
+[StaticText] 6 chamadas simultâneas
+[StaticText] Mensagens de texto
+[StaticText] Licença Comercial
+[heading3] Creator
+  [StaticText] Creator
+[StaticText] Popular
+[StaticText] $ 11
+[StaticText] primeiro mês
+[StaticText] Depois, $ 22 por mês
+[link] Escolha Creator
+  [StaticText] Escolha Creator
+[StaticText] Tudo no Starter, mais
+[StaticText] 275 minutos
+[StaticText] de chamadas inclusos
+[StaticText] 10 chamadas simultâneas
+[StaticText] Minutos Adicionais
+[heading3] Pro
+  [StaticText] Pro
+[StaticText] $ 99
+[StaticText] /mês
+[link] Escolha Pro
+  [StaticText] Escolha Pro
+[StaticText] Tudo no Creator, mais
+[StaticText] 1.238 minutos
+[StaticText] de chamadas inclusos
+[StaticText] 20 chamadas simultâneas
+[heading3] Para empresas
+  [StaticText] Para
+  [StaticText] empresas
+[heading3] Scale
+  [StaticText] Scale
+[StaticText] $ 299
+[StaticText] /mês
+[link] Escolha Scale
+  [StaticText] Escolha Scale
+[StaticText] Tudo no Pro, mais
+[StaticText] 3.738 minutos
+[StaticText] de chamadas inclusos
+[StaticText] 30 chamadas simultâneas
+[StaticText] 3 Assentos no Workspace
+[heading3] Business
+  [StaticText] Business
+[StaticText] $ 990
+[StaticText] /mês
+[link] Escolha Business
+  [StaticText] Escolha Business
+[StaticText] Tudo no Scale, mais
+[StaticText] 12.375 minutos
+[StaticText] de chamadas inclusos
+[StaticText] 40 chamadas simultâneas
+[StaticText] 10 vagas no workspace
+[StaticText] 10 clones de voz profissionais
+[heading3] Enterprise
+  [StaticText] Enterprise
+[StaticText] Preço personalizado
+[link] Entre em contato
+  [StaticText] Entre em contato
+[StaticText] Tudo no Business, mais
+[StaticText] Limites de concorrência elevados
+[StaticText] Termos personalizados e garantias em torno de DPA/SLAs
+[StaticText] BAAs para clientes HIPAA
+[StaticText] SSO Personalizado
+[StaticText] Mais assentos e vozes
+[StaticText] Descontos significativos em escala
+[StaticText] Suporte prioritário
+[StaticText] Os preços não incluem impostos, taxas e encargos.
+[heading2] Calcule seus custos com base nas suas necessidades de uso
+  [StaticText] Calcule seus custos com base nas suas necessidades de uso
+[StaticText] 1
+[heading3] Modelo de pagamento
+  [StaticText] Modelo de pagamento
+[tablist] Modelo de pagamento
+  [tab] Assinatura
+    [StaticText] Assinatura
+  [tab] Pague conforme o uso
+    [StaticText] Pague conforme o uso
+[button] Cobrança mensal
+  [StaticText] Cobrança mensal
+[StaticText] 2
+[heading3] Configure seu agente
+  [StaticText] Configure seu agente
+[StaticText] Minutos de conversa por mês
+[StaticText] 270 min
+[slider] Minutos de conversa por mês
+[StaticText] 0
+[StaticText] 19k+
+[StaticText] Modelo
+[button] Modelo
+  [StaticText] Gemini 2.5 Flash
+  [StaticText] $0.0029
+  [StaticText] /min
+[StaticText] Custos estimados em USD, incluindo a voz da plataforma ElevenAgents e os modelos de LLM. Não inclui cobranças do seu próprio provedor de telefonia.
+[heading3] Creator
+  [StaticText] Creator
+[StaticText] $ 11
+[StaticText] $ 22
+[StaticText] Plano recomendado para o seu uso
+[StaticText] por mês
+[StaticText] Mais popular
+[StaticText] Primeiro mês com 50% de desconto
+[StaticText] Inclui 275 minutos de ligação por mês
+[StaticText] ($0.08/min para minutos extras)
+[StaticText] $ 0,78 / mês Gemini 2.5 Flash (deduzido dos créditos da ElevenLabs)
+[StaticText] Cancele quando quiser
+[link] Comece com Creator
+  [StaticText] Comece com Creator
+[StaticText] Lovable
+[StaticText] Synthesia
+[StaticText] Stripe
+[StaticText] Perplexity
+[StaticText] Twilio
+[heading2] Programa de Subsídios para Startups
+  [StaticText] Programa de Subsídios para Startups
+[StaticText] Desenvolva agentes de IA conversacional inteligentes e em tempo real no seu novo produto ou startup gratuitamente com um Subsídio da ElevenLabs.
+[link] Saiba mais
+  [StaticText] Saiba mais
+[StaticText] 12 Meses grátis
+[StaticText] Para desenvolver, lançar e testar
+[StaticText] 33M de Caracteres
+[StaticText] Válido por 12 meses
+[heading2] Preços do ElevenAgents
+  [StaticText] Preços do ElevenAgents
+[button] Cobrança mensal
+  [StaticText] Cobrança mensal
+[StaticText] Grátis / Pague conforme o uso
+[StaticText] Starter
+[StaticText] $ 6
+[StaticText] por mês
+[StaticText] ,
+[StaticText] primeiro mês $ 1
+[StaticText] Creator
+[StaticText] $ 22
+[StaticText] por mês
+[StaticText] ,
+[StaticText] primeiro mês $ 11
+[StaticText] Pro
+[StaticText] $ 99
+[StaticText] por mês
+[StaticText] Scale
+[StaticText] $ 299
+[StaticText] por mês
+[StaticText] Business
+[StaticText] $ 990
+[StaticText] por mês
+[StaticText] Hospedagem ElevenLabs
+[StaticText] Minutos incluídos (por minuto)
+[StaticText] Chamada adicional (por minuto)
+[StaticText] Mensagem de texto (por mensagem)
+[StaticText] Preço de pico (por minuto)
+[button] Saiba mais
+[StaticText] Chamadas simultâneas
+[button] Saiba mais
+[StaticText] 15 min
+[StaticText] $ 0,080
+[StaticText] $ 0,003
+[StaticText] $ 0,160
+[StaticText] 4
+[StaticText] 75 min
+[StaticText] $ 0,080
+[StaticText] $ 0,003
+[StaticText] $ 0,160
+[StaticText] 6
+[StaticText] 275 min
+[StaticText] $ 0,080
+[StaticText] $ 0,003
+[StaticText] $ 0,160
+[StaticText] 10
+[StaticText] 1.238 min
+[StaticText] $ 0,080
+[StaticText] $ 0,003
+[StaticText] $ 0,160
+[StaticText] 20
+[StaticText] 3.738 min
+[StaticText] $ 0,080
+[StaticText] $ 0,003
+[StaticText] $ 0,160
+[StaticText] 30
+[StaticText] 12.375 min
+[StaticText] $ 0,080
+[StaticText] $ 0,003
+[StaticText] $ 0,160
+[StaticText] 40
+[StaticText] Provedores externos
+[StaticText] LLM
+[StaticText] Provedor de Telefonia
+[link] De acordo com o uso e varia conforme o modelo.
+  [StaticText] De acordo com o uso e varia conforme o modelo.
+[StaticText] A preço de custo
+[link] De acordo com o uso e varia conforme o modelo.
+  [StaticText] De acordo com o uso e varia conforme o modelo.
+[StaticText] A preço de custo
+[link] De acordo com o uso e varia conforme o modelo.
+  [StaticText] De acordo com o uso e varia conforme o modelo.
+[StaticText] A preço de custo
+[link] De acordo com o uso e varia conforme o modelo.
+  [StaticText] De acordo com o uso e varia conforme o modelo.
+[StaticText] A preço de custo
+[link] De acordo com o uso e varia conforme o modelo.
+  [StaticText] De acordo com o uso e varia conforme o modelo.
+[StaticText] A preço de custo
+[link] De acordo com o uso e varia conforme o modelo.
+  [StaticText] De acordo com o uso e varia conforme o modelo.
+[StaticText] A preço de custo
+[StaticText] Recursos incluídos
+[StaticText] Transformar Texto em Áudio
+[StaticText] Speech to Text
+[StaticText] Configurações do Realtime
+[StaticText] Bases de conhecimento
+[StaticText] RAG
+[StaticText] Telefonia
+[heading2] Perguntas Frequentes
+  [StaticText] Perguntas Frequentes
+[heading3] Quanto custam os planos do ElevenAgents por minuto e o que está incluído?
+  [button] Quanto custam os planos do ElevenAgents por minuto e o que está incluído?
+    [StaticText] Quanto custam os planos do ElevenAgents por minuto e o que está incluído?
+[heading3] Quantos agentes posso criar?
+  [button] Quantos agentes posso criar?
+    [StaticText] Quantos agentes posso criar?
+[heading3] Qual é o custo de usar um LLM com meu agente de voz?
+  [button] Qual é o custo de usar um LLM com meu agente de voz?
+    [StaticText] Qual é o custo de usar um LLM com meu agente de voz?
+[heading3] Vocês cobram extra por telefonia?
+  [button] Vocês cobram extra por telefonia?
+    [StaticText] Vocês cobram extra por telefonia?
+[heading3] O que é precificação de pico?
+  [button] O que é precificação de pico?
+    [StaticText] O que é precificação de pico?
+[heading3] O que acontece se eu fizer upgrade, downgrade ou cancelar minha assinatura?
+  [button] O que acontece se eu fizer upgrade, downgrade ou cancelar minha assinatura?
+    [StaticText] O que acontece se eu fizer upgrade, downgrade ou cancelar minha assinatura?
+[heading3] Quando posso cancelar minha assinatura?
+  [button] Quando posso cancelar minha assinatura?
+    [StaticText] Quando posso cancelar minha assinatura?
+[heading3] Como posso verificar quantos créditos tenho restantes?
+  [button] Como posso verificar quantos créditos tenho restantes?
+    [StaticText] Como posso verificar quantos créditos tenho restantes?
+[heading3] Que tipo de pagamento vocês aceitam?
+  [button] Que tipo de pagamento vocês aceitam?
+    [StaticText] Que tipo de pagamento vocês aceitam?
+[StaticText] Crie com o áudio de IA da mais alta qualidade
+[link] Falar com vendas
+  [StaticText] Falar com vendas
+[link] Inscreva-se
+  [StaticText] Inscreva-se
+[link] ElevenLabs
+[button] Portuguese Selecionar idioma
+  [StaticText] Portuguese
+[link] ElevenCreative
+  [StaticText] ElevenCreative
+[link] Text to Speech
+  [StaticText] Text to Speech
+[link] Speech to Text
+  [StaticText] Speech to Text
+[link] Modificador de Voz IA
+  [StaticText] Modificador de Voz IA
+[link] Efeitos Sonoros
+  [StaticText] Efeitos Sonoros
+[link] Clonar Voz com IA
+  [StaticText] Clonar Voz com IA
+[link] Isolador de Voz
+  [StaticText] Isolador de Voz
+[link] Gerador de música com IA
+  [StaticText] Gerador de música com IA
+[link] Estúdio
+  [StaticText] Estúdio
+[link] Design de voz
+  [StaticText] Design de voz
+[link] Gerador de Voz IA
+  [StaticText] Gerador de Voz IA
+[link] Gerador de imagens com IA
+  [StaticText] Gerador de imagens com IA
+[link] Gerador de vídeos com IA
+  [StaticText] Gerador de vídeos com IA
+[link] Mecanismo de anúncios
+  [StaticText] Mecanismo de anúncios
+[link] ElevenAgents
+  [StaticText] ElevenAgents
+[link] Agentes de voz
+  [StaticText] Agentes de voz
+[link] IA conversacional
+  [StaticText] IA conversacional
+[link] Integrações
+  [StaticText] Integrações
+[link] Telecomunicações
+  [StaticText] Telecomunicações
+[link] Serviços financeiros
+  [StaticText] Serviços financeiros
+[link] Saúde
+  [StaticText] Saúde
+[link] Governo
+  [StaticText] Governo
+[link] Tecnologia
+  [StaticText] Tecnologia
+[link] Varejo e e-commerce
+  [StaticText] Varejo e e-commerce
+[link] Viagens e hospitalidade
+  [StaticText] Viagens e hospitalidade
+[link] Atendimento ao cliente
+  [StaticText] Atendimento ao cliente
+[link] Chatbots
+  [StaticText] Chatbots
+[link] ElevenAPI
+  [StaticText] ElevenAPI
+[link] Referência da API
+  [StaticText] Referência da API
+[link] API de agentes
+  [StaticText] API de agentes
+[link] Mecanismo de fala
+  [StaticText] Mecanismo de fala
+[link] API de dublagem
+  [StaticText] API de dublagem
+[link] API de Text to Speech
+  [StaticText] API de Text to Speech
+[link] API de Speech to Text
+  [StaticText] API de Speech to Text
+[link] API de efeitos sonoros
+  [StaticText] API de efeitos sonoros
+[link] API de música
+  [StaticText] API de música
+[link] Chave de API
+  [StaticText] Chave de API
+[StaticText] Recursos
+[link] Blog
+  [StaticText] Blog
+[link] Marketplace Iconic
+  [StaticText] Marketplace Iconic
+[link] Programa de impacto
+  [StaticText] Programa de impacto
+[link] Bolsas para startups
+  [StaticText] Bolsas para startups
+[link] Central de ajuda
+  [StaticText] Central de ajuda
+[link] Webinars
+  [StaticText] Webinars
+[link] Documentação
+  [StaticText] Documentação
+[link] Empresas
+  [StaticText] Empresas
+[link] Central de confiança
+  [StaticText] Central de confiança
+[link] Índia
+  [StaticText] Índia
+[StaticText] Redes sociais
+[button] X
+  [StaticText] X
+[button] LinkedIn
+  [StaticText] LinkedIn
+[link] GitHub
+  [StaticText] GitHub
+[link] YouTube
+  [StaticText] YouTube
+[link] Discord
+  [StaticText] Discord
+[link] TikTok
+  [StaticText] TikTok
+[link] Instagram
+  [StaticText] Instagram
+[link] Facebook
+  [StaticText] Facebook
+[link] Reddit
+  [StaticText] Reddit
+[StaticText] Empresa
+[link] Sobre nós
+  [StaticText] Sobre nós
+[link] Carreiras
+  [StaticText] Carreiras
+[link] Segurança
+  [StaticText] Segurança
+[link] Marca e kit de imprensa
+  [StaticText] Marca e kit de imprensa
+[link] ElevenLabs Summit
+  [StaticText] ElevenLabs Summit
+[button] Políticas
+  [StaticText] Políticas
+[button] Configurações de Cookies
+  [StaticText] Configurações de Cookies
+[StaticText] Select preferred language
+[StaticText] We noticed you are browsing in
+[StaticText] Português
+[StaticText] . Would you prefer to view the site in
+[StaticText] English
+[StaticText] instead?
+[button] Fechar
+[link] Switch to English
+  [StaticText] Switch to English
+[button] Chat de voz
+  [StaticText] Chat de voz
+[region] Notifications

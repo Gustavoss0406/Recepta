@@ -1,0 +1,954 @@
+{
+ "desktop": {
+  "body": {
+   "tag": "BODY",
+   "text": "Ganhe seu primeiro mês por apenas $1\n\nAssinar\nPular para o c",
+   "font": "Inter, \"Inter Fallback\"",
+   "size": "18px",
+   "weight": "400",
+   "lh": "28.8px",
+   "ls": "normal",
+   "color": "rgb(0, 0, 0)",
+   "bg": "rgb(253, 252, 252)",
+   "radius": "0px",
+   "pad": "0px",
+   "h": 10918,
+   "w": 1425,
+   "border": "0px solid rgb(229, 229, 229)"
+  },
+  "header": null,
+  "h1": {
+   "tag": "H1",
+   "text": "Dando vida à tecnologia",
+   "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+   "size": "48px",
+   "weight": "300",
+   "lh": "52px",
+   "ls": "-0.96px",
+   "color": "rgb(0, 0, 0)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "radius": "0px",
+   "pad": "0px",
+   "h": 35,
+   "w": 563,
+   "border": "0px solid rgb(229, 229, 229)"
+  },
+  "h2": [
+   {
+    "tag": "H2",
+    "text": "Impulsionando as melhores empresas, criadores e desenvolvedo",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 60,
+    "w": 563,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Confiado por grandes desenvolvedores e empresas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 12,
+    "w": 563,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Duas plataformas baseadas na mesma pesquisa",
+    "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+    "size": "36px",
+    "weight": "300",
+    "lh": "42px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 68,
+    "w": 724,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Crie, edite e localize tudo em uma única plataforma de IA",
+    "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+    "size": "36px",
+    "weight": "300",
+    "lh": "42px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 68,
+    "w": 530,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "h3": [
+   {
+    "tag": "H3",
+    "text": "ElevenCreative",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "500",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 12,
+    "w": 256,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H3",
+    "text": "ElevenAgents",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "500",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 12,
+    "w": 256,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H3",
+    "text": "Crie fala ultra-realista, transforme ideias em vídeos, compo",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 108,
+    "w": 530,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "p": [
+   {
+    "tag": "P",
+    "text": "Ganhe seu primeiro mês por apenas $1",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "18px",
+    "weight": "400",
+    "lh": "28.8px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 14,
+    "w": 276,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "P",
+    "text": "Narração",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "4px 0px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "P",
+    "text": "Vozes expressivas que dão vida a audiolivros e podcasts",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "13px",
+    "weight": "400",
+    "lh": "18px",
+    "ls": "normal",
+    "color": "rgb(119, 113, 105)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "4px 0px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "buttons": [
+   {
+    "tag": "A",
+    "text": "Entrar",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 36,
+    "w": 68,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Criar conta",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 36,
+    "w": 101,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Fale com vendas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Entrar",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Criar conta",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 20px",
+    "h": 44,
+    "w": 124,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Falar com vendas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 20px",
+    "h": 44,
+    "w": 173,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "sections": [
+   {
+    "tag": "SCRIPT",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "STYLE",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 9649,
+    "top": 112,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 190,
+    "top": 9761,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 967,
+    "top": 9951,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   }
+  ],
+  "radii": {
+   "9999px": 131,
+   "16px": 61,
+   "16px 16px 0px 0px": 3,
+   "12px": 15,
+   "2px": 12,
+   "4px": 51,
+   "0px 0px 16px 16px": 1,
+   "0px": 5,
+   "12px 12px 0px 0px": 2,
+   "0px 0px 0px 16px": 1,
+   "8px 0px 0px 8px": 1,
+   "8px": 4,
+   "10px": 7,
+   "20px": 5,
+   "7.2px 21.6px 21.6px": 1
+  },
+  "colors": [
+   [
+    "rgb(0, 0, 0)",
+    1804
+   ],
+   [
+    "rgb(119, 113, 105)",
+    124
+   ],
+   [
+    "rgb(255, 255, 255)",
+    91
+   ],
+   [
+    "rgb(245, 243, 241)",
+    41
+   ],
+   [
+    "rgba(0, 0, 0, 0.05)",
+    36
+   ],
+   [
+    "rgb(68, 64, 59)",
+    27
+   ],
+   [
+    "rgb(165, 159, 151)",
+    18
+   ],
+   [
+    "rgba(0, 0, 0, 0.3)",
+    18
+   ],
+   [
+    "rgb(235, 232, 228)",
+    12
+   ],
+   [
+    "rgb(244, 26, 47)",
+    9
+   ],
+   [
+    "rgb(10, 89, 210)",
+    9
+   ],
+   [
+    "rgb(5, 47, 112)",
+    8
+   ],
+   [
+    "rgba(0, 0, 0, 0.075)",
+    4
+   ],
+   [
+    "rgb(253, 252, 252)",
+    3
+   ],
+   [
+    "rgb(239, 239, 239)",
+    3
+   ],
+   [
+    "rgba(255, 255, 255, 0.8)",
+    2
+   ],
+   [
+    "rgb(255, 71, 4)",
+    2
+   ],
+   [
+    "rgb(4, 71, 255)",
+    2
+   ],
+   [
+    "rgba(0, 0, 0, 0.1)",
+    1
+   ],
+   [
+    "rgba(0, 0, 0, 0.2)",
+    1
+   ],
+   [
+    "rgba(0, 0, 0, 0.01)",
+    1
+   ]
+  ],
+  "fonts": {
+   "Inter": 2154,
+   "Waldenburg-ML": 11,
+   "\"Geist Mono\"": 30
+  },
+  "maxWidths": {
+   "260px": 1,
+   "156.8px": 36,
+   "256px": 26,
+   "592px": 1,
+   "288px": 1,
+   "240px": 5,
+   "896px": 1,
+   "672px": 1,
+   "1440px": 2
+  }
+ },
+ "mobile": {
+  "body": {
+   "tag": "BODY",
+   "text": "Primeiro mês por $1\n\nPular para o conteúdo\nCriar conta\nDando",
+   "font": "Inter, \"Inter Fallback\"",
+   "size": "17px",
+   "weight": "400",
+   "lh": "23.8px",
+   "ls": "normal",
+   "color": "rgb(0, 0, 0)",
+   "bg": "rgb(253, 252, 252)",
+   "radius": "0px",
+   "pad": "0px",
+   "h": 16281,
+   "w": 375,
+   "border": "0px solid rgb(229, 229, 229)"
+  },
+  "header": null,
+  "h1": {
+   "tag": "H1",
+   "text": "Dando vida à tecnologia",
+   "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+   "size": "36px",
+   "weight": "300",
+   "lh": "42px",
+   "ls": "-0.72px",
+   "color": "rgb(0, 0, 0)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "radius": "0px",
+   "pad": "0px",
+   "h": 68,
+   "w": 335,
+   "border": "0px solid rgb(229, 229, 229)"
+  },
+  "h2": [
+   {
+    "tag": "H2",
+    "text": "Impulsionando as melhores empresas, criadores e desenvolvedo",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 108,
+    "w": 335,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Confiado por grandes desenvolvedores e empresas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 36,
+    "w": 335,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Duas plataformas baseadas na mesma pesquisa",
+    "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+    "size": "30px",
+    "weight": "300",
+    "lh": "36px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 94,
+    "w": 285,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Crie, edite e localize tudo em uma única plataforma de IA",
+    "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+    "size": "30px",
+    "weight": "300",
+    "lh": "36px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px 16px",
+    "h": 94,
+    "w": 317,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "h3": [
+   {
+    "tag": "H3",
+    "text": "ElevenCreative",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "500",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 12,
+    "w": 256,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H3",
+    "text": "ElevenAgents",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "500",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 12,
+    "w": 256,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H3",
+    "text": "Crie fala ultra-realista, transforme ideias em vídeos, compo",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 204,
+    "w": 285,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "p": [
+   {
+    "tag": "P",
+    "text": "Primeiro mês por $1",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "17px",
+    "weight": "400",
+    "lh": "23.8px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 10,
+    "w": 134,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "P",
+    "text": "Narração",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "4px 0px",
+    "h": 20,
+    "w": 89,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "P",
+    "text": "Vozes expressivas que dão vida a audiolivros e podcasts",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "13px",
+    "weight": "400",
+    "lh": "18px",
+    "ls": "normal",
+    "color": "rgb(119, 113, 105)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "4px 0px",
+    "h": 36,
+    "w": 201,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "buttons": [
+   {
+    "tag": "A",
+    "text": "Entrar",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Criar conta",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 36,
+    "w": 101,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Fale com vendas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Entrar",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Falar com vendas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Criar conta",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 20px",
+    "h": 44,
+    "w": 124,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "sections": [
+   {
+    "tag": "SCRIPT",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "STYLE",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 14282,
+    "top": 112,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 329,
+    "top": 14394,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 1559,
+    "top": 14723,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   }
+  ],
+  "radii": {
+   "9999px": 131,
+   "12px": 59,
+   "12px 12px 0px 0px": 3,
+   "8px": 17,
+   "2px": 12,
+   "4px": 51,
+   "0px": 4,
+   "8px 8px 0px 0px": 2,
+   "0px 0px 0px 12px": 1,
+   "8px 0px 0px 8px": 1,
+   "10px": 7,
+   "16px": 6,
+   "20px": 5,
+   "7.2px 21.6px 21.6px": 1
+  },
+  "colors": [
+   [
+    "rgb(0, 0, 0)",
+    1804
+   ],
+   [
+    "rgb(119, 113, 105)",
+    124
+   ],
+   [
+    "rgb(255, 255, 255)",
+    91
+   ],
+   [
+    "rgb(245, 243, 241)",
+    43
+   ],
+   [
+    "rgba(0, 0, 0, 0.05)",
+    36
+   ],
+   [
+    "rgb(68, 64, 59)",
+    27
+   ],
+   [
+    "rgb(165, 159, 151)",
+    18
+   ],
+   [
+    "rgba(0, 0, 0, 0.3)",
+    18
+   ],
+   [
+    "rgb(235, 232, 228)",
+    12
+   ],
+   [
+    "rgb(244, 26, 47)",
+    9
+   ],
+   [
+    "rgb(10, 89, 210)",
+    9
+   ],
+   [
+    "rgb(5, 47, 112)",
+    8
+   ],
+   [
+    "rgba(0, 0, 0, 0.075)",
+    4
+   ],
+   [
+    "rgb(253, 252, 252)",
+    3
+   ],
+   [
+    "rgb(239, 239, 239)",
+    3
+   ],
+   [
+    "rgba(255, 255, 255, 0.8)",
+    2
+   ],
+   [
+    "rgb(255, 71, 4)",
+    2
+   ],
+   [
+    "rgb(4, 71, 255)",
+    2
+   ],
+   [
+    "rgba(0, 0, 0, 0.1)",
+    1
+   ],
+   [
+    "rgba(0, 0, 0, 0.2)",
+    1
+   ],
+   [
+    "rgba(0, 0, 0, 0.01)",
+    1
+   ]
+  ],
+  "fonts": {
+   "Inter": 2154,
+   "Waldenburg-ML": 11,
+   "\"Geist Mono\"": 30
+  },
+  "maxWidths": {
+   "260px": 1,
+   "156.8px": 36,
+   "256px": 26,
+   "592px": 1,
+   "288px": 1,
+   "240px": 5,
+   "480px": 1,
+   "896px": 1,
+   "672px": 1,
+   "390px": 2
+  }
+ }
+}

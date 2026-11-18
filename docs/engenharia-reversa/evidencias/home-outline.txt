@@ -1,0 +1,510 @@
+[StaticText] Ganhe seu primeiro mês por apenas $1
+[link] Assinar
+  [StaticText] Assinar
+[link] Pular para o conteúdo
+  [StaticText] Pular para o conteúdo
+[link] ElevenLabs
+[button] Produtos
+  [StaticText] Produtos
+[button] Soluções
+  [StaticText] Soluções
+[link] Clientes
+  [StaticText] Clientes
+[button] Recursos
+  [StaticText] Recursos
+[link] Empresas
+  [StaticText] Empresas
+[link] Preços
+  [StaticText] Preços
+[link] Entrar
+  [StaticText] Entrar
+[link] Criar conta
+  [StaticText] Criar conta
+[heading1] Dando vida à tecnologia
+  [StaticText] Dando vida à tecnologia
+[link] Criar conta
+  [StaticText] Criar conta
+[link] Falar com vendas
+  [StaticText] Falar com vendas
+[heading2] Impulsionando as melhores empresas, criadores e desenvolvedores. Do ElevenAgents para experiência do cliente, ElevenCreative para criação de conteúdo, até o pri
+  [StaticText] Impulsionando as melhores empresas, criadores e desenvolvedores. Do ElevenAgents para experiência do cliente, ElevenCreative para criação de conteúdo, até o pri
+[tab] ElevenCreative
+  [StaticText] ElevenCreative
+[tab] ElevenAgents
+  [StaticText] ElevenAgents
+[tab] ElevenAPI
+  [StaticText] ElevenAPI
+[tab] Gerador de Voz IA
+  [StaticText] Gerador de Voz IA
+[tab] Transformar Texto em Áudio
+  [StaticText] Transformar Texto em Áudio
+[tab] Música
+  [StaticText] Música
+[tab] Speech to Text
+  [StaticText] Speech to Text
+[tab] Clonar Voz com IA
+  [StaticText] Clonar Voz com IA
+[tab] Dublagem
+  [StaticText] Dublagem
+[button] Reproduzir prévia de Nassim - Corporate Narrator
+[button] Reproduzir prévia de Christopher - Smooth, Deep and Engaging
+[button] Reproduzir prévia de Jessica Anne Bogart - Eloquent Villain
+[button] Reproduzir prévia de James - Husky Storyteller
+[button] Reproduzir prévia de Mark - Natural Conversations
+[button] Reproduzir prévia de Hope - Social Media
+[link] Anúncio
+  [StaticText] Anúncio
+[StaticText] Vozes persuasivas que incentivam ações e ajudam a fixar sua marca.
+[link] Personagens
+  [StaticText] Personagens
+[StaticText] Vozes divertidas e envolventes para desenhos animados ou jogos.
+[link] Narração
+  [StaticText] Narração
+[StaticText] Vozes expressivas que dão vida a audiolivros e podcasts
+[link] Conversacional
+  [StaticText] Conversacional
+[StaticText] Vozes naturais perfeitas para cenários informais.
+[link] Mídias Sociais
+  [StaticText] Mídias Sociais
+[StaticText] Vozes modernas e cativantes para conteúdo de curta duração
+[button] Voz anterior
+[button] Próxima voz
+[link] Criar conta
+  [StaticText] Criar conta
+[heading2] Confiado por grandes desenvolvedores e empresas
+  [StaticText] Confiado por grandes desenvolvedores e empresas
+[link] Ver todas as histórias
+  [StaticText] Ver todas as histórias
+[link] Twilio
+  [StaticText] Twilio
+[link] The Walt Disney Studios
+  [StaticText] The Walt Disney Studios
+[link] KPN
+  [StaticText] KPN
+[link] A Stripe agora é cliente da ElevenLabs
+  [StaticText] A Stripe agora é cliente da ElevenLabs
+[link] TELUS Digital
+  [StaticText] TELUS Digital
+[link] Cisco
+  [StaticText] Cisco
+[link] A Epic Games usa ElevenLabs
+  [StaticText] A Epic Games usa ElevenLabs
+[link] Nvidia
+  [StaticText] Nvidia
+[link] Revolut
+  [StaticText] Revolut
+[link] Meta
+  [StaticText] Meta
+[link] Zoom
+  [StaticText] Zoom
+[link] Ramp
+  [StaticText] Ramp
+[link] IBM
+  [StaticText] IBM
+[link] Deutsche Telekom
+  [StaticText] Deutsche Telekom
+[link] Klarna
+  [StaticText] Klarna
+[link] Harvey
+  [StaticText] Harvey
+[link] Salesforce + ElevenLabs
+  [StaticText] Salesforce + ElevenLabs
+[link] Adobe
+  [StaticText] Adobe
+[heading2] Duas plataformas baseadas na mesma pesquisa
+  [StaticText] Duas plataformas baseadas na mesma pesquisa
+[heading3] ElevenCreative
+  [link] ElevenCreative
+    [StaticText] ElevenCreative
+[StaticText] Gere fala ultra-realista, vídeos, músicas e efeitos sonoros.
+[heading3] ElevenAgents
+  [link] ElevenAgents
+    [StaticText] ElevenAgents
+[StaticText] Configure, implemente e monitore agentes conversacionais.
+[StaticText] ElevenCreative
+[heading2] Crie, edite e localize tudo em uma única plataforma de IA
+  [StaticText] Crie, edite e localize tudo em uma única plataforma de IA
+[link] Saiba mais
+  [StaticText] Saiba mais
+[heading3] Crie fala ultra-realista, transforme ideias em vídeos, componha músicas de qualquer gênero ou desenvolva efeitos sonoros imersivos. Produza seu próximo filme, a
+  [StaticText] Crie fala ultra-realista, transforme ideias em vídeos, componha músicas de qualquer gênero ou desenvolva efeitos sonoros imersivos. Produza seu próximo filme, a
+[heading3] Editor tudo-em-um com IA
+  [StaticText] Editor tudo-em-um com IA
+[StaticText] Crie podcasts, audiolivros e locuções em um editor baseado em toda a pesquisa de áudio da ElevenLabs.
+[heading3] Voz ultra-realista
+  [link] Voz ultra-realista
+    [StaticText] Voz ultra-realista
+[StaticText] Crie vozes expressivas e controláveis em mais de 90 idiomas.
+[textbox] Digite seu texto aqui, o gerador de voz IA da ElevenLabs irá lê-lo para você
+  [StaticText] Na antiga terra de Eldoria, onde os céus brilhavam e as florestas sussurravam segredos ao vento, vivia um dragão chamado Zephyros. [sarcastically] Não do tipo q
+[button] Portuguese (Brazil) Idioma
+  [StaticText] Portuguese (Brazil)
+[button] Lax Voz
+  [StaticText] Lax
+[button] Reproduzir
+  [StaticText] Reproduzir
+[heading3] Música
+  [link] Música
+    [StaticText] Música
+[StaticText] Gere faixas com qualidade de estúdio instantaneamente, em qualquer gênero, estilo, com ou sem vocais.
+[heading3] Efeitos sonoros
+  [link] Efeitos sonoros
+    [StaticText] Efeitos sonoros
+[StaticText] Crie efeitos sonoros personalizados, paisagens sonoras e áudios ambientes ou pesquise na biblioteca de SFX.
+[heading3] Vozes
+  [link] Vozes
+    [StaticText] Vozes
+[StaticText] Clone sua voz, crie uma a partir de um prompt ou explore mais de 17.500 vozes da biblioteca.
+[heading3] Imagem e Vídeo
+  [link] Imagem e Vídeo
+    [StaticText] Imagem e Vídeo
+[StaticText] Crie ou edite imagens e transforme ideias em vídeos com modelos avançados como Veo, Wan, Kling e Seedance.
+[tab] NVIDIA
+[tab] Clay
+[tab] Duolingo
+[StaticText] NVIDIA
+[StaticText] Usando tecnologia de voz sintética para criar conteúdo de marketing multilíngue
+[link] Comece agora - é grátis
+  [StaticText] Comece agora - é grátis
+[StaticText] ElevenAgents
+[heading2] Implemente agentes que falam, digitam e agem
+  [StaticText] Implemente agentes que falam, digitam e agem
+[link] Saiba mais
+  [StaticText] Saiba mais
+[heading3] Configure, implemente e monitore agentes naturais, com voz humana, em mais de 90 idiomas, com alta precisão e latência ultrabaixa por voz ou chat.
+  [StaticText] Configure, implemente e monitore agentes naturais, com voz humana, em mais de 90 idiomas, com alta precisão e latência ultrabaixa por voz ou chat.
+[heading3] Agentes omnichannel
+  [StaticText] Agentes omnichannel
+[StaticText] Agentes que ouvem, leem e interagem como humanos por telefone, chat, e-mail e WhatsApp.
+[heading3] Análises
+  [StaticText] Análises
+[StaticText] Meça facilmente taxas de sucesso e métricas de experiência do cliente, otimizando fluxos ao longo do tempo.
+[heading3] Testes
+  [StaticText] Testes
+[StaticText] Simule conversas reais para validar se os agentes se comportam como esperado antes da implantação.
+[heading3] Regras de segurança
+  [StaticText] Regras de segurança
+[StaticText] Defina regras claras de comportamento e conformidade para manter as respostas dos agentes alinhadas à política.
+[heading3] Fluxos de trabalho
+  [StaticText] Fluxos de trabalho
+[StaticText] Gerencie fluxos de conversa complexos, aplique lógica de negócios e conecte-se com segurança a sistemas.
+[tab] Deliveroo
+[tab] Meesho
+[tab] Cars24
+[link] Deliveroo
+  [StaticText] Deliveroo
+[StaticText] Usando agentes de voz para melhorar a experiência de motoristas e restaurantes
+[link] Comece agora - é grátis
+  [StaticText] Comece agora - é grátis
+[StaticText] ElevenAPI
+[heading2] Ou crie qualquer solução com nossas APIs poderosas
+  [StaticText] Ou crie qualquer solução com nossas APIs poderosas
+[link] Explorar documentação
+  [StaticText] Explorar documentação
+[heading3] API de Transformar Texto em Áudio
+  [link] API de Transformar Texto em Áudio
+    [StaticText] API de Transformar Texto em Áudio
+[StaticText] Modelos de Transformar Texto em Áudio líderes, avaliados de forma independente. Escolha o modelo ideal para consistência, latência ou controle emocional. Todos 
+[heading4] Eleven Flash
+  [StaticText] Eleven Flash
+[StaticText] Latência de 75ms para conversas em tempo real
+[heading4] Eleven Multilíngue
+  [StaticText] Eleven Multilíngue
+[StaticText] Fala mais realista e consistente
+[heading4] Eleven v4
+  [StaticText] Eleven v4
+[StaticText] Nosso modelo mais expressivo até agora
+[StaticText] import
+[StaticText] { ElevenLabsClient }
+[StaticText] from
+[StaticText] "@elevenlabs/elevenlabs-js"
+[StaticText] ;
+[StaticText] const
+[StaticText] client
+[StaticText] = new ElevenLabsClient({
+[StaticText] apiKey:
+[StaticText] "YOUR_API_KEY"
+[StaticText] });
+[StaticText] await
+[StaticText] client.textToSpeech.convert(
+[StaticText] "JBFqnCBsd6RMkjVDRZzb"
+[StaticText] , {
+[StaticText] outputFormat:
+[StaticText] "mp3_44100_128"
+[StaticText] ,
+[StaticText] text:
+[StaticText] "The first move is what sets everything in motion."
+[StaticText] ,
+[StaticText] modelId:
+[StaticText] "eleven_v4"
+[StaticText] ,
+});
+[button] Copiar
+[heading3] API de Speech to Text
+  [link] API de Speech to Text
+    [StaticText] API de Speech to Text
+[StaticText] O
+[link] modelo ASR mais preciso
+  [StaticText] modelo ASR mais preciso
+[StaticText] . Baixo custo, com suporte a diarização de falantes e marcação de tempo por caractere.
+[heading4] Eleven Scribe
+  [StaticText] Eleven Scribe
+[StaticText] 98% de precisão
+[heading3] API de Música
+  [link] API de Música
+    [StaticText] API de Música
+[StaticText] Música com qualidade de estúdio a partir de prompts em linguagem natural, em qualquer gênero, estilo ou estrutura.
+[heading4] Música
+  [StaticText] Música
+[StaticText] Desenvolvido em parceria com artistas, gravadoras e editoras. Liberado para amplo uso comercial. Os direitos comerciais variam conforme o plano de assinatura.
+[StaticText] import
+[StaticText] { ElevenLabsClient }
+[StaticText] from
+[StaticText] "@elevenlabs/elevenlabs-js"
+[StaticText] ;
+[StaticText] const
+[StaticText] {
+[StaticText] music
+[StaticText] } = new ElevenLabsClient();
+[StaticText] const
+[StaticText] compositionPlan
+[StaticText] =
+[StaticText] await
+[StaticText] music.compositionPlan.create({
+[StaticText] prompt:
+[StaticText] "Fast-paced electronic track for a video..."
+[StaticText] ,
+[StaticText] musicLengthMs: 10000
+[StaticText] ,
+});
+[button] Copiar
+[heading2] Mostrando o impacto global da pesquisa em áudio com IA
+  [StaticText] Mostrando o impacto global da pesquisa em áudio com IA
+[tablist] Estudos de caso
+  [tab] ElevenCreative
+    [StaticText] ElevenCreative
+  [tab] ElevenAgents
+    [StaticText] ElevenAgents
+[link] ElevenLabs apresenta tecnologia de voz IA multilíngue com NVIDIA ACE na Computex
+  [StaticText] ElevenLabs apresenta tecnologia de voz IA multilíngue com NVIDIA ACE na Computex
+[link] Lyrics of Livin’ de Matthew McConaughey cresce com a ElevenLabs
+  [StaticText] Lyrics of Livin’ de Matthew McConaughey cresce com a ElevenLabs
+[link] ElevenLabs Impact anuncia doação de US$1 bilhão em serviços e lança série documental original
+  [StaticText] ElevenLabs Impact anuncia doação de US$1 bilhão em serviços e lança série documental original
+[heading2] Histórias de clientes
+  [StaticText] Histórias de clientes
+[StaticText] Nossa visão é tornar a comunicação e a criação com tecnologia mais fluida. Criamos nossos próprios modelos, começando com o primeiro modelo de voz humana e agor
+[button] Anterior
+[button] Próximo
+[tablist] História da ElevenLabs
+  [tab] Evento 1: Eleven Multilíngue v2. Aug 2023
+  [tab] Evento 2: Eleven Turbo v2. Nov 2023
+  [tab] Evento 3: Eleven Flash v2.5. Dec 2024
+  [tab] Evento 4: Scribe. Feb 2025
+  [tab] Evento 5: Eleven v3. Jun 2025
+  [tab] Evento 6: Eleven Music. Aug 2025
+  [tab] Evento 7: Scribe v3 Live. Nov 2025
+  [tab] Evento 8: Scribe v3. Jan 2026
+  [tab] Evento 9: Modo Expressivo para Agents. Feb 2026
+  [tab] Evento 10: Music v2. May 2026
+  [tab] Evento 11: Dubbing Studio v2. May 2026
+  [tab] Evento 12: Eleven v4. Sep 2026
+[heading3] Eleven v4
+  [StaticText] Eleven v4
+[StaticText] Nossos modelos de voz mais rápidos e expressivos até hoje.
+[StaticText] Sep 2026
+[heading3] Avançando a pesquisa além da voz: transcrição, música, clonagem de voz, agentes inteligentes e mais.
+  [StaticText] Avançando a pesquisa além da voz: transcrição, música, clonagem de voz, agentes inteligentes e mais.
+[StaticText] Oct 2026
+[link] Como sua transcrição sabe onde cada palavra é falada
+  [StaticText] Como sua transcrição sabe onde cada palavra é falada
+[StaticText] Sep 2026
+[link] Apresentamos o Eleven v4, nosso modelo mais expressivo
+  [StaticText] Apresentamos o Eleven v4, nosso modelo mais expressivo
+[link] Saiba mais
+  [StaticText] Saiba mais
+[heading2] Avançando a pesquisa além da voz, explorando transcrição, música, Voice Cloning, agentes inteligentes e mais.
+  [StaticText] Avançando a pesquisa além da voz, explorando transcrição, música, Voice Cloning, agentes inteligentes e mais.
+[link] Saiba mais
+  [StaticText] Saiba mais
+[heading3] Moderação
+  [StaticText] Moderação
+[StaticText] Monitoramos ativamente o conteúdo gerado com nossa tecnologia.
+[heading3] Responsabilidade
+  [StaticText] Responsabilidade
+[StaticText] Acreditamos que o uso indevido deve ter consequências.
+[heading3] Proveniência
+  [StaticText] Proveniência
+[StaticText] Acreditamos que você deve saber se o áudio foi criado com IA.
+[heading2] Novidades
+  [StaticText] Novidades
+[link] Todos os posts
+  [StaticText] Todos os posts
+[heading3] Construindo a camada de interação para IA: tudo o que foi anunciado no ElevenLabs Summit NYC
+  [link] Construindo a camada de interação para IA: tudo o que foi anunciado no ElevenLabs Summit NYC
+    [StaticText] Construindo a camada de interação para IA: tudo o que foi anunciado no ElevenLabs Summit NYC
+[StaticText] Categoria
+[StaticText] Empresa
+[StaticText] Data
+[StaticText] 11 de nov. de 2026
+[heading3] Apresentamos o Eleven v4, nosso modelo mais expressivo
+  [link] Apresentamos o Eleven v4, nosso modelo mais expressivo
+    [StaticText] Apresentamos o Eleven v4, nosso modelo mais expressivo
+[StaticText] Categoria
+[StaticText] Pesquisa
+[StaticText] Data
+[StaticText] 28 de set. de 2026
+[heading3] Apresentamos o Eleven Realtime: uma maneira mais simples de criar agentes de voz naturais
+  [link] Apresentamos o Eleven Realtime: uma maneira mais simples de criar agentes de voz naturais
+    [StaticText] Apresentamos o Eleven Realtime: uma maneira mais simples de criar agentes de voz naturais
+[StaticText] Categoria
+[StaticText] Produto
+[StaticText] Data
+[StaticText] 20 de out. de 2026
+[StaticText] Plataforma de Comunicação com IA
+[link] Falar com vendas
+  [StaticText] Falar com vendas
+[link] Crie um agente IA
+  [StaticText] Crie um agente IA
+[link] ElevenLabs
+[button] Portuguese Selecionar idioma
+  [StaticText] Portuguese
+[link] ElevenCreative
+  [StaticText] ElevenCreative
+[link] Text to Speech
+  [StaticText] Text to Speech
+[link] Speech to Text
+  [StaticText] Speech to Text
+[link] Modificador de Voz IA
+  [StaticText] Modificador de Voz IA
+[link] Efeitos Sonoros
+  [StaticText] Efeitos Sonoros
+[link] Clonar Voz com IA
+  [StaticText] Clonar Voz com IA
+[link] Isolador de Voz
+  [StaticText] Isolador de Voz
+[link] Gerador de música com IA
+  [StaticText] Gerador de música com IA
+[link] Estúdio
+  [StaticText] Estúdio
+[link] Design de voz
+  [StaticText] Design de voz
+[link] Gerador de Voz IA
+  [StaticText] Gerador de Voz IA
+[link] Gerador de imagens com IA
+  [StaticText] Gerador de imagens com IA
+[link] Gerador de vídeos com IA
+  [StaticText] Gerador de vídeos com IA
+[link] Mecanismo de anúncios
+  [StaticText] Mecanismo de anúncios
+[link] ElevenAgents
+  [StaticText] ElevenAgents
+[link] Agentes de voz
+  [StaticText] Agentes de voz
+[link] IA conversacional
+  [StaticText] IA conversacional
+[link] Integrações
+  [StaticText] Integrações
+[link] Telecomunicações
+  [StaticText] Telecomunicações
+[link] Serviços financeiros
+  [StaticText] Serviços financeiros
+[link] Saúde
+  [StaticText] Saúde
+[link] Governo
+  [StaticText] Governo
+[link] Tecnologia
+  [StaticText] Tecnologia
+[link] Varejo e e-commerce
+  [StaticText] Varejo e e-commerce
+[link] Viagens e hospitalidade
+  [StaticText] Viagens e hospitalidade
+[link] Atendimento ao cliente
+  [StaticText] Atendimento ao cliente
+[link] Chatbots
+  [StaticText] Chatbots
+[link] ElevenAPI
+  [StaticText] ElevenAPI
+[link] Referência da API
+  [StaticText] Referência da API
+[link] API de agentes
+  [StaticText] API de agentes
+[link] Mecanismo de fala
+  [StaticText] Mecanismo de fala
+[link] API de dublagem
+  [StaticText] API de dublagem
+[link] API de Text to Speech
+  [StaticText] API de Text to Speech
+[link] API de Speech to Text
+  [StaticText] API de Speech to Text
+[link] API de efeitos sonoros
+  [StaticText] API de efeitos sonoros
+[link] API de música
+  [StaticText] API de música
+[link] Chave de API
+  [StaticText] Chave de API
+[StaticText] Recursos
+[link] Blog
+  [StaticText] Blog
+[link] Marketplace Iconic
+  [StaticText] Marketplace Iconic
+[link] Programa de impacto
+  [StaticText] Programa de impacto
+[link] Bolsas para startups
+  [StaticText] Bolsas para startups
+[link] Central de ajuda
+  [StaticText] Central de ajuda
+[link] Webinars
+  [StaticText] Webinars
+[link] Documentação
+  [StaticText] Documentação
+[link] Empresas
+  [StaticText] Empresas
+[link] Central de confiança
+  [StaticText] Central de confiança
+[link] Índia
+  [StaticText] Índia
+[StaticText] Redes sociais
+[button] X
+  [StaticText] X
+[button] LinkedIn
+  [StaticText] LinkedIn
+[link] GitHub
+  [StaticText] GitHub
+[link] YouTube
+  [StaticText] YouTube
+[link] Discord
+  [StaticText] Discord
+[link] TikTok
+  [StaticText] TikTok
+[link] Instagram
+  [StaticText] Instagram
+[link] Facebook
+  [StaticText] Facebook
+[link] Reddit
+  [StaticText] Reddit
+[StaticText] Empresa
+[link] Sobre nós
+  [StaticText] Sobre nós
+[link] Carreiras
+  [StaticText] Carreiras
+[link] Segurança
+  [StaticText] Segurança
+[link] Marca e kit de imprensa
+  [StaticText] Marca e kit de imprensa
+[link] ElevenLabs Summit
+  [StaticText] ElevenLabs Summit
+[button] Políticas
+  [StaticText] Políticas
+[button] Configurações de Cookies
+  [StaticText] Configurações de Cookies
+[StaticText] Select preferred language
+[StaticText] We noticed you are browsing in
+[StaticText] Português
+[StaticText] . Would you prefer to view the site in
+[StaticText] English
+[StaticText] instead?
+[button] Fechar
+[link] Switch to English
+  [StaticText] Switch to English
+[region] Notifications

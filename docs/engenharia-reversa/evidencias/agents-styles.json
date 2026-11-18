@@ -1,0 +1,1008 @@
+{
+ "desktop": {
+  "body": {
+   "tag": "BODY",
+   "text": "Conheça o Eleven v4, nosso modelo mais expressivo até agora.",
+   "font": "Inter, \"Inter Fallback\"",
+   "size": "18px",
+   "weight": "400",
+   "lh": "28.8px",
+   "ls": "normal",
+   "color": "rgb(0, 0, 0)",
+   "bg": "rgb(253, 252, 252)",
+   "radius": "0px",
+   "pad": "0px",
+   "h": 10561,
+   "w": 1425,
+   "border": "0px solid rgb(229, 229, 229)"
+  },
+  "header": {
+   "tag": "HEADER",
+   "text": "Triage Agent\n/\nMain",
+   "font": "Inter, \"Inter Fallback\"",
+   "size": "18px",
+   "weight": "400",
+   "lh": "28.8px",
+   "ls": "normal",
+   "color": "rgb(0, 0, 0)",
+   "bg": "rgb(255, 255, 255)",
+   "radius": "0px",
+   "pad": "0px 12px",
+   "h": 48,
+   "w": 800,
+   "border": ""
+  },
+  "h1": {
+   "tag": "H1",
+   "text": "Agentes conversacionais que parecem humanos",
+   "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+   "size": "48px",
+   "weight": "300",
+   "lh": "52px",
+   "ls": "-0.96px",
+   "color": "rgb(0, 0, 0)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "radius": "0px",
+   "pad": "0px",
+   "h": 87,
+   "w": 660,
+   "border": "0px solid rgb(229, 229, 229)"
+  },
+  "h2": [
+   {
+    "tag": "H2",
+    "text": "Configure, implante e monitore agentes naturais, com vozes h",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 60,
+    "w": 466,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Confiado por grandes empresas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 12,
+    "w": 563,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Agentes de voz e chat criados para melhorar suporte, vendas ",
+    "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+    "size": "36px",
+    "weight": "300",
+    "lh": "42px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 68,
+    "w": 724,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Mais de 10 milhões de conversas por semana gerando resultado",
+    "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+    "size": "36px",
+    "weight": "300",
+    "lh": "42px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 110,
+    "w": 530,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "h3": [
+   {
+    "tag": "H3",
+    "text": "Melhore a experiência do cliente",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "15px",
+    "weight": "400",
+    "lh": "22px",
+    "ls": "0.15px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 11,
+    "w": 295,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H3",
+    "text": "Impulsione o crescimento em todo o funil",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "15px",
+    "weight": "400",
+    "lh": "22px",
+    "ls": "0.15px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 33,
+    "w": 295,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H3",
+    "text": "Aumente a eficiência",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "15px",
+    "weight": "400",
+    "lh": "22px",
+    "ls": "0.15px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 11,
+    "w": 295,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "p": [
+   {
+    "tag": "P",
+    "text": "Conheça o Eleven v4, nosso modelo mais expressivo até agora.",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "18px",
+    "ls": "0.14px",
+    "color": "rgb(89, 84, 79)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 10,
+    "w": 430,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "P",
+    "text": "Agendamento de horários",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "15px",
+    "weight": "500",
+    "lh": "22px",
+    "ls": "0.15px",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 11,
+    "w": 189,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "P",
+    "text": "Crie seu próprio agente",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "18px",
+    "weight": "400",
+    "lh": "28.8px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px 18px 0px 0px",
+    "h": 10,
+    "w": 177,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "buttons": [
+   {
+    "tag": "A",
+    "text": "Entrar",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 36,
+    "w": 68,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Criar conta",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 36,
+    "w": 101,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Fale com vendas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Entrar",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Falar com vendas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 20px",
+    "h": 44,
+    "w": 173,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Criar um agente IA",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 20px",
+    "h": 44,
+    "w": 181,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "sections": [
+   {
+    "tag": "SCRIPT",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "STYLE",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 48,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "8px",
+    "pb": "8px"
+   },
+   {
+    "tag": "DIV",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 9236,
+    "top": 168,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 190,
+    "top": 9404,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 967,
+    "top": 9594,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   }
+  ],
+  "radii": {
+   "9999px": 90,
+   "6px": 15,
+   "16px": 25,
+   "4px": 113,
+   "7.2px 21px 21px": 2,
+   "2px": 16,
+   "24px": 4,
+   "16px 16px 0px 0px": 1,
+   "8px": 1,
+   "10px": 26
+  },
+  "colors": [
+   [
+    "rgb(0, 0, 0)",
+    1748
+   ],
+   [
+    "rgb(119, 113, 105)",
+    139
+   ],
+   [
+    "rgb(255, 255, 255)",
+    137
+   ],
+   [
+    "rgb(165, 159, 151)",
+    51
+   ],
+   [
+    "rgba(0, 0, 0, 0.05)",
+    44
+   ],
+   [
+    "rgb(245, 243, 241)",
+    24
+   ],
+   [
+    "rgb(235, 232, 228)",
+    20
+   ],
+   [
+    "rgba(0, 0, 0, 0.3)",
+    18
+   ],
+   [
+    "rgba(0, 0, 0, 0.075)",
+    13
+   ],
+   [
+    "rgba(0, 0, 0, 0.2)",
+    9
+   ],
+   [
+    "rgba(0, 0, 0, 0.5)",
+    7
+   ],
+   [
+    "rgb(244, 26, 47)",
+    6
+   ],
+   [
+    "rgb(5, 47, 112)",
+    4
+   ],
+   [
+    "rgb(10, 89, 210)",
+    4
+   ],
+   [
+    "rgb(231, 0, 11)",
+    3
+   ],
+   [
+    "rgb(250, 248, 248)",
+    3
+   ],
+   [
+    "rgb(68, 64, 59)",
+    2
+   ],
+   [
+    "rgb(255, 71, 4)",
+    2
+   ],
+   [
+    "rgb(4, 71, 255)",
+    2
+   ],
+   [
+    "rgba(0, 0, 0, 0.1)",
+    1
+   ],
+   [
+    "rgb(89, 84, 79)",
+    1
+   ],
+   [
+    "rgb(253, 252, 252)",
+    1
+   ],
+   [
+    "rgba(255, 255, 255, 0.6)",
+    1
+   ],
+   [
+    "rgba(255, 255, 255, 0.2)",
+    1
+   ],
+   [
+    "rgb(215, 210, 204)",
+    1
+   ]
+  ],
+  "fonts": {
+   "Inter": 2201,
+   "Waldenburg-ML": 10,
+   "": 4,
+   "\"Geist Mono\"": 17
+  },
+  "maxWidths": {
+   "320px": 1,
+   "156.8px": 36,
+   "576px": 2,
+   "356px": 1,
+   "288px": 2,
+   "384px": 2,
+   "370.945px": 1,
+   "672px": 1,
+   "1440px": 1
+  }
+ },
+ "mobile": {
+  "body": {
+   "tag": "BODY",
+   "text": "Apresentamos o Eleven v4\n\nPular para o conteúdo\nCriar conta\n",
+   "font": "Inter, \"Inter Fallback\"",
+   "size": "17px",
+   "weight": "400",
+   "lh": "23.8px",
+   "ls": "normal",
+   "color": "rgb(0, 0, 0)",
+   "bg": "rgb(253, 252, 252)",
+   "radius": "0px",
+   "pad": "0px",
+   "h": 14810,
+   "w": 375,
+   "border": "0px solid rgb(229, 229, 229)"
+  },
+  "header": {
+   "tag": "HEADER",
+   "text": "Triage Agent\n/\nMain",
+   "font": "Inter, \"Inter Fallback\"",
+   "size": "17px",
+   "weight": "400",
+   "lh": "23.8px",
+   "ls": "normal",
+   "color": "rgb(0, 0, 0)",
+   "bg": "rgb(255, 255, 255)",
+   "radius": "0px",
+   "pad": "0px 12px",
+   "h": 48,
+   "w": 832,
+   "border": ""
+  },
+  "h1": {
+   "tag": "H1",
+   "text": "Agentes conversacionais que parecem humanos",
+   "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+   "size": "36px",
+   "weight": "300",
+   "lh": "42px",
+   "ls": "-0.72px",
+   "color": "rgb(0, 0, 0)",
+   "bg": "rgba(0, 0, 0, 0)",
+   "radius": "0px",
+   "pad": "0px",
+   "h": 110,
+   "w": 335,
+   "border": "0px solid rgb(229, 229, 229)"
+  },
+  "h2": [
+   {
+    "tag": "H2",
+    "text": "Configure, implante e monitore agentes naturais, com vozes h",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 84,
+    "w": 335,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Confiado por grandes empresas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "0.16px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 12,
+    "w": 335,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Agentes de voz e chat criados para melhorar suporte, vendas ",
+    "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+    "size": "30px",
+    "weight": "300",
+    "lh": "36px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 130,
+    "w": 285,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H2",
+    "text": "Mais de 10 milhões de conversas por semana gerando resultado",
+    "font": "Waldenburg-ML, \"Waldenburg Fallback\"",
+    "size": "30px",
+    "weight": "300",
+    "lh": "36px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px 16px",
+    "h": 130,
+    "w": 317,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "h3": [
+   {
+    "tag": "H3",
+    "text": "Melhore a experiência do cliente",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "15px",
+    "weight": "400",
+    "lh": "22px",
+    "ls": "0.15px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 11,
+    "w": 293,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H3",
+    "text": "Impulsione o crescimento em todo o funil",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "15px",
+    "weight": "400",
+    "lh": "22px",
+    "ls": "0.15px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 33,
+    "w": 293,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "H3",
+    "text": "Aumente a eficiência",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "15px",
+    "weight": "400",
+    "lh": "22px",
+    "ls": "0.15px",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 11,
+    "w": 293,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "p": [
+   {
+    "tag": "P",
+    "text": "Apresentamos o Eleven v4",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "18px",
+    "ls": "0.14px",
+    "color": "rgb(89, 84, 79)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 10,
+    "w": 180,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "P",
+    "text": "Agendamento de horários",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "15px",
+    "weight": "500",
+    "lh": "22px",
+    "ls": "0.15px",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "P",
+    "text": "Crie seu próprio agente",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "17px",
+    "weight": "400",
+    "lh": "23.8px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "pad": "0px 18px 0px 0px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "buttons": [
+   {
+    "tag": "A",
+    "text": "Entrar",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Criar conta",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 36,
+    "w": 101,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Fale com vendas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Entrar",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Falar com vendas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(0, 0, 0)",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "9999px",
+    "pad": "0px 14px",
+    "h": 0,
+    "w": 0,
+    "border": "0px solid rgb(229, 229, 229)"
+   },
+   {
+    "tag": "A",
+    "text": "Falar com vendas",
+    "font": "Inter, \"Inter Fallback\"",
+    "size": "16px",
+    "weight": "400",
+    "lh": "24px",
+    "ls": "normal",
+    "color": "rgb(255, 255, 255)",
+    "bg": "rgb(0, 0, 0)",
+    "radius": "9999px",
+    "pad": "0px 20px",
+    "h": 44,
+    "w": 173,
+    "border": "0px solid rgb(229, 229, 229)"
+   }
+  ],
+  "sections": [
+   {
+    "tag": "SCRIPT",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "STYLE",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 48,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "8px",
+    "pb": "8px"
+   },
+   {
+    "tag": "DIV",
+    "h": 0,
+    "top": 0,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 12755,
+    "top": 168,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 329,
+    "top": 12923,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   },
+   {
+    "tag": "DIV",
+    "h": 1559,
+    "top": 13252,
+    "bg": "rgba(0, 0, 0, 0)",
+    "pt": "0px",
+    "pb": "0px"
+   }
+  ],
+  "radii": {
+   "9999px": 93,
+   "12px": 25,
+   "4px": 113,
+   "7.2px 21px 21px": 2,
+   "2px": 16,
+   "24px": 4,
+   "12px 12px 0px 0px": 1,
+   "6px": 12,
+   "8px": 1,
+   "10px": 26
+  },
+  "colors": [
+   [
+    "rgb(0, 0, 0)",
+    1748
+   ],
+   [
+    "rgb(119, 113, 105)",
+    139
+   ],
+   [
+    "rgb(255, 255, 255)",
+    137
+   ],
+   [
+    "rgb(165, 159, 151)",
+    51
+   ],
+   [
+    "rgba(0, 0, 0, 0.05)",
+    44
+   ],
+   [
+    "rgb(245, 243, 241)",
+    24
+   ],
+   [
+    "rgb(235, 232, 228)",
+    20
+   ],
+   [
+    "rgba(0, 0, 0, 0.3)",
+    18
+   ],
+   [
+    "rgba(0, 0, 0, 0.075)",
+    13
+   ],
+   [
+    "rgba(0, 0, 0, 0.2)",
+    9
+   ],
+   [
+    "rgba(0, 0, 0, 0.5)",
+    7
+   ],
+   [
+    "rgb(244, 26, 47)",
+    6
+   ],
+   [
+    "rgb(5, 47, 112)",
+    4
+   ],
+   [
+    "rgb(10, 89, 210)",
+    4
+   ],
+   [
+    "rgb(231, 0, 11)",
+    3
+   ],
+   [
+    "rgb(250, 248, 248)",
+    3
+   ],
+   [
+    "rgb(68, 64, 59)",
+    2
+   ],
+   [
+    "rgb(255, 71, 4)",
+    2
+   ],
+   [
+    "rgb(4, 71, 255)",
+    2
+   ],
+   [
+    "rgba(0, 0, 0, 0.1)",
+    1
+   ],
+   [
+    "rgb(89, 84, 79)",
+    1
+   ],
+   [
+    "rgb(253, 252, 252)",
+    1
+   ],
+   [
+    "rgba(255, 255, 255, 0.6)",
+    1
+   ],
+   [
+    "rgba(255, 255, 255, 0.2)",
+    1
+   ],
+   [
+    "rgb(215, 210, 204)",
+    1
+   ]
+  ],
+  "fonts": {
+   "Inter": 2201,
+   "Waldenburg-ML": 10,
+   "": 4,
+   "\"Geist Mono\"": 17
+  },
+  "maxWidths": {
+   "320px": 1,
+   "156.8px": 36,
+   "576px": 2,
+   "356px": 1,
+   "288px": 2,
+   "384px": 3,
+   "370.945px": 1,
+   "144px": 4,
+   "390px": 1
+  }
+ }
+}

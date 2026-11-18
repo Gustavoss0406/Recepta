@@ -1,0 +1,274 @@
+@import "tailwindcss";
+@import "@fontsource/geist-mono/400.css";
+@import "@fontsource/geist-mono/500.css";
+
+/*
+ * Design tokens measured from the reference site (docs/engenharia-reversa/DESIGN_MEDIDO.md).
+ * Near-white canvas, pure-black ink, warm-gray panels, hairline grid, voice orbs.
+ * Type: Satoshi (ITF Free Font License, self-hosted) for display and body. Mono: Geist Mono.
+ */
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/satoshi/Satoshi-Variable.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/satoshi/Satoshi-VariableItalic.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: italic;
+  font-display: swap;
+}
+@theme {
+  --font-sans: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+
+  --color-primary: #000000;
+  --color-primary-active: #292524;
+  --color-ink: #000000;
+  --color-body: #59544f;
+  --color-body-strong: #44403b;
+  --color-muted-foreground: #777169;
+  --color-muted-soft: #a59f97;
+  --color-hairline: #ebe8e4;
+  --color-hairline-soft: #f2f0ed;
+  --color-hairline-strong: #dcd8d3;
+  --color-canvas: #fdfcfc;
+  --color-canvas-soft: #faf8f8;
+  --color-card: #ffffff;
+  --color-strong: #f5f3f1;
+  --color-dark: #0b0a09;
+  --color-dark-elevated: #1c1917;
+  --color-on-dark-soft: #a59f97;
+  --color-mint: #a7e5d3;
+  --color-peach: #f4c5a8;
+  --color-lavender: #c8b8e0;
+  --color-sky: #a8c8e8;
+  --color-rose: #e8b8c4;
+  --color-success: #16a34a;
+  --color-error: #dc2626;
+  /* shadcn / ElevenLabs UI semantic tokens (neutral scale of the ElevenLabs app) */
+  --color-background: #ffffff;
+  --color-foreground: oklch(0.145 0 0);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: oklch(0.97 0 0);
+  --color-secondary-foreground: oklch(0.205 0 0);
+  --color-muted: oklch(0.97 0 0);
+  --color-accent: oklch(0.965 0 0);
+  --color-accent-foreground: oklch(0.205 0 0);
+  --color-popover: #ffffff;
+  --color-popover-foreground: oklch(0.145 0 0);
+  --color-card-foreground: oklch(0.145 0 0);
+  --color-destructive: oklch(0.577 0.245 27.325);
+  --color-border: oklch(0.922 0 0);
+  --color-input: oklch(0.922 0 0);
+  --color-ring: oklch(0.708 0 0);
+  --color-surface: #f9f9f9;
+  --color-sidebar: #ffffff;
+  --color-chart-1: #2563eb;
+  --color-chart-2: #93c5fd;
+  /* data-only accents (charts), never UI chrome */
+  --color-data-1: #e5560f;
+  --color-data-2: #0a59d2;
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius: 0.625rem;
+
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-pill: 0 0 0 1px rgba(0, 0, 0, 0.075), 0 1px 2px rgba(0, 0, 0, 0.05);
+  /* Apple-like elevation: hairline + soft ambient shadow */
+  --shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 1px rgba(0, 0, 0, 0.02), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+  --shadow-float: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 12px 32px -8px rgba(0, 0, 0, 0.16), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
+  --ease-apple: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ---------- Type scale (measured) ---------- */
+@utility display-hero {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.25rem, 4.2vw, 3rem);
+  line-height: 1.083;
+  letter-spacing: -0.035em;
+}
+@utility display-section {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  line-height: 1.167;
+  letter-spacing: -0.025em;
+}
+@utility display-sm {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+@utility lead {
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+@utility body-sm {
+  font-size: 0.9375rem;
+  line-height: 1.467;
+  letter-spacing: 0.01em;
+}
+@utility eyebrow {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-muted-foreground);
+}
+@utility mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+
+/* ---------- Components ---------- */
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color 150ms, box-shadow 150ms, color 150ms;
+}
+@utility btn-sm {
+  height: 36px;
+  padding: 0 14px;
+  font-size: 0.875rem;
+}
+@utility btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+  &:hover { background: var(--color-primary-active); }
+}
+@utility btn-secondary {
+  background: #fff;
+  color: var(--color-ink);
+  box-shadow: var(--shadow-pill);
+  &:hover { background: var(--color-strong); }
+}
+@utility btn-ghost {
+  color: var(--color-ink);
+  &:hover { background: var(--color-strong); }
+}
+@utility btn-on-dark {
+  background: #fff;
+  color: var(--color-ink);
+  &:hover { background: var(--color-strong); }
+}
+@utility card {
+  background: var(--color-card);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-xl);
+}
+@utility panel {
+  background: var(--color-surface);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-xl);
+}
+@utility badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: var(--shadow-pill);
+  color: var(--color-ink);
+  font-size: 0.8125rem;
+  line-height: 1.2;
+}
+@utility field {
+  height: 40px;
+  width: 100%;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--color-input);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-size: 0.875rem;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.02);
+  transition: border-color 150ms, box-shadow 150ms;
+  &::placeholder { color: #a3a3a3; }
+  &:focus { outline: none; border-color: #a3a3a3; box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06); }
+}
+@utility container-page {
+  width: 100%;
+  max-width: 1208px;
+  margin-inline: auto;
+  padding-inline: 16px;
+  @media (min-width: 640px) { padding-inline: 32px; }
+}
+/* Hairline "blueprint" frame: vertical rules on the container edges (desktop). */
+@utility grid-frame {
+  position: relative;
+  @media (min-width: 1024px) {
+    &::before, &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--color-hairline);
+      pointer-events: none;
+    }
+    &::before { left: max(16px, calc(50% - 588px)); }
+    &::after { right: max(16px, calc(50% - 588px)); }
+  }
+}
+@utility rule-t { border-top: 1px solid var(--color-hairline); }
+@utility rule-b { border-bottom: 1px solid var(--color-hairline); }
+
+
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes word-in {
+  from { opacity: 0.15; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---------- Base ---------- */
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+::selection { background: var(--color-lavender); color: var(--color-ink); }
