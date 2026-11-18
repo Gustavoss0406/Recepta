@@ -73,6 +73,17 @@ docker run -p 3000:3000 --env-file .env.producao recepta
 ```
 As migrações rodam sozinhas ao iniciar (`MIGRAR_AO_INICIAR=0` desliga essa etapa).
 
+## MCP (usar a Recepta pelo Claude, ChatGPT, Cursor…)
+
+Servidor MCP em `https://SEU-DOMINIO/api/mcp` (Streamable HTTP), autenticado com uma chave de
+API (Configurações › Chaves de API). Ferramentas: listar e ver recepcionistas, listar e ver
+ligações (transcrição e ações), pendências (listar e atualizar), testar por texto, propor e
+aplicar ajustes no rascunho, publicar (com confirmação) e resumo do período.
+
+```bash
+claude mcp add --transport http recepta https://SEU-DOMINIO/api/mcp --header "Authorization: Bearer rk_…"
+```
+
 ## Apps OAuth ("Entrar com …")
 
 Cada plataforma exige um app registrado pela Recepta (uma vez só, vale para todos os clientes).

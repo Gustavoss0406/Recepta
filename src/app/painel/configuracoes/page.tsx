@@ -77,7 +77,7 @@ export default async function ConfiguracoesPage() {
         )}
 
         {pode(s.papel, "integracoes") && (
-          <Grupo titulo="Chaves de API" ajuda="Para a API pública v1 (Authorization: Bearer <chave>).">
+          <Grupo titulo="Chaves de API" ajuda="Para a API pública v1 e para o MCP (Authorization: Bearer <chave>).">
             <NovaChave />
             {chaves.length > 0 && (
               <ul className="divide-y divide-hairline rounded-[12px] bg-white text-sm shadow-[var(--shadow-pill)]">
@@ -98,6 +98,20 @@ export default async function ConfiguracoesPage() {
                 ))}
               </ul>
             )}
+          </Grupo>
+        )}
+
+        {pode(s.papel, "integracoes") && (
+          <Grupo titulo="Conectar a assistentes de IA (MCP)" ajuda="Use a Recepta pelo Claude, ChatGPT, Cursor e outros: ver ligações e pendências, testar e ajustar recepcionistas.">
+            <div className="space-y-2 rounded-[12px] bg-white p-3 text-sm shadow-[var(--shadow-pill)]">
+              <p className="text-muted-foreground">Endereço do servidor (Streamable HTTP):</p>
+              <code className="block break-all rounded-[8px] bg-muted px-2 py-1.5 font-mono text-xs">{`${process.env.RECEPTA_URL_PUBLICA ?? ""}/api/mcp`}</code>
+              <p className="text-muted-foreground">Cabeçalho: <code className="font-mono text-xs">Authorization: Bearer &lt;sua chave&gt;</code>. No Claude Code:</p>
+              <code className="block break-all rounded-[8px] bg-muted px-2 py-1.5 font-mono text-xs">
+                {`claude mcp add --transport http recepta ${process.env.RECEPTA_URL_PUBLICA ?? ""}/api/mcp --header "Authorization: Bearer rk_…"`}
+              </code>
+              <p className="text-xs text-muted-foreground">Ajustes vão para o rascunho; publicar pelo assistente sempre pede a sua confirmação.</p>
+            </div>
           </Grupo>
         )}
 
