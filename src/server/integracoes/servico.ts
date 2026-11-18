@@ -4,7 +4,8 @@ import { getDb, schema } from "@/db/client";
 import { cifrar, decifrar } from "@/server/cripto";
 import { conector } from "@/lib/integracoes/catalogo";
 import { ADAPTADORES, ErroConector, SINCRONIZAM, whatsapp, type Credenciais, type Evento } from "./conectores";
-import "./oauth"; // registers the OAuth adapters (Salesforce, Google Sheets)
+import "./oauth"; // registers the OAuth adapters (Salesforce, HubSpot/Pipedrive sign-in)
+import { enviarGmail } from "./google"; // also registers the Google adapter
 
 export interface Historico {
   quando: string;
@@ -14,6 +15,8 @@ export interface Historico {
 }
 export interface Detalhes {
   conta?: string;
+  /** Google: permissions granted (agenda, planilhas, gmail). */
+  permissoes?: string[];
   conectadoEm?: string;
   historico?: Historico[];
 }
@@ -110,7 +113,11 @@ export async function executarSincronizacao(p: { integracaoId: string; evento: E
   if (!a) return;
   const quando = new Date().toISOString();
   try {
-    const ref = await a.enviar(JSON.parse(decifrar(i.credenciais)) as Credenciais, p.evento);
+    const original = decifrar(i.credenciais);
+    const cred = JSON.parse(original) as Credenciais;
+    const ref = await a.enviar(cred, p.evento);
+    // OAuth adapters refresh tokens (and may create settings) in place: keep them
+    if (JSON.stringify(cred) !== original) await db.update(schema.integracoes).set({ credenciais: cifrar(JSON.stringify(cred)) }).where(eq(schema.integracoes.id, i.id));
     await registrar(i.id, { quando, evento: p.evento.tipo, ok: true, detalhe: ref });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -131,15 +138,19 @@ export async function enviarWhatsAppReal(orgId: string, para: string, texto: str
 }
 
 /**
- * Outbox: records every outgoing message and, for WhatsApp, delivers it through the customer's
- * connected Cloud API (status enviado/erro). Without a connection it stays "simulado".
+ * Outbox: records every outgoing message and delivers it through the customer's own channels:
+ * WhatsApp Cloud API, or e-mail from their Gmail (Google › Gmail permission). Without a
+ * connection it stays "simulado".
  */
 export async function enviarSaida(orgId: string, m: { canal: "whatsapp" | "email"; destino: string; corpo: string; assunto?: string }, opts: { real?: boolean } = {}) {
   const db = getDb();
   const [linha] = await db.insert(schema.caixaSaida).values({ orgId, ...m, status: "simulado" }).returning();
-  if (m.canal !== "whatsapp" || opts.real === false || !m.destino) return linha;
+  if (opts.real === false || !m.destino) return linha;
   try {
-    const id = await enviarWhatsAppReal(orgId, m.destino, m.corpo);
+    const id =
+      m.canal === "whatsapp"
+        ? await enviarWhatsAppReal(orgId, m.destino, m.corpo)
+        : await enviarGmail(orgId, m.destino, m.assunto ?? "Recepta", m.corpo);
     if (id) await db.update(schema.caixaSaida).set({ status: "enviado" }).where(eq(schema.caixaSaida.id, linha.id));
   } catch {
     await db.update(schema.caixaSaida).set({ status: "erro" }).where(eq(schema.caixaSaida.id, linha.id));

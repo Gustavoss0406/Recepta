@@ -1,5 +1,7 @@
 "use server";
 
+import { enviarSaida } from "@/server/integracoes/servico";
+
 import { revalidatePath } from "next/cache";
 import { and, eq } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
@@ -19,7 +21,7 @@ export async function convidar(_: R, fd: FormData): Promise<R> {
   const db = getDb();
   await db.insert(schema.convites).values({ id: sha256(token), orgId: s.org.id, email, papel, expiraEm: new Date(Date.now() + 7 * 86_400_000) });
   const link = `${process.env.RECEPTA_URL_PUBLICA ?? ""}/convite/${token}`;
-  await db.insert(schema.caixaSaida).values({ orgId: s.org.id, canal: "email", destino: email, assunto: `Convite para ${s.org.nome} na Recepta`, corpo: `Você foi convidado como ${papel}. Aceite em: ${link}` });
+  await enviarSaida(s.org.id, { canal: "email", destino: email, assunto: `Convite para ${s.org.nome} na Recepta`, corpo: `Você foi convidado como ${papel}. Aceite em: ${link}` });
   revalidatePath("/painel/configuracoes");
   return { ok: true, mensagem: `Convite enviado. Link (válido por 7 dias): ${link}` };
 }

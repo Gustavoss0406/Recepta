@@ -9,6 +9,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const s = await exigirPermissao("integracoes");
   const { id } = await params;
   const url = new URL(req.url);
+  if (id === "google") return NextResponse.redirect(new URL(`/api/integracoes/google${url.search}`, url));
   if (!OAUTH[id]) return NextResponse.redirect(new URL("/painel/integracoes?erro=desconhecida", url));
   if (!oauthConfigurado(id)) return NextResponse.redirect(new URL(`/painel/integracoes?erro=app_nao_configurado&id=${id}`, url));
   const redirectUri = `${process.env.RECEPTA_URL_PUBLICA ?? url.origin}/api/integracoes/${id}/oauth`;

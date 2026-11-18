@@ -48,6 +48,24 @@ npm test           # 55 testes: preços, ciclo de cobrança, runtime do agente, 
 npm run e2e        # jornada completa no navegador (precisa dos 3 processos rodando)
 ```
 
+## Apps OAuth ("Entrar com …")
+
+Cada plataforma exige um app registrado pela Recepta (uma vez só, vale para todos os clientes).
+Troque `https://SEU-DOMINIO` pela URL pública (`RECEPTA_URL_PUBLICA`) e coloque o par
+`*_CLIENT_ID` / `*_CLIENT_SECRET` no `.env.local`. Até lá o botão aparece como "Aguardando app".
+
+| Plataforma | Onde criar | URL de redirecionamento | Escopos |
+|---|---|---|---|
+| Google (Agenda, Planilhas, Gmail) | console.cloud.google.com › APIs e serviços › Credenciais › ID do cliente OAuth (Aplicativo da Web). Ative Calendar, Sheets, Drive e Gmail API. | `https://SEU-DOMINIO/api/integracoes/google` | `calendar.events`, `calendar.freebusy`, `drive.file`, `gmail.send` |
+| HubSpot | developers.hubspot.com › Apps › Criar app › Auth | `https://SEU-DOMINIO/api/integracoes/hubspot/oauth` | `oauth`, `crm.objects.contacts.read`, `crm.objects.contacts.write` |
+| Pipedrive | developers.pipedrive.com › Developer Hub › Criar app | `https://SEU-DOMINIO/api/integracoes/pipedrive/oauth` | Contatos (ler/escrever), Negócios, Atividades |
+| Salesforce | Setup › App Manager › New Connected App › Enable OAuth | `https://SEU-DOMINIO/api/integracoes/salesforce/oauth` | `api`, `refresh_token` |
+| Microsoft (Outlook) | portal.azure.com › Registros de aplicativo | `https://SEU-DOMINIO/api/integracoes/outlook/oauth` | `offline_access`, `Calendars.ReadWrite`, `User.Read` |
+
+Google: enquanto o app estiver em "Teste" na tela de consentimento, adicione os e-mails que vão
+conectar em "Usuários de teste". Para abrir a todos, `gmail.send` exige a verificação do Google
+(`drive.file` e a Agenda não exigem auditoria de segurança).
+
 ## O que é real e o que é simulado
 
 | Peça | Com chave | Sem chave |

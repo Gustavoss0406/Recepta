@@ -2,9 +2,13 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { exigirPermissao } from "@/server/auth/session";
 import { conectarGoogle, googleConfigurado, urlConsentimento } from "@/server/integracoes/google";
+import { lerPermissoes } from "@/lib/integracoes/google-permissoes";
 import { novoToken } from "@/server/auth/tokens";
 
-/** GET without ?code → start OAuth; with ?code → callback. CSRF-protected by a state cookie. */
+/**
+ * GET ?permissoes=agenda,planilhas,gmail → Google consent (incremental: already granted
+ * permissions are kept); with ?code → callback. CSRF-protected by a state cookie.
+ */
 export async function GET(req: Request) {
   const s = await exigirPermissao("integracoes");
   const url = new URL(req.url);
@@ -14,9 +18,10 @@ export async function GET(req: Request) {
 
   const code = url.searchParams.get("code");
   if (!code) {
+    if (url.searchParams.get("error")) return NextResponse.redirect(new URL("/painel/integracoes?erro=google_cancelado", url));
     const state = novoToken(16);
     jar.set("recepta_oauth", state, { httpOnly: true, sameSite: "lax", maxAge: 600, path: "/api/integracoes" });
-    return NextResponse.redirect(urlConsentimento(redirectUri, state));
+    return NextResponse.redirect(urlConsentimento(redirectUri, state, lerPermissoes(url.searchParams.getAll("permissoes"))));
   }
   if (url.searchParams.get("state") !== jar.get("recepta_oauth")?.value)
     return NextResponse.redirect(new URL("/painel/integracoes?erro=estado_invalido", url));

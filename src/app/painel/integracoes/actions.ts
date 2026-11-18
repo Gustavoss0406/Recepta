@@ -9,6 +9,7 @@ import { urlPublicaSegura } from "@/server/crawler/seguranca";
 import { EVENTOS } from "@/server/integracoes/eventos";
 import { entregarWebhook } from "@/server/jobs/tarefas";
 import { conectar, desconectar, testarConexao } from "@/server/integracoes/servico";
+import { desconectarGoogle } from "@/server/integracoes/google";
 
 export type R = { ok?: boolean; erro?: string; mensagem?: string } | undefined;
 
@@ -47,12 +48,6 @@ export async function testarWebhook(id: string) {
   revalidatePath("/painel/integracoes");
 }
 
-export async function desconectarGoogle() {
-  const s = await exigirPermissao("integracoes");
-  await getDb().delete(schema.integracoes).where(and(eq(schema.integracoes.orgId, s.org.id), eq(schema.integracoes.tipo, "google_agenda")));
-  revalidatePath("/painel/integracoes");
-}
-
 export async function acaoConectarIntegracao(id: string, _: R, fd: FormData): Promise<R> {
   const s = await exigirPermissao("integracoes");
   const campos = Object.fromEntries([...fd.entries()].map(([k, v]) => [k, String(v)]));
@@ -79,6 +74,7 @@ export async function acaoTestarIntegracao(id: string): Promise<R> {
 
 export async function acaoDesconectarIntegracao(id: string) {
   const s = await exigirPermissao("integracoes");
-  await desconectar(s.org.id, id);
+  if (id === "google") await desconectarGoogle(s.org.id);
+  else await desconectar(s.org.id, id);
   revalidatePath("/painel/integracoes");
 }

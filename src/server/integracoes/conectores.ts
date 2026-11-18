@@ -78,11 +78,11 @@ const corpoNota = (e: Evento) =>
 const HS = "https://api.hubapi.com";
 const hubspot: Adaptador = {
   async testar(c) {
-    const r = await req<{ portalId?: number; uiDomain?: string }>(`${HS}/account-info/v3/details`, { headers: { authorization: `Bearer ${c.token}` } });
+    const r = await req<{ portalId?: number; uiDomain?: string }>(`${HS}/account-info/v3/details`, { headers: { authorization: `Bearer ${(c.access_token ?? c.token)}` } });
     return r.portalId ? `Portal ${r.portalId}` : "Conta HubSpot";
   },
   async enviar(c, e) {
-    const h = { authorization: `Bearer ${c.token}` };
+    const h = { authorization: `Bearer ${(c.access_token ?? c.token)}` };
     const tel = so(e.contato.telefone);
     let contatoId: string | undefined;
     if (tel) {
@@ -112,23 +112,28 @@ const hubspot: Adaptador = {
 
 /* ───────── Pipedrive (personal API token) ───────── */
 const PD = "https://api.pipedrive.com/v1";
+/** Personal API token (query string) or OAuth access token (Bearer, on the company's api_domain). */
+function pdApi(c: Credenciais): { base: string; q: string; h: Record<string, string> } {
+  if (c.access_token) return { base: `${c.api_domain || "https://api.pipedrive.com"}/api/v1`, q: "", h: { authorization: `Bearer ${c.access_token}` } };
+  return { base: PD, q: `api_token=${encodeURIComponent(c.token)}`, h: {} };
+}
 const pipedrive: Adaptador = {
   async testar(c) {
-    const r = await req<{ data: { name: string; company_name?: string } }>(`${PD}/users/me?api_token=${encodeURIComponent(c.token)}`);
+    const r = await req<{ data: { name: string; company_name?: string } }>(`${pdApi(c).base}/users/me?${pdApi(c).q}`, { headers: pdApi(c).h });
     return r.data.company_name ? `${r.data.company_name} (${r.data.name})` : r.data.name;
   },
   async enviar(c, e) {
-    const q = `api_token=${encodeURIComponent(c.token)}`;
+    const { base, q, h } = pdApi(c);
     const tel = so(e.contato.telefone);
     let pessoaId: number | undefined;
     if (tel) {
-      const b = await req<{ data: { items: { item: { id: number } }[] } }>(`${PD}/persons/search?${q}&term=${encodeURIComponent(tel)}&fields=phone&exact_match=false&limit=1`);
+      const b = await req<{ data: { items: { item: { id: number } }[] } }>(`${base}/persons/search?${q}&term=${encodeURIComponent(tel)}&fields=phone&exact_match=false&limit=1`, { headers: h });
       pessoaId = b.data?.items?.[0]?.item.id;
     }
-    if (!pessoaId) pessoaId = (await req<{ data: { id: number } }>(`${PD}/persons?${q}`, { method: "POST", json: { name: nomeOu(e), phone: tel ? [{ value: tel, primary: true, label: "work" }] : undefined } })).data.id;
+    if (!pessoaId) pessoaId = (await req<{ data: { id: number } }>(`${base}/persons?${q}`, { method: "POST", headers: h, json: { name: nomeOu(e), phone: tel ? [{ value: tel, primary: true, label: "work" }] : undefined } })).data.id;
     let negocio: number | undefined;
-    if (e.tipo === "repasse.criado") negocio = (await req<{ data: { id: number } }>(`${PD}/deals?${q}`, { method: "POST", json: { title: e.titulo.slice(0, 250), person_id: pessoaId } })).data.id;
-    const nota = await req<{ data: { id: number } }>(`${PD}/notes?${q}`, { method: "POST", json: { content: corpoNota(e).replace(/\n/g, "<br>"), person_id: pessoaId, ...(negocio ? { deal_id: negocio } : {}) } });
+    if (e.tipo === "repasse.criado") negocio = (await req<{ data: { id: number } }>(`${base}/deals?${q}`, { method: "POST", headers: h, json: { title: e.titulo.slice(0, 250), person_id: pessoaId } })).data.id;
+    const nota = await req<{ data: { id: number } }>(`${base}/notes?${q}`, { method: "POST", headers: h, json: { content: corpoNota(e).replace(/\n/g, "<br>"), person_id: pessoaId, ...(negocio ? { deal_id: negocio } : {}) } });
     return `pessoa ${pessoaId}${negocio ? `, negócio ${negocio}` : ""}, nota ${nota.data.id}`;
   },
 };
@@ -264,4 +269,4 @@ export function registrarAdaptador(id: string, a: Adaptador) {
 }
 
 /** Connectors that receive call/hand-off events. */
-export const SINCRONIZAM = ["hubspot", "pipedrive", "rd_station", "kommo", "zendesk", "make", "n8n", "salesforce", "google_sheets"];
+export const SINCRONIZAM = ["hubspot", "pipedrive", "rd_station", "kommo", "zendesk", "make", "n8n", "salesforce", "google"];

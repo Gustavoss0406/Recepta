@@ -5,7 +5,8 @@ import { googleConfigurado } from "@/server/integracoes/google";
 import { BOTAO, PageHeader, Secao } from "@/components/painel/page-header";
 import { NovoWebhook } from "@/components/painel/webhook-form";
 import { MarcaIntegracao } from "@/components/ui/marca-integracao";
-import { IntegracaoCard } from "@/components/painel/integracao-card";
+import { GoogleCard, IntegracaoCard } from "@/components/painel/integracao-card";
+import { type PermissaoGoogle } from "@/lib/integracoes/google-permissoes";
 import { CATEGORIAS, CONECTORES, type Categoria } from "@/lib/integracoes/catalogo";
 import { oauthConfigurado } from "@/server/integracoes/oauth";
 import type { Detalhes } from "@/server/integracoes/servico";
@@ -26,6 +27,8 @@ export default async function IntegracoesPage({ searchParams }: { searchParams: 
     db.select().from(schema.caixaSaida).where(eq(schema.caixaSaida.orgId, s.org.id)).orderBy(desc(schema.caixaSaida.criadoEm)).limit(15),
   ]);
   const porTipo = new Map(conexoes.map((c) => [c.tipo, c]));
+  // older connections were calendar-only ("google_agenda")
+  if (!porTipo.has("google") && porTipo.has("google_agenda")) porTipo.set("google", { ...porTipo.get("google_agenda")!, detalhes: { ...(porTipo.get("google_agenda")!.detalhes as object), permissoes: ["agenda"] } });
 
   return (
     <>
@@ -35,7 +38,9 @@ export default async function IntegracoesPage({ searchParams }: { searchParams: 
           <p className="rounded-[12px] bg-[#fdecec] px-4 py-3 text-sm text-[#b42318]">
             {sp.erro === "google_nao_configurado" || sp.erro === "app_nao_configurado"
               ? "Esta integração ainda não tem o app da plataforma configurado (CLIENT_ID e CLIENT_SECRET)."
-              : "Não foi possível conectar. Tente de novo."}
+              : sp.erro === "google_cancelado"
+                ? "Você cancelou a autorização no Google. Nada foi alterado."
+                : "Não foi possível conectar. Tente de novo."}
           </p>
         </Secao>
       )}
@@ -50,13 +55,16 @@ export default async function IntegracoesPage({ searchParams }: { searchParams: 
               {lista.map((c) => {
                 const l = porTipo.get(c.id);
                 const d = (l?.detalhes ?? {}) as Detalhes;
+                const estado = { status: l?.status === "conectado" ? ("conectado" as const) : l?.status === "erro" ? ("erro" as const) : null, conta: d.conta, historico: d.historico };
+                if (c.id === "google")
+                  return <GoogleCard key={c.id} c={c} estado={estado} permissoes={(d.permissoes ?? []) as PermissaoGoogle[]} disponivel={googleConfigurado()} />;
                 return (
                   <IntegracaoCard
                     key={c.id}
                     c={c}
-                    estado={{ status: l?.status === "conectado" ? "conectado" : l?.status === "erro" ? "erro" : null, conta: d.conta, historico: d.historico }}
-                    oauthDisponivel={c.id === "google_agenda" ? googleConfigurado() : oauthConfigurado(c.id)}
-                    hrefOAuth={c.id === "google_agenda" ? "/api/integracoes/google" : `/api/integracoes/${c.id}/oauth`}
+                    estado={estado}
+                    oauthDisponivel={oauthConfigurado(c.id)}
+                    hrefOAuth={`/api/integracoes/${c.id}/oauth`}
                   />
                 );
               })}

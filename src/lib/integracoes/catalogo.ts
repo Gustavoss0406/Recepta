@@ -26,7 +26,7 @@ export interface Conector {
   campos?: Campo[];
   /** Where the customer gets the credential (shown in the connect sheet). */
   comoObter?: string;
-  /** OAuth: env prefix for the platform app (CLIENT_ID / CLIENT_SECRET). */
+  /** OAuth: env prefix for the platform app (CLIENT_ID / CLIENT_SECRET). On a "token" connector it adds "Entrar com …" next to the token form. */
   oauthEnv?: string;
 }
 
@@ -34,14 +34,14 @@ const SEGREDO = "password" as const;
 
 export const CONECTORES: Conector[] = [
   {
-    id: "google_agenda",
-    nome: "Google Agenda",
-    logo: "/integracoes/google_agenda.svg",
+    id: "google",
+    nome: "Google",
+    logo: "/integracoes/google.svg",
     categoria: "agenda",
     auth: "oauth",
     oauthEnv: "GOOGLE",
-    descricao: "Consulta horários livres e cria os eventos na sua agenda.",
-    faz: ["Mostra só horários livres de verdade", "Cria o evento com nome e telefone do cliente"],
+    descricao: "Uma conexão para Agenda, Planilhas e Gmail. Você escolhe as permissões e pode mudar quando quiser.",
+    faz: ["Agenda: horários livres e eventos", "Planilhas: uma linha por ligação", "Gmail: avisos dos casos para a equipe"],
   },
   {
     id: "outlook",
@@ -91,6 +91,7 @@ export const CONECTORES: Conector[] = [
     faz: ["Contato pelo telefone, sem duplicar", "Nota com o resumo ou o relatório do repasse"],
     campos: [{ nome: "token", rotulo: "Token do app privado", tipo: SEGREDO, placeholder: "pat-…" }],
     comoObter: "HubSpot › Configurações › Integrações › Apps privados › Criar app com escopos crm.objects.contacts.read/write.",
+    oauthEnv: "HUBSPOT",
   },
   {
     id: "pipedrive",
@@ -102,6 +103,7 @@ export const CONECTORES: Conector[] = [
     faz: ["Pessoa pelo telefone, sem duplicar", "Nota na pessoa", "Negócio para cada caso passado à equipe"],
     campos: [{ nome: "token", rotulo: "Token da API", tipo: SEGREDO }],
     comoObter: "Pipedrive › Preferências pessoais › API: copie o seu token pessoal.",
+    oauthEnv: "PIPEDRIVE",
   },
   {
     id: "rd_station",
@@ -152,16 +154,6 @@ export const CONECTORES: Conector[] = [
     oauthEnv: "SALESFORCE",
     descricao: "Cria um lead com o resumo de cada ligação.",
     faz: ["Lead com nome, telefone e descrição"],
-  },
-  {
-    id: "google_sheets",
-    nome: "Google Sheets",
-    logo: "/integracoes/google_sheets.svg",
-    categoria: "planilhas",
-    auth: "oauth",
-    oauthEnv: "GOOGLE",
-    descricao: "Uma linha por ligação numa planilha sua.",
-    faz: ["Data, telefone, motivo, resultado e resumo"],
   },
   {
     id: "make",

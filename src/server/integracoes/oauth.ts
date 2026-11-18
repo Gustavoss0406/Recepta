@@ -2,7 +2,7 @@ import "server-only";
 import { and, eq } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
 import { cifrar, decifrar } from "@/server/cripto";
-import { ErroConector, registrarAdaptador, type Adaptador, type Credenciais, type Evento } from "./conectores";
+import { ADAPTADORES, ErroConector, registrarAdaptador, type Adaptador, type Credenciais, type Evento } from "./conectores";
 
 /**
  * Generic OAuth 2.0 (authorization code) for connectors that need a platform app registration.
@@ -15,15 +15,31 @@ interface ProvedorOAuth {
   token: string;
   escopos: string[];
   extra?: Record<string, string>;
+  /** Token endpoint wants client credentials in an HTTP Basic header (Pipedrive). */
+  basic?: boolean;
 }
 
 export const OAUTH: Record<string, ProvedorOAuth> = {
-  google_sheets: {
+  // Google has its own consent route with per-permission scopes (src/server/integracoes/google.ts);
+  // this entry is only used to refresh tokens.
+  google: {
     env: "GOOGLE",
     autorizar: "https://accounts.google.com/o/oauth2/v2/auth",
     token: "https://oauth2.googleapis.com/token",
-    escopos: ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive.file"],
-    extra: { access_type: "offline", prompt: "consent" },
+    escopos: [],
+  },
+  hubspot: {
+    env: "HUBSPOT",
+    autorizar: "https://app.hubspot.com/oauth/authorize",
+    token: "https://api.hubapi.com/oauth/v1/token",
+    escopos: ["oauth", "crm.objects.contacts.read", "crm.objects.contacts.write"],
+  },
+  pipedrive: {
+    env: "PIPEDRIVE",
+    autorizar: "https://oauth.pipedrive.com/oauth/authorize",
+    token: "https://oauth.pipedrive.com/oauth/token",
+    escopos: [], // Pipedrive scopes are chosen in the app registration
+    basic: true,
   },
   outlook: {
     env: "MICROSOFT",
@@ -55,23 +71,46 @@ interface Tokens {
   refresh_token?: string;
   expira: number;
   instance_url?: string; // Salesforce
+  api_domain?: string; // Pipedrive
+  escopos?: string[]; // granted scopes (Google)
 }
 
 async function trocar(id: string, params: Record<string, string>): Promise<Tokens> {
   const p = OAUTH[id];
+  const cid = process.env[`${p.env}_CLIENT_ID`]!;
+  const sec = process.env[`${p.env}_CLIENT_SECRET`]!;
   const r = await fetch(p.token, {
     method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded", accept: "application/json" },
-    body: new URLSearchParams({ client_id: process.env[`${p.env}_CLIENT_ID`]!, client_secret: process.env[`${p.env}_CLIENT_SECRET`]!, ...params }),
+    headers: {
+      "content-type": "application/x-www-form-urlencoded",
+      accept: "application/json",
+      ...(p.basic ? { authorization: `Basic ${Buffer.from(`${cid}:${sec}`).toString("base64")}` } : {}),
+    },
+    body: new URLSearchParams(p.basic ? params : { client_id: cid, client_secret: sec, ...params }),
     signal: AbortSignal.timeout(10_000),
   });
   if (!r.ok) throw new ErroConector(`Autorização recusada (${r.status})`, r.status);
-  const j = (await r.json()) as { access_token: string; refresh_token?: string; expires_in?: number; instance_url?: string };
-  return { access_token: j.access_token, refresh_token: j.refresh_token, instance_url: j.instance_url, expira: Date.now() + ((j.expires_in ?? 3600) - 60) * 1000 };
+  const j = (await r.json()) as { access_token: string; refresh_token?: string; expires_in?: number; instance_url?: string; api_domain?: string; scope?: string };
+  return {
+    access_token: j.access_token,
+    refresh_token: j.refresh_token,
+    instance_url: j.instance_url,
+    api_domain: j.api_domain,
+    ...(j.scope ? { escopos: j.scope.split(/[ ,]+/).filter(Boolean) } : {}),
+    expira: Date.now() + ((j.expires_in ?? 3600) - 60) * 1000,
+  };
 }
+
+export { trocar as trocarCodigoOAuth };
 
 export async function concluirOAuth(orgId: string, id: string, code: string, redirectUri: string) {
   const t = await trocar(id, { code, redirect_uri: redirectUri, grant_type: "authorization_code" });
+  let conta = t.instance_url ? new URL(t.instance_url).host : "Conta conectada";
+  try {
+    conta = (await ADAPTADORES[id]?.testar(t as unknown as Credenciais)) ?? conta;
+  } catch {
+    /* label only */
+  }
   const db = getDb();
   await db.delete(schema.integracoes).where(and(eq(schema.integracoes.orgId, orgId), eq(schema.integracoes.tipo, id)));
   await db.insert(schema.integracoes).values({
@@ -79,17 +118,19 @@ export async function concluirOAuth(orgId: string, id: string, code: string, red
     tipo: id,
     status: "conectado",
     credenciais: cifrar(JSON.stringify(t)),
-    detalhes: { conta: t.instance_url ? new URL(t.instance_url).host : "Conta conectada", conectadoEm: new Date().toISOString(), historico: [] },
+    detalhes: { conta, conectadoEm: new Date().toISOString(), historico: [] },
   });
 }
 
 /** Access token, refreshed and re-saved when expired. Credentials blob = Tokens (+ connector settings). */
 type ComTokens = Tokens & Record<string, unknown>;
-export async function acesso(id: string, c: Credenciais, integracaoId?: string): Promise<ComTokens> {
+export async function acesso(id: string, c: Credenciais | Record<string, unknown>, integracaoId?: string): Promise<ComTokens> {
   const t = c as unknown as ComTokens;
   if (t.expira > Date.now()) return t;
   if (!t.refresh_token) throw new ErroConector("Autorização expirada: reconecte", 401);
-  const novo: ComTokens = { ...t, ...(await trocar(id, { refresh_token: t.refresh_token, grant_type: "refresh_token" })), refresh_token: t.refresh_token };
+  const renovado = await trocar(id, { refresh_token: t.refresh_token, grant_type: "refresh_token" });
+  // keep what the refresh response omits (refresh token, granted scopes, api domain)
+  const novo: ComTokens = { ...t, ...Object.fromEntries(Object.entries(renovado).filter(([, v]) => v !== undefined)), refresh_token: renovado.refresh_token ?? t.refresh_token };
   if (integracaoId) await getDb().update(schema.integracoes).set({ credenciais: cifrar(JSON.stringify(novo)) }).where(eq(schema.integracoes.id, integracaoId));
   return novo;
 }
@@ -133,29 +174,11 @@ export const salesforce: Adaptador = {
   },
 };
 
-/** Google Sheets: one row per call (date, phone, name, reason, result, summary) in a spreadsheet the app creates. */
-export const googleSheets: Adaptador = {
-  async testar(c) {
-    const t = await acesso("google_sheets", c);
-    if (!c.planilhaId) {
-      const nova = await pedir<{ spreadsheetId: string }>("https://sheets.googleapis.com/v4/spreadsheets", t.access_token, {
-        properties: { title: "Recepta · Ligações" },
-        sheets: [{ properties: { title: "Ligações" } }],
-      });
-      c.planilhaId = nova.spreadsheetId;
-      await googleSheets.enviar(c, { tipo: "teste", titulo: "Evento", texto: "Resumo", contato: { nome: "Nome", telefone: "Telefone" }, resultado: "Resultado", quando: "Data" });
-    }
-    return `Planilha ${c.planilhaId.slice(0, 8)}…`;
-  },
-  async enviar(c, e) {
-    const t = await acesso("google_sheets", c);
-    if (!c.planilhaId) throw new ErroConector("Planilha não criada: teste a conexão");
-    await pedir(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(c.planilhaId)}/values/A1:append?valueInputOption=USER_ENTERED`, t.access_token, {
-      values: [[e.quando, e.tipo === "teste" ? "Evento" : e.tipo === "repasse.criado" ? "Passado à equipe" : "Ligação", e.contato.telefone ?? "", e.contato.nome ?? "", e.titulo, e.resultado ?? "", e.texto]],
-    });
-    return "linha adicionada";
-  },
-};
-
 registrarAdaptador("salesforce", salesforce);
-registrarAdaptador("google_sheets", googleSheets);
+
+/** Token connectors that also accept "Entrar com …": refresh the OAuth token, then reuse the token adapter. */
+function comOAuth(id: string, base: Adaptador): Adaptador {
+  const pronto = async (c: Credenciais) => (c.access_token ? Object.assign(c, await acesso(id, c)) : c);
+  return { testar: async (c) => base.testar(await pronto(c)), enviar: async (c, e) => base.enviar(await pronto(c), e) };
+}
+for (const id of ["hubspot", "pipedrive"]) registrarAdaptador(id, comOAuth(id, ADAPTADORES[id]));

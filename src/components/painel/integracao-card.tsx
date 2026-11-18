@@ -1,10 +1,11 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
-import { CircleCheck, CircleX, ExternalLink, X } from "lucide-react";
+import { Check, CircleCheck, CircleX, ExternalLink, X } from "lucide-react";
 import { acaoConectarIntegracao, acaoDesconectarIntegracao, acaoTestarIntegracao, type R } from "@/app/painel/integracoes/actions";
 import { BotaoEnviar } from "@/components/ui/form";
 import type { Conector } from "@/lib/integracoes/catalogo";
+import { PERMISSOES_GOOGLE, PERMISSOES_ORDEM, type PermissaoGoogle } from "@/lib/integracoes/google-permissoes";
 import { cn } from "@/lib/utils";
 
 export interface EstadoConexao {
@@ -62,7 +63,7 @@ export function IntegracaoCard({ c, estado, oauthDisponivel, hrefOAuth }: { c: C
       <div className="mt-auto flex flex-wrap items-center gap-2 pt-4">
         {conectado || estado.status === "erro" ? (
           <>
-            {c.id !== "google_agenda" && (
+            {(
               <button
                 type="button"
                 disabled={testando}
@@ -91,6 +92,15 @@ export function IntegracaoCard({ c, estado, oauthDisponivel, hrefOAuth }: { c: C
           >
             Entrar com {c.nome.split(" ")[0]}
           </a>
+        ) : c.oauthEnv && oauthDisponivel ? (
+          <>
+            <a href={hrefOAuth} className="inline-flex h-8 items-center rounded-full bg-foreground px-3 text-sm font-medium text-white hover:bg-foreground/85">
+              Entrar com {c.nome.split(" ")[0]}
+            </a>
+            <button type="button" onClick={() => setAberto(true)} className="h-8 rounded-full px-2 text-sm text-muted-foreground hover:text-foreground">
+              Usar token
+            </button>
+          </>
         ) : (
           <button type="button" onClick={() => setAberto(true)} className="h-8 rounded-full bg-foreground px-3 text-sm font-medium text-white hover:bg-foreground/85">
             Conectar
@@ -99,6 +109,103 @@ export function IntegracaoCard({ c, estado, oauthDisponivel, hrefOAuth }: { c: C
         {teste && <span className={cn("w-full text-xs", teste.erro ? "text-[#b42318]" : "text-[#147a3d]")}>{teste.erro ?? teste.mensagem}</span>}
       </div>
       {aberto && <FolhaConectar c={c} fechar={() => setAberto(false)} />}
+    </article>
+  );
+}
+
+/** Google: one sign-in, permissions chosen by the business (incremental consent). */
+export function GoogleCard({
+  c,
+  estado,
+  permissoes,
+  disponivel,
+}: {
+  c: Conector;
+  estado: EstadoConexao;
+  permissoes: PermissaoGoogle[];
+  disponivel: boolean;
+}) {
+  const [teste, setTeste] = useState<R>(undefined);
+  const [testando, iniciar] = useTransition();
+  const conectado = estado.status === "conectado";
+  const href = (p: PermissaoGoogle[]) => `/api/integracoes/google?permissoes=${p.join(",")}`;
+
+  return (
+    <article className="flex flex-col rounded-[16px] border border-border bg-background p-4 transition-shadow hover:shadow-[var(--shadow-card)] sm:col-span-2 lg:col-span-2">
+      <div className="flex items-start justify-between gap-3">
+        <Logo c={c} />
+        {conectado ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e9f7ef] px-2 py-0.5 text-xs text-[#147a3d]">
+            <span className="size-1.5 rounded-full bg-[#22a35a]" aria-hidden /> Conectado
+          </span>
+        ) : estado.status === "erro" ? (
+          <span className="rounded-full bg-[#fdecec] px-2 py-0.5 text-xs text-[#b42318]">Reconectar</span>
+        ) : !disponivel ? (
+          <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">Aguardando app</span>
+        ) : null}
+      </div>
+      <h3 className="mt-3 text-[0.9375rem] font-medium text-foreground">{c.nome}</h3>
+      <p className="mt-0.5 text-sm text-muted-foreground">{conectado && estado.conta ? estado.conta : c.descricao}</p>
+
+      <form action="/api/integracoes/google" method="get" className="mt-3">
+        <ul className="divide-y divide-border overflow-hidden rounded-[12px] border border-border">
+          {PERMISSOES_ORDEM.map((p) => {
+            const tem = permissoes.includes(p);
+            return (
+              <li key={p} className="flex items-start gap-3 px-3 py-2.5">
+                {conectado ? (
+                  <span className={cn("mt-0.5 grid size-4 shrink-0 place-items-center rounded-full", tem ? "bg-[#22a35a] text-white" : "border border-border")} aria-hidden>
+                    {tem && <Check size={10} strokeWidth={3} />}
+                  </span>
+                ) : (
+                  <input type="checkbox" name="permissoes" value={p} defaultChecked disabled={!disponivel} className="mt-0.5 size-4 accent-foreground" aria-label={PERMISSOES_GOOGLE[p].rotulo} />
+                )}
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm text-foreground">{PERMISSOES_GOOGLE[p].rotulo}</span>
+                  <span className="block text-xs text-muted-foreground">{PERMISSOES_GOOGLE[p].descricao}</span>
+                </span>
+                {conectado && !tem && disponivel && (
+                  <a href={href([p])} className="shrink-0 rounded-full border border-border px-2.5 py-1 text-xs hover:bg-accent">
+                    Permitir
+                  </a>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          {conectado || estado.status === "erro" ? (
+            <>
+              <button
+                type="button"
+                disabled={testando}
+                onClick={() => iniciar(async () => setTeste(await acaoTestarIntegracao("google")))}
+                className="h-8 rounded-full border border-border px-3 text-sm hover:bg-accent disabled:opacity-50"
+              >
+                {testando ? "Testando…" : "Testar"}
+              </button>
+              {estado.status === "erro" && (
+                <a href={href(permissoes.length ? permissoes : PERMISSOES_ORDEM)} className="inline-flex h-8 items-center rounded-full bg-foreground px-3 text-sm font-medium text-white">
+                  Reconectar
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={() => iniciar(async () => acaoDesconectarIntegracao("google"))}
+                className="h-8 rounded-full px-2 text-sm text-muted-foreground hover:text-destructive"
+              >
+                Desconectar e revogar acesso
+              </button>
+            </>
+          ) : (
+            <button type="submit" disabled={!disponivel} className="inline-flex h-8 items-center rounded-full bg-foreground px-3 text-sm font-medium text-white disabled:opacity-30">
+              Entrar com Google
+            </button>
+          )}
+          {teste && <span className={cn("w-full text-xs", teste.erro ? "text-[#b42318]" : "text-[#147a3d]")}>{teste.erro ?? teste.mensagem}</span>}
+        </div>
+      </form>
+      <p className="mt-3 text-xs text-muted-foreground">Você pode revogar a qualquer momento aqui ou em myaccount.google.com/permissions.</p>
     </article>
   );
 }
