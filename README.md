@@ -2,6 +2,27 @@
 
 Agentes de voz com IA que atendem as ligações de empresas. Preço fixo em reais, com tudo incluso.
 
+## Testar no seu computador (grátis, sem instalar banco de dados)
+
+Precisa só do [Node.js 22 ou mais novo](https://nodejs.org).
+
+1. Baixe o código: botão verde **Code › Download ZIP** no GitHub, e descompacte.
+2. Abra o terminal dentro da pasta e rode uma vez:
+   ```bash
+   npm install
+   ```
+3. Copie `.env.example` para um arquivo chamado `.env.local` e preencha o que quiser usar:
+   - `GROQ_API_KEY`: respostas reais da recepcionista (chave grátis em console.groq.com). Sem ela, use `LLM_MOTOR=demo` (respostas roteirizadas).
+   - `TTS_API_KEY` (ElevenLabs) e `DEEPGRAM_API_KEY`: para testar por voz. Sem elas, o teste por texto funciona normalmente.
+4. Rode:
+   ```bash
+   npm run local
+   ```
+   Isso liga um banco de dados embutido (fica em `.data/pglite`), cria as tabelas, e sobe o site, a voz e as tarefas.
+5. Abra http://localhost:3000 e crie sua conta em **Teste grátis**.
+
+Para parar, `Ctrl+C`. Os dados continuam salvos para a próxima vez.
+
 ## Rodar localmente
 
 Pré-requisitos: Node 22+ e Postgres 15+.
