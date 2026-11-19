@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { ChevronDown, CircleCheck, CircleDashed, CircleX, Play, Plus, X } from "lucide-react";
-import { criarCaso, excluirCaso, mudarSeveridade, rodarCaso, rodarSuite, type R } from "@/app/painel/testes/actions";
+import { criarCaso, excluirCaso, mudarSeveridade, rodarCaso, rodarSuite, transcricaoTeste, type R } from "@/app/painel/testes/actions";
 import { BotaoEnviar, Erro } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
@@ -147,11 +147,60 @@ export function SuiteTestes({ agenteId, casos, cota }: { agenteId: string; casos
   );
 }
 
+/** One run: verdict, the judge's reason and the full conversation (loaded when opened). */
+function Rodada({ r, indice }: { r: { aprovado: boolean; justificativa: string; conversaId: string; demo: boolean }; indice: number }) {
+  const [falas, setFalas] = useState<{ papel: string; texto: string }[] | null>(null);
+  return (
+    <li>
+      <details
+        onToggle={(ev) => {
+          if ((ev.currentTarget as HTMLDetailsElement).open && !falas && r.conversaId) void transcricaoTeste(r.conversaId).then(setFalas);
+        }}
+      >
+        <summary className="flex cursor-pointer list-none items-start gap-2 py-0.5 text-sm [&::-webkit-details-marker]:hidden">
+          {r.demo ? (
+            <CircleDashed size={15} className="mt-0.5 shrink-0 text-[#a3a3a3]" />
+          ) : r.aprovado ? (
+            <CircleCheck size={15} className="mt-0.5 shrink-0 text-[#22a35a]" />
+          ) : (
+            <CircleX size={15} className="mt-0.5 shrink-0 text-[#e5484d]" />
+          )}
+          <span className="shrink-0 font-mono text-xs leading-5 text-muted-foreground">#{indice}</span>
+          <span className="flex-1 text-foreground">{r.justificativa || (r.aprovado ? "Aprovado" : "Reprovado")}</span>
+          <span className="shrink-0 text-xs leading-5 text-muted-foreground underline">ver conversa</span>
+        </summary>
+        <div className="mt-2 mb-3 space-y-1.5 rounded-[12px] border border-border bg-background p-3">
+          {!falas ? (
+            <p className="text-xs text-muted-foreground">Carregando…</p>
+          ) : falas.length === 0 ? (
+            <p className="text-xs text-muted-foreground">Conversa não encontrada.</p>
+          ) : (
+            falas.map((f, i) =>
+              f.papel === "acoes" ? (
+                <p key={i} className="text-xs text-muted-foreground">
+                  Ações: <span className="font-mono">{f.texto}</span>
+                </p>
+              ) : (
+                <p key={i} className={cn("max-w-[85%] rounded-[12px] px-3 py-1.5 text-sm", f.papel === "agente" ? "bg-muted text-foreground" : "ml-auto bg-foreground text-white")}>
+                  {f.texto}
+                </p>
+              ),
+            )
+          )}
+          {r.conversaId && (
+            <Link href={`/painel/ligacoes/${r.conversaId}?aba=transcricao`} className="block pt-1 text-xs text-muted-foreground hover:text-foreground hover:underline">
+              Abrir detalhes da conversa ↗
+            </Link>
+          )}
+        </div>
+      </details>
+    </li>
+  );
+}
+
 function Linha({ c, rodando, rodar }: { c: CasoView; rodando: string | null; rodar: (id: string, n?: number) => void }) {
   const e = estadoDe(c.ultima);
   const detalhes = c.ultima?.rodadasDetalhe ?? [];
-  const falhas = new Map<string, typeof detalhes>();
-  for (const r of detalhes.filter((r) => !r.aprovado && !r.demo)) falhas.set(r.justificativa, [...(falhas.get(r.justificativa) ?? []), r]);
   const n = detalhes.length;
 
   return (
@@ -205,27 +254,8 @@ function Linha({ c, rodando, rodar }: { c: CasoView; rodando: string | null; rod
                   {e === "demo" ? n : c.ultima!.aprovadas}/{n}
                 </span>
               </li>
-              {[...falhas.entries()].map(([motivo, rs]) => (
-                <li key={motivo}>
-                  <details>
-                    <summary className="flex cursor-pointer list-none items-center gap-2 text-sm [&::-webkit-details-marker]:hidden">
-                      <CircleX size={15} className="shrink-0 text-[#e5484d]" />
-                      <span className="flex-1 truncate text-foreground">{motivo}</span>
-                      <span className="font-mono text-xs text-[#b42318]">
-                        {rs.length}/{n}
-                      </span>
-                    </summary>
-                    <ul className="mt-1 space-y-0.5 pl-6">
-                      {rs.map((r) => (
-                        <li key={r.conversaId}>
-                          <Link href={`/painel/ligacoes/${r.conversaId}?aba=transcricao`} className="font-mono text-xs text-muted-foreground hover:text-foreground hover:underline">
-                            {r.conversaId.slice(0, 18)} ↗
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                </li>
+              {detalhes.map((r, k) => (
+                <Rodada key={r.conversaId || k} r={r} indice={k + 1} />
               ))}
             </ul>
           ) : (

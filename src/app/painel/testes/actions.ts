@@ -82,3 +82,18 @@ export async function mudarSeveridade(casoId: string, severidade: Severidade) {
     .where(and(eq(schema.casosTeste.orgId, s.org.id), eq(schema.casosTeste.id, casoId)));
   revalidatePath("/painel/testes");
 }
+
+/** Transcript of one simulated run (shown inline under the test, approved or not). */
+export async function transcricaoTeste(conversaId: string): Promise<{ papel: string; texto: string }[]> {
+  const s = await exigirPermissao("editarAgente");
+  const [c] = await getDb()
+    .select({ id: schema.conversas.id })
+    .from(schema.conversas)
+    .where(and(eq(schema.conversas.orgId, s.org.id), eq(schema.conversas.id, conversaId), eq(schema.conversas.teste, true)));
+  if (!c) return [];
+  const [turnos, acoes] = await Promise.all([
+    getDb().select({ papel: schema.turnos.papel, texto: schema.turnos.texto, ordem: schema.turnos.ordem }).from(schema.turnos).where(eq(schema.turnos.conversaId, conversaId)).orderBy(schema.turnos.ordem),
+    getDb().select({ nome: schema.chamadasFerramenta.nome, criadoEm: schema.chamadasFerramenta.criadoEm }).from(schema.chamadasFerramenta).where(eq(schema.chamadasFerramenta.conversaId, conversaId)),
+  ]);
+  return [...turnos.map((t) => ({ papel: t.papel, texto: t.texto })), ...(acoes.length ? [{ papel: "acoes", texto: acoes.map((a) => a.nome).join(", ") }] : [])];
+}
