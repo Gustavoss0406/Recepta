@@ -1,4 +1,5 @@
 import "server-only";
+import { tirarTags } from "@/lib/voz/tags";
 import { converter } from "@/server/audio/conversao";
 import type { FormatoAudio, TtsEngine, TtsRequest } from "./tts";
 import { TtsNotConfiguredError } from "./tts";
@@ -59,7 +60,7 @@ export class MotorVoiceStudio extends MotorProprio {
     if (!url) throw new TtsNotConfiguredError();
     const v = { ...DESIGN[req.voiceId], ...mapa("VOICESTUDIO_VOICE_MAP")[req.voiceId] };
     const fd = new FormData();
-    fd.set("text", req.text);
+    fd.set("text", tirarTags(req.text));
     fd.set("language", "pt");
     if (v.instruct) fd.set("instruct", v.instruct);
     if (req.velocidade) fd.set("speed", String(req.velocidade));
@@ -84,7 +85,7 @@ export class MotorDrama extends MotorProprio {
     const r = await fetch(`${url.replace(/\/$/, "")}/v1/audio/speech`, {
       method: "POST",
       headers: { "content-type": "application/json", ...(process.env.DRAMA_API_KEY ? { authorization: `Bearer ${process.env.DRAMA_API_KEY}` } : {}) },
-      body: JSON.stringify({ model: process.env.DRAMA_MODEL ?? "fishaudio/drama-3", input: req.text, response_format: "wav", speed: req.velocidade ?? 1, ...v }),
+      body: JSON.stringify({ model: process.env.DRAMA_MODEL ?? "fishaudio/drama-3", input: tirarTags(req.text), response_format: "wav", speed: req.velocidade ?? 1, ...v }),
       signal: req.signal ?? AbortSignal.timeout(15_000),
     });
     if (!r.ok) throw new Error(`Drama ${r.status}: ${(await r.text()).slice(0, 200)}`);

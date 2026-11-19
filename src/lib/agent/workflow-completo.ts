@@ -18,6 +18,10 @@ export function workflowCompleto(c: AgentConfig): Workflow {
   const apis = c.acoes.apis ?? [];
   const transfere = c.acoes.transferir.ativo && Boolean(c.acoes.transferir.numero);
   const saude = c.empresa.nicho === "clinica";
+  const imob = c.empresa.nicho === "imobiliaria";
+  const rest = c.empresa.nicho === "restaurante";
+  const fimDados = "Nome e telefone só agora, no fim e um por vez: peça o nome se ainda não souber; depois pergunte se pode usar o número de quem está ligando.";
+  const soDepois = " NUNCA diga que está marcado antes de usar agendar e ele responder ok; se der erro, ofereça outro horário.";
 
   // ── entry and triage ──
   no("inicio", "inicio", "Início", "", 520, 0);
@@ -33,6 +37,17 @@ export function workflowCompleto(c: AgentConfig): Workflow {
 
   // ── every topic ──
   const topicos: { id: string; titulo: string; objetivo: string; entra: string }[] = [
+    ...(imob
+      ? [
+          {
+            id: "imovel",
+            titulo: "Encontrar o imóvel",
+            entra: "O cliente procura um imóvel para comprar ou alugar",
+            objetivo:
+              "Seja consultiva, como um bom corretor: entenda o que a pessoa procura (comprar ou alugar, região/bairro, faixa de preço, quantos quartos, algo indispensável), UMA pergunta por vez e reagindo ao que ela diz. Assim que tiver região e faixa de preço, use consultar_conhecimento para achar imóveis que combinem e sugira 1 ou 2 opções concretas (tipo, bairro, preço). Se ela gostar de algum, ofereça visitar. Não peça nome nem telefone nesta etapa.",
+          },
+        ]
+      : []),
     {
       id: "duvidas",
       titulo: "Dúvidas",
@@ -44,10 +59,13 @@ export function workflowCompleto(c: AgentConfig): Workflow {
       ? [
           {
             id: "agendar",
-            titulo: "Agendar",
-            entra: "O cliente quer marcar um horário",
-            objetivo:
-              "Nesta ordem: 1) se o cliente não disse o serviço, pergunte; 2) use consultar_horarios (com o dia e o período que ele pediu) e ofereça no máximo duas opções; 3) quando ele escolher, peça o nome; 4) se você sabe o telefone de quem liga (está no contexto), pergunte se pode usar esse número em vez de pedir de novo; 5) repita serviço, dia e hora e, com o sim dele, use agendar. Uma pergunta por vez. Fora do horário de atendimento você também pode marcar para os próximos dias.",
+            titulo: imob ? "Marcar visita" : rest ? "Reservar mesa" : "Agendar",
+            entra: imob ? "O cliente quer visitar um imóvel" : rest ? "O cliente quer reservar uma mesa" : "O cliente quer marcar um horário",
+            objetivo: imob
+              ? `A visita é NO IMÓVEL, com um corretor (não no escritório). Confirme qual imóvel, use consultar_horarios e ofereça duas opções numa frase. Quando ele escolher: ${fimDados} Repita imóvel, dia e hora e, com o sim, use agendar com servico "Visita: <imóvel>" e o endereço do imóvel na observação.${soDepois}`
+              : rest
+                ? `Pergunte para quantas pessoas e o dia/horário, use consultar_horarios e ofereça duas opções numa frase. Quando ele escolher: ${fimDados} Repita pessoas, dia e hora e, com o sim, use agendar com servico "Mesa para <N>".${soDepois}`
+                : "Nesta ordem: 1) se o cliente não disse o serviço, pergunte; 2) use consultar_horarios (com o dia e o período que ele pediu) e ofereça no máximo duas opções; 3) quando ele escolher, peça o nome; 4) se você sabe o telefone de quem liga (está no contexto), pergunte se pode usar esse número em vez de pedir de novo; 5) repita serviço, dia e hora e, com o sim dele, use agendar — nunca diga que está marcado antes de agendar responder ok. Uma pergunta por vez. Fora do horário de atendimento você também pode marcar para os próximos dias.",
           },
           {
             id: "meus",
@@ -130,6 +148,7 @@ export function workflowCompleto(c: AgentConfig): Workflow {
     liga(t.id, "recepcao", "O cliente mudou de assunto antes de terminar este");
   }
   if (agenda) liga("duvidas", "agendar", "O cliente decidiu marcar um horário");
+  if (imob && agenda) liga("imovel", "agendar", "O cliente quer visitar um dos imóveis");
   liga("recado", "fechamento", "O pedido foi registrado para a equipe");
   liga("fechamento", "recepcao", "O cliente tem outro assunto");
   liga("fechamento", "fim", "O cliente não precisa de mais nada e você já se despediu");

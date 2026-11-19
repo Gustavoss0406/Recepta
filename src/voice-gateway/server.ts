@@ -14,6 +14,7 @@ import { encerrarConversa, ErroLinhaOcupada, iniciarConversa, registrarUsoVoz, r
 import { configParaConversa } from "@/server/agent/agentes";
 import { aceitarTwilio } from "./twilio";
 import { esperaExtraMs, juntar } from "@/lib/voz/turno";
+import { tirarTags } from "@/lib/voz/tags";
 import { Gravador } from "@/server/audio/gravador";
 import { salvarAudio } from "@/server/audio/armazenamento";
 
@@ -74,7 +75,7 @@ export async function rodarPipeline(sessao: Sessao, t: Transporte) {
   // voice of whoever is on the call (changes when a colleague takes over)
   let vozAtual = config.voz.vozId;
   async function falar(texto: string) {
-    t.enviarEvento({ tipo: "agente.texto", texto });
+    t.enviarEvento({ tipo: "agente.texto", texto: tirarTags(texto) });
     if (!ttsConfigurado(vozAtual)) return t.enviarEvento({ tipo: "agente.sem_audio", texto });
     const ctrl = new AbortController();
     falando = ctrl;

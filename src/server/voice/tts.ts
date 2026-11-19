@@ -1,4 +1,5 @@
 import "server-only";
+import { MODELOS_COM_TAGS, tirarTags } from "@/lib/voz/tags";
 import { getVoice } from "@/lib/voices";
 import { MotorDrama, MotorVoiceStudio } from "./tts-proprio";
 
@@ -61,7 +62,8 @@ class PremiumTtsEngine implements TtsEngine {
       method: "POST",
       headers: { "xi-api-key": this.apiKey, "content-type": "application/json" },
       body: JSON.stringify({
-        text: req.text,
+        // audio tags only for models that understand them (others would read "[sighs]" aloud)
+        text: MODELOS_COM_TAGS.test(this.models[req.tier ?? "padrao"]) ? req.text : tirarTags(req.text),
         model_id: this.models[req.tier ?? "padrao"],
         language_code: "pt",
         // Lower stability + some style = more natural intonation on phone calls (defaults sound flat).

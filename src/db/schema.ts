@@ -203,7 +203,7 @@ export const conversas = pgTable(
     duracaoS: integer("duracao_s").notNull().default(0),
     minutosCobrados: integer("minutos_cobrados").notNull().default(0),
     /** LLM message history (Anthropic MessageParam[]) so a conversation survives across requests. */
-    estado: jsonb("estado").$type<{ mensagens: unknown[]; transferirPara?: string; mockAgenda?: string; modelo?: string; no?: string | null; vars?: Record<string, string>; agenteAtivo?: string; resumos?: number }>(),
+    estado: jsonb("estado").$type<{ mensagens: unknown[]; transferirPara?: string; mockAgenda?: string; modelo?: string; no?: string | null; vars?: Record<string, string>; agenteAtivo?: string; resumos?: number; memoria?: Record<string, string> }>(),
     /** Metered usage, turned into cost at hang-up. */
     uso: jsonb("uso").$type<UsoConversa>(),
     iniciadaEm: ts("iniciada_em").notNull().defaultNow(),

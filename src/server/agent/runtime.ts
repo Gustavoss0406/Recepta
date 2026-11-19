@@ -21,6 +21,8 @@ import { ErroSemMotor } from "@/server/providers/llm-rotacao";
 import { versaoParaNovaChamada } from "./experimentos";
 import { aplicarResumo, pontoDeCorte, SYSTEM_RESUMO, transcricao } from "@/lib/agent/compactar";
 import { contextoCliente, identificarCliente, type ClienteIdentificado } from "./identificar";
+import { contextoMemoria, extrairDados, type Memoria } from "@/lib/agent/memoria";
+import { filtrarTags, INSTRUCOES_VOZ, tirarTags } from "@/lib/voz/tags";
 
 const CANAIS_TESTE: Canal[] = ["teste_texto", "teste_voz", "simulador", "simulacao"];
 const MAX_ITERACOES = 5;
@@ -152,6 +154,7 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   const uso = conv.uso ?? usoVazio(modelo);
 
   const fala = org.mascararDados ? mascarar(textoCliente) : textoCliente;
+  const canalDeVoz = ["telefone", "teste_voz", "simulador", "widget"].includes(conv.canal);
   let ordem = await proximaOrdem(conversaId);
   await db.insert(schema.turnos).values({ orgId: conv.orgId, conversaId, ordem: ordem++, papel: "cliente", texto: fala, offsetMs: opts.offsetMs ?? 0 });
 
@@ -165,7 +168,7 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
       type: "text",
       text: `Contexto da ligação: ${contextoTemporal(config.horarios, agora)} ${conv.de ? `Telefone do cliente: ${conv.de}.` : ""} ${
         conv.modoRecado ? "MODO RECADO: apenas colete nome, telefone e o pedido, use repassar_para_equipe e encerre com educação." : ""
-      }\nVocê já disse a saudação: "${saud[0]?.texto ?? config.comportamento.saudacao}"`,
+      }\nA saudação já foi dita no início da ligação ("${saud[0]?.texto ?? config.comportamento.saudacao}"). NÃO repita nada dela: responda ao cliente direto.`,
     });
     const cliente = await clienteDaLigacao(conversaId, conv.orgId, conv.de);
     if (cliente) {
@@ -196,6 +199,12 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   const trechos = fala.trim().split(/\s+/).length >= 3 ? await buscarConhecimento(ativoId, fala, 2) : [];
   if (trechos.length)
     blocos.push({ type: "text", text: `${PREFIXO_CONHECIMENTO}\n${trechos.map((t) => `- ${t.texto.replace(/\s+/g, " ").slice(0, 700)}`).join("\n")}` });
+  // What the caller already said: captured from the answer to the last question, shown every turn.
+  const anteriorAgente =
+    [...mensagens].reverse().flatMap((m) => (m.role === "assistant" && Array.isArray(m.content) ? m.content : [])).find((b) => b.type === "text")?.text ?? "";
+  estado.memoria = extrairDados(anteriorAgente, fala, (estado.memoria as Memoria | undefined) ?? (estado.vars?.cliente_nome ? { nome: estado.vars.cliente_nome } : {}));
+  const memoria = contextoMemoria(estado.memoria, conv.de);
+  if (memoria) blocos.push({ type: "text", text: memoria });
   blocos.push({ type: "text", text: `Cliente: ${fala}` });
   mensagens.push({ role: "user", content: blocos });
 
@@ -210,7 +219,9 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   // A workflow step that names its tools only gets those (+ the essentials): fewer tokens, fewer mix-ups.
   const passo = fluxo && estado.no ? noDoFluxo(fluxo, estado.no) : undefined;
   if (passo?.tipo === "subagente") {
-    const citadas = tools.filter((t) => passo.texto.includes(t.name)).map((t) => t.name);
+    // the step can move on mid-answer (seguir_fluxo): include the tools of the steps it leads to
+    const textos = [passo.texto, ...saidas(fluxo!, passo.id).map((a) => noDoFluxo(fluxo!, a.para)?.texto ?? "")].join(" ");
+    const citadas = tools.filter((t) => textos.includes(t.name)).map((t) => t.name);
     if (citadas.length) tools = tools.filter((t) => citadas.includes(t.name) || ESSENCIAIS.includes(t.name));
   }
   if (fluxo && estado.no && noDoFluxo(fluxo, estado.no)?.tipo === "subagente" && saidas(fluxo, estado.no).length)
@@ -258,7 +269,7 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   for (let i = 0; i < MAX_ITERACOES; i++) {
     let r;
     try {
-      r = await llm.turno({ modelo, system: prompt, messages: semConhecimentoAntigo(mensagens), tools, maxTokens: 400 });
+      r = await llm.turno({ modelo, system: canalDeVoz ? prompt + INSTRUCOES_VOZ : prompt, messages: semConhecimentoAntigo(mensagens), tools, maxTokens: 400 });
     } catch (e) {
       if (!(e instanceof ErroSemMotor)) throw e;
       console.error(`[conversa ${conversaId}] sem motor de resposta: ${e.message}`);
@@ -352,7 +363,9 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
     if (encerrar && transferirPara && !usos.some((x) => x.name === "seguir_fluxo")) break;
   }
 
-  const textoAgente = falas.join(" ").trim();
+  // tags stay only in what is spoken (voice channels); stored transcripts and text channels never show them
+  for (let i = 0; i < falas.length; i++) falas[i] = canalDeVoz ? filtrarTags(falas[i]) : tirarTags(falas[i]);
+  const textoAgente = tirarTags(falas.join(" "));
   if (textoAgente) {
     uso.ttsChars += textoAgente.length;
     await db.insert(schema.turnos).values({ orgId: conv.orgId, conversaId, ordem: ordem++, papel: "agente", texto: textoAgente });
