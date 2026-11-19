@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { and, desc, eq, gte, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
+import { AtualizarEnquanto } from "@/components/painel/atualizar-enquanto";
 import { getDb, schema } from "@/db/client";
 import { exigirSessao } from "@/server/auth/session";
 import { listarAgentes } from "@/server/agent/agentes";
@@ -42,6 +43,13 @@ export default async function TestesPage({ searchParams }: { searchParams: Promi
     .from(schema.execucoesTeste)
     .where(and(eq(schema.execucoesTeste.orgId, s.org.id), gte(schema.execucoesTeste.criadoEm, a.inicioCiclo)));
   const llm = await getLlm();
+  // a suite queued or running in the worker: keep the page refreshing until it finishes
+  const [fila] = await db
+    .select({ id: schema.jobs.id })
+    .from(schema.jobs)
+    .where(and(eq(schema.jobs.tipo, "testes.suite"), inArray(schema.jobs.status, ["pendente", "rodando"]), sql`${schema.jobs.payload}->>'agenteId' = ${agente.id}`))
+    .limit(1);
+  const emAndamento = Boolean(fila) || execs.some((e) => e.status === "rodando");
 
   const view: CasoView[] = casos.map((c) => {
     const e = execs.find((x) => x.casoId === c.id);
@@ -66,6 +74,7 @@ export default async function TestesPage({ searchParams }: { searchParams: Promi
 
   return (
     <>
+      <AtualizarEnquanto ativo={emAndamento} />
       <PageHeader
         titulo="Testes"
         descricao="Clientes simulados ligam para o rascunho e cada conversa é avaliada pelos critérios do teste. Cada teste roda várias vezes, porque as respostas variam: o que importa é a taxa de aprovação."

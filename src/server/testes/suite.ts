@@ -1,3 +1,4 @@
+import { paciencia } from "@/server/providers/llm-rotacao";
 import { orgIlimitada } from "@/server/billing/ilimitado";
 import "server-only";
 import { and, count, desc, eq, gte, inArray, sql } from "drizzle-orm";
@@ -74,7 +75,9 @@ export async function executarCaso(orgId: string, casoId: string, rodadas = 3) {
     .values({ orgId, casoId, agenteId: caso.agenteId, alvo: "rascunho", rodadas, status: "rodando" })
     .returning();
   try {
-    const resultados = await Promise.all(Array.from({ length: rodadas }, () => rodarCaso(orgId, caso.agenteId, caso)));
+    // one run at a time, waiting up to 3 min for free-tier limits to reset (instead of failing as "erro")
+    const resultados: Rodada[] = [];
+    for (let i = 0; i < rodadas; i++) resultados.push(await paciencia.run({ ateMs: 180_000 }, () => rodarCaso(orgId, caso.agenteId, caso)));
     const aprovadas = resultados.filter((r) => r.aprovado).length;
     const [fim] = await db
       .update(schema.execucoesTeste)
@@ -105,7 +108,8 @@ export async function executarSuite(orgId: string, agenteId: string, opts: { sev
       ),
     );
   const out: Awaited<ReturnType<typeof executarCaso>>[] = [];
-  for (let i = 0; i < casos.length; i += 4) out.push(...(await Promise.all(casos.slice(i, i + 4).map((c) => executarCaso(orgId, c.id, opts.rodadas ?? 1)))));
+  // two cases at a time: free engines allow a few dozen requests per minute
+  for (let i = 0; i < casos.length; i += 2) out.push(...(await Promise.all(casos.slice(i, i + 2).map((c) => executarCaso(orgId, c.id, opts.rodadas ?? 1)))));
   return casos.map((c, i) => ({ caso: c, execucao: out[i] }));
 }
 

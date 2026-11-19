@@ -6,7 +6,7 @@ import { getDb, schema } from "@/db/client";
 import type { Severidade } from "@/db/schema";
 import { exigirPermissao } from "@/server/auth/session";
 import { obterAgente } from "@/server/agent/agentes";
-import { executarCaso, executarSuite, LimiteSimulacoes } from "@/server/testes/suite";
+import { executarCaso, LimiteSimulacoes } from "@/server/testes/suite";
 
 export type R = { ok?: boolean; erro?: string; mensagem?: string } | undefined;
 
@@ -24,14 +24,12 @@ export async function rodarCaso(casoId: string, rodadas: number): Promise<R> {
 export async function rodarSuite(agenteId: string, rodadas = 1): Promise<R> {
   const s = await exigirPermissao("editarAgente");
   await obterAgente(s.org.id, agenteId);
-  try {
-    const r = await executarSuite(s.org.id, agenteId, { rodadas: [1, 3, 5, 15].includes(rodadas) ? rodadas : 1 });
-    const ok = r.filter((x) => x.execucao.aprovadas === x.execucao.rodadas).length;
-    revalidatePath("/painel/testes");
-    return { ok: true, mensagem: `${ok}/${r.length} testes aprovados` };
-  } catch (e) {
-    return { erro: e instanceof Error ? e.message : "Erro" };
-  }
+  // The whole suite can take minutes on free engines (they are paced): it runs in the worker and the
+  // page refreshes itself while executions are "rodando".
+  const n = [1, 3, 5, 15].includes(rodadas) ? rodadas : 1;
+  await getDb().insert(schema.jobs).values({ tipo: "testes.suite", payload: { orgId: s.org.id, agenteId, rodadas: n } });
+  revalidatePath("/painel/testes");
+  return { ok: true, mensagem: "Rodando em segundo plano. Os resultados aparecem aqui conforme cada teste termina." };
 }
 
 export async function criarCaso(agenteId: string, _: R, fd: FormData): Promise<R> {

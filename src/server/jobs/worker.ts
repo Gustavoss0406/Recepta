@@ -8,10 +8,12 @@ import { fecharCiclosVencidos, processarInadimplencia } from "@/server/billing/f
 import { aplicarRetencao, entregarWebhook, reivindicarJobs } from "./tarefas";
 import { executarSincronizacao } from "@/server/integracoes/servico";
 import { importarTodasAgendas, sincronizarEvento } from "@/server/agenda/agenda";
+import { executarSuite } from "@/server/testes/suite";
 
 const HANDLERS: Record<string, (p: Record<string, unknown>) => Promise<unknown>> = {
   "webhook.entregar": (p) => entregarWebhook(String(p.entregaId)),
   "integracao.sincronizar": (p) => executarSincronizacao(p as Parameters<typeof executarSincronizacao>[0]),
+  "testes.suite": (p) => executarSuite(String(p.orgId), String(p.agenteId), { rodadas: Number(p.rodadas) || 1 }),
   "agenda.sincronizar": (p) => sincronizarEvento(p as { eventoId: string; tentativa?: number }),
 };
 

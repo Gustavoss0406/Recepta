@@ -1,4 +1,8 @@
 import "server-only";
+import { AsyncLocalStorage } from "node:async_hooks";
+
+/** Inside paciencia.run({ ateMs }, fn), engines that are all rate-limited are waited for (tests only). */
+export const paciencia = new AsyncLocalStorage<{ ateMs: number }>();
 import type { EstruturadoReq, Llm, TurnoReq, TurnoRes, UsoLlm } from "./llm";
 import { ErroProvedor, estruturadoOpenAI, turnoOpenAI, type EndpointOpenAI } from "./llm-openai";
 
@@ -89,6 +93,22 @@ export class LlmRotativo implements Llm {
   }
 
   private async rodar<R>(fn: (e: EndpointOpenAI) => Promise<R>, preferirGrande = false): Promise<R> {
+    // Tests/simulations (paciencia) may wait for a rate limit to reset instead of failing.
+    const limite = paciencia.getStore();
+    const fimEspera = limite ? Date.now() + limite.ateMs : 0;
+    for (;;) {
+      try {
+        return await this.rodarUmaVez(fn, preferirGrande);
+      } catch (e) {
+        if (!(e instanceof ErroSemMotor) || !limite || Date.now() >= fimEspera) throw e;
+        const agora = Date.now();
+        const proxima = Math.min(...[...pausas.values()].map((p) => p.ate).filter((t) => t > agora), agora + 20_000);
+        await new Promise((ok) => setTimeout(ok, Math.max(2_000, Math.min(proxima - agora + 500, 20_000, fimEspera - agora))));
+      }
+    }
+  }
+
+  private async rodarUmaVez<R>(fn: (e: EndpointOpenAI) => Promise<R>, preferirGrande = false): Promise<R> {
     const tentativas: string[] = [];
     let cands = await this.candidatos();
     // larger models first (stable sort keeps the provider order among equals)
