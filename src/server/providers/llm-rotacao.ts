@@ -52,7 +52,11 @@ export function classificarErro(e: unknown, agora = Date.now()): { escopo: "prov
     if (e.status === 402) return { escopo: "provedor", ate: agora + 3_600_000, motivo: "sem saldo/limite" };
     if (e.status === 401 || (e.status === 403 && /(key|auth|unauthori|credential)/.test(msg))) return { escopo: "provedor", ate: agora + 3_600_000, motivo: "credencial" };
     if (e.status === 403) return { escopo: "modelo", ate: agora + 6 * 3_600_000, motivo: "modelo bloqueado para esta conta/região" };
-    if (e.status === 404 || e.status === 400) return { escopo: "modelo", ate: agora + 3_600_000, motivo: `modelo indisponível (${e.status})` };
+    // 400 is usually about this request (Groq answers 400 when the model fails JSON mode), not the model:
+    // a short pause only, so the model stays available for the calls.
+    if (e.status === 400 && /json|schema|tool|function/.test(msg)) return { escopo: "modelo", ate: agora, motivo: "requisição recusada (formato)" };
+    if (e.status === 400) return { escopo: "modelo", ate: agora + 60_000, motivo: "requisição recusada (400)" };
+    if (e.status === 404) return { escopo: "modelo", ate: agora + 3_600_000, motivo: "modelo indisponível (404)" };
   }
   return { escopo: "modelo", ate: agora + 120_000, motivo: e instanceof Error ? e.message.slice(0, 80) : "falha" };
 }

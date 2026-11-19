@@ -164,7 +164,12 @@ export async function estruturadoOpenAI<T>(e: EndpointOpenAI, req: EstruturadoRe
   const uso: UsoLlm = { input: 0, cached: 0, output: 0 };
   let msgs: MsgOA[] = base;
   for (let i = 0; i < 2; i++) {
-    const r = await chamar(e, { messages: msgs, max_tokens: req.maxTokens ?? 1500, temperature: 0, response_format: { type: "json_object" } });
+    // NVIDIA reasoning models would spend the whole budget "thinking" and return no JSON: off for structured calls
+    const semRaciocinio = /nvidia\.com/.test(e.baseURL) ? { chat_template_kwargs: { enable_thinking: false } } : {};
+    const r = await chamar(
+      { ...e, corpoExtra: { ...e.corpoExtra, ...semRaciocinio, max_tokens: req.maxTokens ?? 1500 } },
+      { messages: msgs, max_tokens: req.maxTokens ?? 1500, temperature: 0, response_format: { type: "json_object" } },
+    );
     uso.input += r.uso.input;
     uso.output += r.uso.output;
     const bruto = limparFala(r.msg.content ?? "").replace(/^```(?:json)?|```$/g, "").trim();
