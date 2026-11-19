@@ -83,7 +83,8 @@ export async function chamar(e: EndpointOpenAI, corpo: Record<string, unknown>):
   try {
     r = await fetch(`${e.baseURL.replace(/\/$/, "")}/chat/completions`, {
       method: "POST",
-      headers: { "content-type": "application/json", authorization: `Bearer ${e.chave}`, ...e.extraHeaders },
+      // keyless endpoints (OVH anonymous tier) get no Authorization header at all
+      headers: { "content-type": "application/json", ...(e.chave ? { authorization: `Bearer ${e.chave}` } : {}), ...e.extraHeaders },
       body: JSON.stringify({ model: e.modelo, ...corpo }),
       signal: AbortSignal.timeout(e.timeoutMs),
     });

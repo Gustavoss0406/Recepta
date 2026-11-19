@@ -163,7 +163,7 @@ async function modelosOpenRouter(): Promise<string[]> {
 
 export function provedoresPadrao(): Provedor[] {
   const p: Provedor[] = [];
-  const ordem = lista(process.env.LLM_PROVEDORES, ["groq", "openrouter"]);
+  const ordem = lista(process.env.LLM_PROVEDORES, ["groq", "nvidia", "ovh", "openrouter"]);
   for (const id of ordem) {
     if (id === "groq" && process.env.GROQ_API_KEY)
       p.push({
@@ -172,6 +172,26 @@ export function provedoresPadrao(): Provedor[] {
         chave: process.env.GROQ_API_KEY,
         modelos: async () => lista(process.env.GROQ_MODELOS, ["openai/gpt-oss-20b", "openai/gpt-oss-120b", "qwen/qwen3.8-27b"]),
         timeoutMs: 8000,
+      });
+    // NVIDIA API catalog (build.nvidia.com): free key, ~40 requests/min shared by the models.
+    if (id === "nvidia" && process.env.NVIDIA_API_KEY)
+      p.push({
+        id,
+        baseURL: "https://integrate.api.nvidia.com/v1",
+        chave: process.env.NVIDIA_API_KEY,
+        modelos: async () => lista(process.env.NVIDIA_MODELOS, ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "meta/llama-3.3-70b-instruct", "qwen/qwen3-next-80b-a3b-instruct"]),
+        timeoutMs: 10000,
+      });
+    // OVHcloud AI Endpoints: anonymous tier without a key (≈2 requests/min per model) — many models, so
+    // it adds real headroom as a fallback. With OVH_API_KEY the limits are the paid ones.
+    if (id === "ovh" && process.env.LLM_OVH_DESLIGADO !== "1")
+      p.push({
+        id,
+        baseURL: "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1",
+        chave: process.env.OVH_API_KEY ?? "",
+        modelos: async () =>
+          lista(process.env.OVH_MODELOS, ["gpt-oss-120b", "gpt-oss-20b", "DeepSeek-V4.1-Flash-1017", "Mistral-Small-3.2-24B-Instruct-2506", "Qwen3.6-27B"]),
+        timeoutMs: 12000,
       });
     if (id === "openrouter" && process.env.OPENROUTER_API_KEY)
       p.push({
