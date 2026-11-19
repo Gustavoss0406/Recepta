@@ -37,7 +37,7 @@ export interface EfeitoFerramenta {
 
 const obj = (properties: Record<string, unknown>, required: string[] = []) => ({ type: "object" as const, properties, required });
 
-export function definirFerramentas(c: AgentConfig): Anthropic.Tool[] {
+export function definirFerramentas(c: AgentConfig, opts: { foraDoHorario?: boolean } = {}): Anthropic.Tool[] {
   const t: Anthropic.Tool[] = [];
   if (c.acoes.colegas?.length)
     t.push({
@@ -105,7 +105,8 @@ export function definirFerramentas(c: AgentConfig): Anthropic.Tool[] {
       ),
     });
   }
-  if (c.acoes.transferir.ativo)
+  // outside business hours nobody can take the call: the case goes to the team instead
+  if (c.acoes.transferir.ativo && !opts.foraDoHorario)
     t.push({
       name: "transferir_para_humano",
       description: "Transfere a ligação para uma pessoa da equipe.",

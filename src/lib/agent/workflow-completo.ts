@@ -47,7 +47,7 @@ export function workflowCompleto(c: AgentConfig): Workflow {
             titulo: "Agendar",
             entra: "O cliente quer marcar um horário",
             objetivo:
-              "Nesta ordem: 1) se o cliente não disse o serviço, pergunte; 2) use consultar_horarios (com o dia e o período que ele pediu) e ofereça no máximo duas opções; 3) quando ele escolher, peça o nome; 4) confirme o telefone; 5) repita serviço, dia e hora e, com o sim dele, use agendar. Uma pergunta por vez. Fora do horário de atendimento você também pode marcar para os próximos dias.",
+              "Nesta ordem: 1) se o cliente não disse o serviço, pergunte; 2) use consultar_horarios (com o dia e o período que ele pediu) e ofereça no máximo duas opções; 3) quando ele escolher, peça o nome; 4) se você sabe o telefone de quem liga (está no contexto), pergunte se pode usar esse número em vez de pedir de novo; 5) repita serviço, dia e hora e, com o sim dele, use agendar. Uma pergunta por vez. Fora do horário de atendimento você também pode marcar para os próximos dias.",
           },
           {
             id: "meus",

@@ -15,6 +15,8 @@ export interface EndpointOpenAI {
   chave: string; // "proxy-injected" in sandboxed environments: the proxy sets the real header
   timeoutMs: number;
   extraHeaders?: Record<string, string>;
+  /** Extra request fields (e.g. NVIDIA reasoning models: chat_template_kwargs.enable_thinking = false). */
+  corpoExtra?: Record<string, unknown>;
 }
 
 export class ErroProvedor extends Error {
@@ -70,12 +72,30 @@ function idTool() {
 }
 
 /** Some open models leak reasoning or tool-call syntax into text; keep only what can be spoken. */
+/**
+ * What the receptionist says is spoken: no markdown, lists become one sentence, line breaks become
+ * spaces (a "- 08:00\n- 08:30" list would be read as "hífen oito horas…").
+ */
 export function limparFala(t: string): string {
-  return t
+  const semMarcas = t
     .replace(/<think>[\s\S]*?<\/think>/gi, "")
     .replace(/<\|[^|]*\|>/g, "")
-    .replace(/\*\*|__|`/g, "")
-    .trim();
+    .replace(/\*\*|__|`|^#+\s*/gm, "");
+  const linhas = semMarcas.split(/\n+/).map((l) => l.trim()).filter(Boolean);
+  const itens = linhas.filter((l) => /^([-*•]|\d+[.)])\s+/.test(l)).map((l) => l.replace(/^([-*•]|\d+[.)])\s+/, "").replace(/[.;]$/, ""));
+  const juntadas: string[] = [];
+  for (let i = 0; i < linhas.length; i++) {
+    if (!/^([-*•]|\d+[.)])\s+/.test(linhas[i])) {
+      juntadas.push(linhas[i]);
+      continue;
+    }
+    // a run of list items → "a, b ou c"
+    const bloco: string[] = [];
+    while (i < linhas.length && /^([-*•]|\d+[.)])\s+/.test(linhas[i])) bloco.push(itens.shift()!), i++;
+    i--;
+    juntadas.push(bloco.length > 1 ? `${bloco.slice(0, -1).join(", ")} ou ${bloco.at(-1)}.` : `${bloco[0]}.`);
+  }
+  return juntadas.join(" ").replace(/:\s+(?=[A-ZÀ-Úa-zà-ú])/g, ": ").replace(/\s{2,}/g, " ").trim();
 }
 
 export async function chamar(e: EndpointOpenAI, corpo: Record<string, unknown>): Promise<{ msg: { content?: string | null; tool_calls?: { id?: string; function: { name: string; arguments: string } }[] }; finish: string | null; uso: UsoLlm }> {
@@ -85,7 +105,7 @@ export async function chamar(e: EndpointOpenAI, corpo: Record<string, unknown>):
       method: "POST",
       // keyless endpoints (OVH anonymous tier) get no Authorization header at all
       headers: { "content-type": "application/json", ...(e.chave ? { authorization: `Bearer ${e.chave}` } : {}), ...e.extraHeaders },
-      body: JSON.stringify({ model: e.modelo, ...corpo }),
+      body: JSON.stringify({ model: e.modelo, ...corpo, ...e.corpoExtra }),
       signal: AbortSignal.timeout(e.timeoutMs),
     });
   } catch (err) {

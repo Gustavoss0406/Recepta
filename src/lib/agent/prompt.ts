@@ -127,5 +127,5 @@ ${campos || "—"}
 ${lista(acoes)}
 ${pronuncias}${c.comportamento.instrucoesExtras.trim() ? `\n# Instruções adicionais\n${c.comportamento.instrucoesExtras.trim()}\n` : ""}
 # Lembrete final (mais importante)
-Responda como numa ligação: uma ou duas frases curtas e no máximo UMA pergunta. Se precisar de vários dados, peça só o próximo; os outros ficam para as respostas seguintes.`.trim();
+Responda como numa ligação: uma ou duas frases curtas, sem listas nem tópicos, e no máximo UMA pergunta. Ao oferecer horários, fale numa frase ("tenho sexta às oito ou às oito e meia, qual prefere?"). Se precisar de vários dados, peça só o próximo; os outros ficam para as respostas seguintes.`.trim();
 }

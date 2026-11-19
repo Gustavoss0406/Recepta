@@ -24,6 +24,7 @@ export interface Provedor {
   modelos: () => Promise<string[]>;
   timeoutMs: number;
   extraHeaders?: Record<string, string>;
+  corpoExtra?: Record<string, unknown>;
 }
 
 type Estado = { ate: number; motivo: string };
@@ -98,7 +99,7 @@ export class LlmRotativo implements Llm {
       usadas++;
       const t0 = Date.now();
       try {
-        const r = await fn({ nome: chave, baseURL: p.baseURL, modelo, chave: p.chave, timeoutMs: p.timeoutMs, extraHeaders: p.extraHeaders });
+        const r = await fn({ nome: chave, baseURL: p.baseURL, modelo, chave: p.chave, timeoutMs: p.timeoutMs, extraHeaders: p.extraHeaders, corpoExtra: p.corpoExtra });
         const s = stats.get(chave) ?? { ok: 0, falha: 0, ultimoMs: 0 };
         stats.set(chave, { ...s, ok: s.ok + 1, ultimoMs: Date.now() - t0 });
         this.ultimo = chave;
@@ -179,8 +180,13 @@ export function provedoresPadrao(): Provedor[] {
         id,
         baseURL: "https://integrate.api.nvidia.com/v1",
         chave: process.env.NVIDIA_API_KEY,
-        modelos: async () => lista(process.env.NVIDIA_MODELOS, ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "meta/llama-3.3-70b-instruct", "qwen/qwen3-next-80b-a3b-instruct"]),
+        // PT-BR test with the receptionist tools: with reasoning on, both Nemotron models looked things up
+        // instead of inventing (0.8–4.6 s); with it off they were faster but made up answers.
+        modelos: async () => lista(process.env.NVIDIA_MODELOS, ["nvidia/nemotron-3.5-lightning-30b-a3b", "nvidia/nemotron-3.5-super-vl-120b-a12b", "google/gemma-4-31b-it"]),
         timeoutMs: 10000,
+        // reasoning tokens count against max_tokens: give room so the reply is never cut to nothing.
+        // NVIDIA_RACIOCINIO=0 turns reasoning off (faster, but invents more).
+        corpoExtra: process.env.NVIDIA_RACIOCINIO === "0" ? { chat_template_kwargs: { enable_thinking: false } } : { max_tokens: 1500 },
       });
     // OVHcloud AI Endpoints: anonymous tier without a key (≈2 requests/min per model) — many models, so
     // it adds real headroom as a fallback. With OVH_API_KEY the limits are the paid ones.

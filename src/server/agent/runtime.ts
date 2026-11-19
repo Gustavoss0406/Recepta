@@ -206,7 +206,7 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   const concluiuAlgo = anteriores.some(
     (m) => m.role === "assistant" && Array.isArray(m.content) && m.content.some((b) => b.type === "tool_use" && ["agendar", "repassar_para_equipe", "transferir_para_humano"].includes(b.name)),
   );
-  let tools = definirFerramentas(config);
+  let tools = definirFerramentas(config, { foraDoHorario: !dentroDoHorario(config.horarios, agora) });
   // A workflow step that names its tools only gets those (+ the essentials): fewer tokens, fewer mix-ups.
   const passo = fluxo && estado.no ? noDoFluxo(fluxo, estado.no) : undefined;
   if (passo?.tipo === "subagente") {
