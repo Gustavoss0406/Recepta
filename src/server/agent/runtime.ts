@@ -23,6 +23,7 @@ import { aplicarResumo, pontoDeCorte, SYSTEM_RESUMO, transcricao } from "@/lib/a
 import { contextoCliente, identificarCliente, type ClienteIdentificado } from "./identificar";
 import { contextoMemoria, extrairDados, type Memoria } from "@/lib/agent/memoria";
 import { filtrarTags, INSTRUCOES_VOZ, tirarTags } from "@/lib/voz/tags";
+import { umaPergunta } from "@/lib/agent/uma-pergunta";
 
 const CANAIS_TESTE: Canal[] = ["teste_texto", "teste_voz", "simulador", "simulacao"];
 const MAX_ITERACOES = 5;
@@ -363,6 +364,22 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
     if (encerrar && transferirPara && !usos.some((x) => x.name === "seguir_fluxo")) break;
   }
 
+  // one question per answer (the colleague's introduction, if any, is handled separately below)
+  if (!encerrar) {
+    const limitadas = umaPergunta(falas);
+    if (limitadas.join(" ") !== falas.join(" ")) {
+      // the history must match what was actually said, or the model "remembers" questions it never asked
+      const ultima = [...mensagens].reverse().find((m) => m.role === "assistant" && Array.isArray(m.content) && m.content.some((b) => b.type === "text"));
+      if (ultima && Array.isArray(ultima.content)) {
+        const blocos = ultima.content as Anthropic.ContentBlockParam[];
+        const iTexto = blocos.findIndex((b) => b.type === "text");
+        const resto = blocos.filter((b, i) => b.type !== "text" || i === iTexto);
+        (resto[resto.findIndex((b) => b.type === "text")] as Anthropic.TextBlockParam).text = limitadas.at(-1) ?? "";
+        ultima.content = resto;
+      }
+      falas.splice(0, falas.length, ...limitadas);
+    }
+  }
   // tags stay only in what is spoken (voice channels); stored transcripts and text channels never show them
   for (let i = 0; i < falas.length; i++) falas[i] = canalDeVoz ? filtrarTags(falas[i]) : tirarTags(falas[i]);
   const textoAgente = tirarTags(falas.join(" "));

@@ -1,5 +1,7 @@
 "use client";
 
+import { ehVersaoAntiga, recarregarUmaVez } from "@/lib/versao-nova";
+
 import { useEffect, useRef, useState, useTransition } from "react";
 import { CalendarCheck, FileText, Flag, MessageCircle, PhoneForwarded, PhoneOff, RotateCcw, Search, Send } from "lucide-react";
 import { testeEncerrar, testeIniciar, testeResponder } from "@/app/painel/teste-actions";
@@ -64,6 +66,7 @@ export function TestPanel({ agenteId, vozDisponivel = true }: { agenteId: string
         setDemo(r.modoDemo);
         setItens([{ tipo: "agente", texto: r.saudacao }]);
       } catch (e) {
+        if (ehVersaoAntiga(e) && recarregarUmaVez()) return;
         setErro(e instanceof Error ? e.message : "Erro ao iniciar");
       }
     });
@@ -93,6 +96,7 @@ export function TestPanel({ agenteId, vozDisponivel = true }: { agenteId: string
         setItens((x) => [...x, ...novos]);
         if (r.encerrar) encerrar(conversaId);
       } catch (e) {
+        if (ehVersaoAntiga(e) && recarregarUmaVez()) return;
         setErro(e instanceof Error ? e.message : "Erro");
       }
     });

@@ -44,7 +44,7 @@ export function workflowCompleto(c: AgentConfig): Workflow {
             titulo: "Encontrar o imóvel",
             entra: "O cliente procura um imóvel para comprar ou alugar",
             objetivo:
-              "Seja consultiva, como um bom corretor: entenda o que a pessoa procura (comprar ou alugar, região/bairro, faixa de preço, quantos quartos, algo indispensável), UMA pergunta por vez e reagindo ao que ela diz. Assim que tiver região e faixa de preço, use consultar_conhecimento para achar imóveis que combinem e sugira 1 ou 2 opções concretas (tipo, bairro, preço). Se ela gostar de algum, ofereça visitar. Não peça nome nem telefone nesta etapa.",
+              "Seja consultiva, como um bom corretor: entenda o que a pessoa procura (comprar ou alugar, região/bairro, faixa de preço, quantos quartos, algo indispensável), UMA pergunta por vez e reagindo ao que ela diz. Assim que tiver região OU faixa de preço — ou se o cliente perguntar 'o que vocês têm' — use consultar_conhecimento na hora e mostre 1 ou 2 opções concretas (tipo, bairro, preço) antes de perguntar mais; não peça a região de novo se ele já respondeu outra coisa. Se ela gostar de algum, ofereça visitar. Não peça nome nem telefone nesta etapa.",
           },
         ]
       : []),

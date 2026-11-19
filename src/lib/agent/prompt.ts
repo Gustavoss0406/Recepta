@@ -32,7 +32,7 @@ export function compilarPrompt(c: AgentConfig): string {
         .map((s) => `- ${s.nome}${s.preco ? ` — ${s.preco}` : ""}${s.duracaoMin ? ` (${s.duracaoMin} min)` : ""}`)
         .join("\n")
     : "—";
-  const campos = c.dados.campos.map((f) => `- ${f.rotulo}${f.obrigatorio ? " (obrigatório)" : ""}`).join("\n");
+  const campos = c.dados.campos.map((f) => `- ${f.rotulo}${f.obrigatorio ? " (necessário para marcar ou registrar)" : ""}`).join("\n");
 
   const acoes: string[] = [];
   if (c.acoes.agendar.ativo)
@@ -122,7 +122,7 @@ Fora do horário: ${
 
 Outras informações vêm em mensagens marcadas como "Conhecimento". Use só o que estiver lá; se a resposta não estiver, diga que vai verificar com a equipe e use repassar_para_equipe.
 
-# Dados para coletar durante a conversa (aos poucos, um por resposta, no meio do papo — nunca peça todos de uma vez)
+# Dados para registrar (só quando for marcar, registrar ou retornar — NUNCA no começo, um por vez)
 ${campos || "—"}
 
 # Ferramentas

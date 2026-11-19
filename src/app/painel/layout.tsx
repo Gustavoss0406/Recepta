@@ -1,3 +1,4 @@
+import { RecarregarSeVersaoAntiga } from "@/components/painel/versao-nova";
 import { and, eq, sql } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
 import { Sidebar } from "@/components/painel/sidebar";
@@ -18,6 +19,7 @@ export default async function PainelLayout({ children }: { children: React.React
   ]);
   return (
     <div className="min-h-dvh bg-background lg:flex">
+      <RecarregarSeVersaoAntiga />
       <Sidebar
         orgNome={s.org.nome}
         usuarioNome={s.usuario.nome}
