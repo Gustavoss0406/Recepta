@@ -1,3 +1,4 @@
+import { orgIlimitada } from "@/server/billing/ilimitado";
 import "server-only";
 import { and, count, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
@@ -41,6 +42,7 @@ export async function garantirCasosPadrao(orgId: string, agenteId: string) {
 export class LimiteSimulacoes extends Error {}
 
 async function verificarCota(orgId: string, rodadas: number) {
+  if (orgIlimitada(orgId)) return;
   const a = await obterAssinatura(orgId);
   const [{ usadas }] = await getDb()
     .select({ usadas: sql<number>`coalesce(sum(${schema.execucoesTeste.rodadas}), 0)::int` })

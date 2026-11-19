@@ -1,3 +1,4 @@
+import { orgIlimitada } from "./ilimitado";
 import "server-only";
 import { and, count, eq, lt, sql } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
@@ -24,8 +25,8 @@ export async function admitirChamada(orgId: string, conversaId: string): Promise
       .delete(schema.chamadasAtivas)
       .where(and(eq(schema.chamadasAtivas.orgId, orgId), lt(schema.chamadasAtivas.iniciadaEm, new Date(Date.now() - 2 * 3600_000))));
     const [a] = await tx.select().from(schema.assinaturas).where(eq(schema.assinaturas.orgId, orgId));
-    if (!a || a.status === "suspensa" || a.status === "cancelada") return { admitida: false, pico: false, motivo: "suspensa" as const };
-    const limite = getPlan(a.planoId as PlanId).concurrency ?? 50;
+    if (!orgIlimitada(orgId) && (!a || a.status === "suspensa" || a.status === "cancelada")) return { admitida: false, pico: false, motivo: "suspensa" as const };
+    const limite = orgIlimitada(orgId) ? 1000 : (getPlan(a.planoId as PlanId).concurrency ?? 50);
     const [{ n }] = await tx.select({ n: count() }).from(schema.chamadasAtivas).where(eq(schema.chamadasAtivas.orgId, orgId));
     if (n < limite) {
       await tx.insert(schema.chamadasAtivas).values({ conversaId, orgId, pico: false });
@@ -45,6 +46,7 @@ export async function liberarChamada(conversaId: string) {
 
 /** Message-only mode when the trial allowance is used up or the monthly cap is reached. */
 export async function deveAtenderSoRecado(orgId: string): Promise<boolean> {
+  if (orgIlimitada(orgId)) return false;
   const r = await resumoCobranca(orgId);
   if (r.estado === "teto") return true;
   if (r.assinatura.status === "trial" && (r.estado === "esgotada" || r.assinatura.fimCiclo < new Date())) return true;
