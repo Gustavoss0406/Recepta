@@ -144,7 +144,8 @@ async function rodar(persona: Persona) {
       e = pularPergunta(e);
       continue;
     }
-    const ia = await paciencia.run({ ateMs: 60_000 }, () => interpretar(e.perfil, id, r));
+    process.stdout.write(".");
+    const ia = await paciencia.run({ ateMs: 15_000 }, () => interpretar(e.perfil, id, r));
     if (ia) usouModelo++;
     e = responder(e, r, ia ?? {});
   }
