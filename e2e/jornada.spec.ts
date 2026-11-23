@@ -38,6 +38,9 @@ test("jornada completa do contratante", async ({ page }) => {
   await page.getByLabel("Nome da empresa").fill("Clínica Sorriso E2E");
   await page.getByRole("button", { name: "Criar conta grátis" }).click();
   await expect(page).toHaveURL(/painel\/comecar/);
+  await expect(page.getByTestId("onboarding-conversa")).toBeVisible();
+  // this journey uses the form onboarding (the conversation has its own spec)
+  await page.getByRole("link", { name: "Prefiro formulário" }).click();
 
   // 2. Passo 1 — empresa
   await page.locator('input[name="cidade"]').fill("Campinas");

@@ -11,17 +11,24 @@ import { TestPanel } from "@/components/painel/test-panel";
 import { Desvio } from "@/components/painel/desvio";
 import { PublicarForm } from "@/components/painel/publicar";
 import { Assistente } from "@/components/painel/assistente";
+import { OnboardingConversa } from "@/components/onboarding/conversa";
+import { iniciar } from "@/lib/onboarding/conversa";
 
 export const metadata = { title: "Começar" };
 
 const PASSOS = ["Sua empresa", "Seu site", "Como a recepcionista trabalha", "Voz e saudação", "Teste agora", "Seu número", "Publicar"];
 
-export default async function ComecarPage({ searchParams }: { searchParams: Promise<{ passo?: string; lido?: string }> }) {
+export default async function ComecarPage({ searchParams }: { searchParams: Promise<{ passo?: string; lido?: string; modo?: string; conversa?: string }> }) {
   const s = await exigirSessao();
   const sp = await searchParams;
   const db = getDb();
   const [org] = await db.select().from(schema.organizacoes).where(eq(schema.organizacoes.id, s.org.id));
   const agente = await primeiroAgente(s.org.id);
+  // first access: the onboarding is a conversation with the Recepta while the flow builds itself
+  if ((!agente && sp.modo !== "formulario") || sp.conversa) {
+    const estado = sp.conversa && org.onboardingConversa?.concluido ? iniciar() : (org.onboardingConversa ?? iniciar());
+    return <OnboardingConversa inicial={estado} agenteInicial={agente?.id ?? null} />;
+  }
   const maximo = agente ? Math.max(org.onboardingPasso, 2) : 1;
   const passo = Math.min(Math.max(1, Number(sp.passo ?? org.onboardingPasso) || 1), maximo, 7);
 

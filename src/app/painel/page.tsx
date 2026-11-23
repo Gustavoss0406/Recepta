@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
 import { ArrowRight, ArrowUpRight, Bell, ChevronRight } from "lucide-react";
@@ -37,6 +38,7 @@ function diasAte(hoje: string, n: number): string[] {
 
 export default async function InicioPage({ searchParams }: { searchParams: Promise<{ publicado?: string; periodo?: string; m?: string }> }) {
   const s = await exigirSessao();
+  if (!s.org.onboardingConcluido && !(await primeiroAgente(s.org.id))) redirect("/painel/comecar");
   const sp = await searchParams;
   const db = getDb();
   const periodo = PERIODOS.some((p) => p.v === sp.periodo) ? (sp.periodo as "7" | "30" | "90") : "7";

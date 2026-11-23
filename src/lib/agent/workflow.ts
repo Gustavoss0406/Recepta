@@ -28,8 +28,8 @@ export const arestaSchema = z.object({
 });
 export const workflowSchema = z.object({
   ativo: z.boolean().default(false),
-  nos: z.array(noSchema).max(40).default([]),
-  arestas: z.array(arestaSchema).max(80).default([]),
+  nos: z.array(noSchema).max(320).default([]),
+  arestas: z.array(arestaSchema).max(900).default([]),
 });
 export type No = z.infer<typeof noSchema>;
 export type Aresta = z.infer<typeof arestaSchema>;

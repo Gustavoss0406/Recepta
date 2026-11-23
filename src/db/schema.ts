@@ -39,6 +39,8 @@ export const organizacoes = pgTable("organizacoes", {
   mascararDados: boolean("mascarar_dados").notNull().default(true),
   onboardingPasso: integer("onboarding_passo").notNull().default(1),
   onboardingConcluido: boolean("onboarding_concluido").notNull().default(false),
+  /** Conversational onboarding state (profile + messages) until the receptionist is created. */
+  onboardingConversa: jsonb("onboarding_conversa").$type<import("@/lib/onboarding/conversa").EstadoOnboarding>(),
   asaasClienteId: text("asaas_cliente_id"),
   criadoEm: createdAt(),
 });
