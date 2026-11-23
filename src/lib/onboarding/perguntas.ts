@@ -561,7 +561,7 @@ export const PERGUNTAS: Pergunta[] = [
     quando: (p) => p.regras.length < 3,
     texto: (p) =>
       p.regras.length
-        ? "Anotado! Mais alguma situação específica? Se não tiver, é só dizer que acabou."
+        ? "Mais alguma situação específica? Se não tiver, é só dizer que acabou."
         : "Última: tem alguma situação específica do seu dia a dia que eu deveria saber? Tipo 'quando acontecer X, faz Y'.",
     ajuda: "Ex.: 'quando cliente pedir desconto pra pagar à vista, passa pro financeiro'. Cada situação vira um caminho próprio no fluxo.",
     chips: () => ["Não, é isso", "Quando pedirem nota fiscal, passa pro financeiro"],

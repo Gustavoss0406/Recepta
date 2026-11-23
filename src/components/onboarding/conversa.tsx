@@ -126,7 +126,7 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
   const camadaAtual = estado.concluido ? 3 : CAMADAS.findIndex(([c]) => c === r.camada);
 
   return (
-    <div className="fixed inset-0 z-50 grid grid-rows-[auto_minmax(0,1fr)] bg-background lg:grid-cols-[minmax(380px,460px)_1fr] lg:grid-rows-1" data-testid="onboarding-conversa" data-pergunta={estado.perguntaAtual ?? ""}>
+    <div className="fixed inset-0 z-50 grid grid-cols-[minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)] bg-background lg:grid-cols-[minmax(380px,460px)_1fr] lg:grid-rows-1" data-testid="onboarding-conversa" data-pergunta={estado.perguntaAtual ?? ""}>
       {/* canvas: top strip on phones, right side on desktop */}
       <section className={cn("relative order-1 border-b border-border transition-[height] duration-500 lg:order-2 lg:h-auto lg:border-b-0 lg:border-l", canvasAberto ? "h-[72dvh]" : "h-[36dvh]")}>
         <FluxoVivo fluxo={fluxo} className="absolute inset-0" />
