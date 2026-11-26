@@ -18,21 +18,27 @@ import { oauthConfigurado } from "@/server/integracoes/oauth";
 import { MeLigue } from "@/components/painel/me-ligue";
 import { LIGACOES_POR_DIA, ligacoesHoje } from "@/server/telefonia/me-ligue";
 import { or } from "drizzle-orm";
-import { iniciar } from "@/lib/onboarding/conversa";
+import { iniciar, responder } from "@/lib/onboarding/conversa";
+import { salvarOnboarding } from "@/server/onboarding/conversa";
 
 export const metadata = { title: "Começar" };
 
 const PASSOS = ["Sua empresa", "Seu site", "Como a recepcionista trabalha", "Voz e saudação", "Teste agora", "Seu número", "Publicar"];
 
-export default async function ComecarPage({ searchParams }: { searchParams: Promise<{ passo?: string; lido?: string; modo?: string; conversa?: string }> }) {
+export default async function ComecarPage({ searchParams }: { searchParams: Promise<{ passo?: string; lido?: string; modo?: string; conversa?: string; negocio?: string }> }) {
   const s = await exigirSessao();
   const sp = await searchParams;
   const db = getDb();
   const [org] = await db.select().from(schema.organizacoes).where(eq(schema.organizacoes.id, s.org.id));
   const agente = await primeiroAgente(s.org.id);
   // first access: the onboarding is a conversation with the Recepta while the flow builds itself
-  if ((!agente && sp.modo !== "formulario") || sp.conversa) {
-    const estado = sp.conversa && org.onboardingConversa?.concluido ? iniciar() : (org.onboardingConversa ?? iniciar());
+  if ((!agente && sp.modo !== "formulario") || sp.conversa || sp.negocio) {
+    let estado = sp.conversa && org.onboardingConversa?.concluido ? iniciar() : (org.onboardingConversa ?? iniciar());
+    // coming from a template card ("Pet shop", "Imobiliária"…): the first answer is already given
+    if (sp.negocio && (estado.mensagens.length <= 1 || estado.concluido)) {
+      estado = responder(iniciar(), sp.negocio.slice(0, 80));
+      await salvarOnboarding(s.org.id, estado);
+    }
     const conectadas = (await db.select({ tipo: schema.integracoes.tipo, status: schema.integracoes.status }).from(schema.integracoes).where(eq(schema.integracoes.orgId, s.org.id)))
       .filter((l) => l.status === "conectado")
       .map((l) => (l.tipo === "google_agenda" ? "google" : l.tipo));

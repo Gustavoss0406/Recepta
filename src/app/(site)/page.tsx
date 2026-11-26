@@ -17,6 +17,7 @@ import { LineCompare } from "@/components/charts/line-compare";
 import { CodeBlock } from "@/components/site/code-block";
 import { Faq } from "@/components/site/faq";
 import { Orb } from "@/components/ui/orb";
+import { BannerRotativo } from "@/components/painel/inicio-vivo";
 import { PLANS } from "@/lib/pricing/plans";
 import { CONECTORES } from "@/lib/integracoes/catalogo";
 import { formatBRLRound, formatInt } from "@/lib/format";
@@ -135,6 +136,16 @@ export default function Home() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="container-page pb-20">
+        <BannerRotativo
+          slides={[
+            { linha1: "Atende toda ligação,", linha2: "24 horas por dia", fotos: ["/fotos/clinica.jpg", "/fotos/restaurante.jpg", "/fotos/salao.jpg", "/fotos/imobiliaria.jpg"], href: "/criar-conta" },
+            { linha1: "Do alô ao", linha2: "horário marcado na agenda", fotos: ["/fotos/odontologia.jpg", "/fotos/salao.jpg", "/fotos/clinica.jpg", "/fotos/restaurante.jpg"], href: "/criar-conta" },
+            { linha1: "Na dúvida, passa o caso", linha2: "pronto pra sua equipe", fotos: ["/fotos/imobiliaria.jpg", "/fotos/odontologia.jpg", "/fotos/restaurante.jpg", "/fotos/salao.jpg"], href: "/precos" },
+          ]}
+        />
       </section>
 
       {/* Agents bento */}

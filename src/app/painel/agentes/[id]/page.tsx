@@ -81,11 +81,12 @@ export default async function AgentePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ aba?: string }>;
+  searchParams: Promise<{ aba?: string; pedido?: string }>;
 }) {
   const s = await exigirSessao();
   const { id } = await params;
-  const pedida = (await searchParams).aba ?? "agente";
+  const sp = await searchParams;
+  const pedida = sp.aba ?? "agente";
   const aba = ANTIGAS[pedida] ?? pedida;
   let agente;
   try {
@@ -237,7 +238,7 @@ export default async function AgentePage({
         >
           {aba === "agente" && (
             <div className="space-y-3">
-              <Assistente agenteId={id} />
+              <Assistente agenteId={id} inicial={sp.pedido?.slice(0, 600)} />
               <SecaoComportamento config={cfg} acao={acao("comportamento")} />
               <ResumoAgente orgId={s.org.id} agenteId={id} />
             </div>

@@ -1,11 +1,12 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Pause, Play, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, BadgeCheck, Pause, Play, Plus, Search, Trash2 } from "lucide-react";
 import type { AgentConfig } from "@/lib/agent/config";
 import { DIAS, OBJETIVOS, saudacaoTemAviso } from "@/lib/agent/config";
 import { servicosParaTexto } from "@/lib/agent/form";
-import { MOTORES, VOICES, type MotorVoz } from "@/lib/voices";
+import { MOTORES, VOICES, type MotorVoz, type Voice } from "@/lib/voices";
+import { cn } from "@/lib/utils";
 import { Orb } from "@/components/ui/orb";
 import { BotaoEnviar, Erro } from "@/components/ui/form";
 
@@ -203,56 +204,9 @@ export function SecaoVoz({
 
   return (
     <Form acao={acao} rotulo={rotulo}>
-      <Grupo titulo="Voz" ajuda="Vozes do catálogo Recepta. Ouça antes de escolher.">
+      <Grupo titulo="Vozes" ajuda="Catálogo Recepta. Ouça antes de escolher.">
         <input type="hidden" name="vozId" value={voz} />
-        {(Object.keys(MOTORES) as MotorVoz[]).map((m) => {
-          const vozes = VOICES.filter((v) => v.motor === m);
-          if (!vozes.length) return null;
-          const ativo = motoresAtivos[m];
-          return (
-            <div key={m}>
-              <p className="mb-1.5 flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                {MOTORES[m].nome}
-                <span className="font-normal">· {MOTORES[m].descricao}</span>
-                {!ativo && <span className="rounded-[6px] bg-muted px-1.5 py-0.5 font-normal">motor não conectado</span>}
-              </p>
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {vozes.map((v) => (
-            <li key={v.id}>
-              <div
-                role="radio"
-                aria-checked={voz === v.id}
-                aria-disabled={!ativo}
-                tabIndex={0}
-                onClick={() => ativo && setVoz(v.id)}
-                onKeyDown={(e) => ativo && (e.key === " " || e.key === "Enter") && setVoz(v.id)}
-                className={`flex items-center gap-3 ${ativo ? "cursor-pointer" : "cursor-not-allowed opacity-50"} rounded-[12px] bg-white p-3 shadow-[var(--shadow-pill)] ${voz === v.id ? "outline-2 outline-ink" : ""}`}
-              >
-                <Orb tom={v.tone} tamanho={40} />
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm text-ink">
-                    {v.name} <span className="text-muted-foreground">· {v.accent}</span>
-                  </span>
-                  <span className="block truncate text-xs text-muted-foreground">{v.style}</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    void ouvir(v.id);
-                  }}
-                  className="grid size-8 place-items-center rounded-full bg-strong text-ink"
-                  aria-label={`Ouvir ${v.name}`}
-                >
-                  {tocando === v.id ? <Pause size={13} /> : <Play size={13} />}
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-            </div>
-          );
-        })}
+        <VozesExplorar voz={voz} setVoz={setVoz} tocando={tocando} ouvir={ouvir} motoresAtivos={motoresAtivos} />
       </Grupo>
       <Grupo titulo="Velocidade">
         <Input type="range" name="velocidade" min={0.9} max={1.15} step={0.05} defaultValue={config.voz.velocidade} className="!h-auto accent-black" aria-label="Velocidade da fala" />
@@ -461,5 +415,130 @@ export function SecaoCanais({ config, acao, agenteId, origem }: { config: AgentC
         </div>
       </Grupo>
     </Form>
+  );
+}
+
+const CATEGORIAS_VOZ = [
+  { id: "todas", rotulo: "Todas", teste: () => true },
+  { id: "acolhedora", rotulo: "Acolhedoras", teste: (v: Voice) => /acolhed|calma|simp|amig/i.test(v.style) },
+  { id: "formal", rotulo: "Formais", teste: (v: Voice) => /formal|execut|seguro|confiante/i.test(v.style) },
+  { id: "expressiva", rotulo: "Expressivas", teste: (v: Voice) => /expressiv|cordial/i.test(v.style) },
+  { id: "feminina", rotulo: "Femininas", teste: (v: Voice) => v.gender === "feminina" },
+  { id: "masculina", rotulo: "Masculinas", teste: (v: Voice) => v.gender === "masculina" },
+];
+
+const ESCOLHIDAS = [
+  { titulo: "Ideais para clínicas", foto: "/fotos/clinica.jpg", voz: "clara", fundo: "linear-gradient(135deg,#bbf7d0,#a5f3fc)" },
+  { titulo: "Para imobiliárias", foto: "/fotos/imobiliaria.jpg", voz: "tomas", fundo: "linear-gradient(135deg,#dbeafe,#e0e7ff)" },
+  { titulo: "Restaurantes e reservas", foto: "/fotos/restaurante.jpg", voz: "otavio", fundo: "linear-gradient(135deg,#fde68a,#fbcfe8)" },
+  { titulo: "Atendimento caloroso", foto: "/fotos/atendimento.jpg", voz: "lia", fundo: "linear-gradient(135deg,#fecaca,#fed7aa)" },
+];
+
+/** ElevenLabs-style voice explorer: search, category chips, trending list with avatars, handpicked cards. */
+function VozesExplorar({
+  voz,
+  setVoz,
+  tocando,
+  ouvir,
+  motoresAtivos,
+}: {
+  voz: string;
+  setVoz: (v: string) => void;
+  tocando: string | null;
+  ouvir: (id: string) => Promise<void>;
+  motoresAtivos: Record<MotorVoz, boolean>;
+}) {
+  const [busca, setBusca] = useState("");
+  const [cat, setCat] = useState("todas");
+  const filtro = CATEGORIAS_VOZ.find((c) => c.id === cat)!;
+  const lista = VOICES.filter((v) => filtro.teste(v) && `${v.name} ${v.style} ${v.accent}`.toLowerCase().includes(busca.toLowerCase()));
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center gap-2 rounded-[12px] border border-foreground/80 bg-white px-3">
+        <Search size={15} className="text-muted-foreground" />
+        <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar vozes…" aria-label="Buscar vozes" className="h-10 flex-1 bg-transparent text-base outline-none sm:text-sm" />
+      </div>
+      <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+        {CATEGORIAS_VOZ.map((c) => (
+          <button key={c.id} type="button" onClick={() => setCat(c.id)} className={cn("shrink-0 rounded-[10px] border px-3 py-1.5 text-[0.8125rem] whitespace-nowrap", cat === c.id ? "border-foreground bg-foreground text-white" : "border-border bg-white hover:bg-accent")}>
+            {c.rotulo}
+          </button>
+        ))}
+      </div>
+
+      <div>
+        <p className="mb-2 text-sm font-medium">Em alta</p>
+        <ul className="grid gap-x-4 gap-y-1 sm:grid-cols-2">
+          {lista.map((v) => {
+            const ativo = motoresAtivos[v.motor];
+            return (
+              <li key={v.id}>
+                <div
+                  role="radio"
+                  aria-checked={voz === v.id}
+                  aria-disabled={!ativo}
+                  tabIndex={0}
+                  onClick={() => ativo && setVoz(v.id)}
+                  onKeyDown={(e) => ativo && (e.key === " " || e.key === "Enter") && setVoz(v.id)}
+                  className={cn("group flex items-center gap-3 rounded-[14px] p-2 transition-colors", ativo ? "cursor-pointer hover:bg-accent" : "cursor-not-allowed opacity-45", voz === v.id && "bg-accent outline-2 outline-foreground")}
+                >
+                  <span className="relative grid size-12 shrink-0 place-items-center rounded-[12px] bg-muted">
+                    <Orb tom={v.tone} tamanho={34} />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void ouvir(v.id);
+                      }}
+                      aria-label={`Ouvir ${v.name}`}
+                      className={cn("absolute inset-0 grid place-items-center rounded-[12px] bg-black/45 text-white opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100", tocando === v.id && "opacity-100")}
+                    >
+                      {tocando === v.id ? <Pause size={14} /> : <Play size={14} />}
+                    </button>
+                    {v.motor === "premium" && <BadgeCheck size={14} className="absolute -right-1 -bottom-1 rounded-full bg-white text-foreground" aria-label="Premium" />}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium text-foreground">{v.name}</span>
+                    <span className="block truncate text-xs text-muted-foreground">
+                      {v.style} · {MOTORES[v.motor].nome}
+                      {!ativo && " · motor não conectado"}
+                    </span>
+                    <span className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                      <span aria-hidden>🇧🇷</span> Português · {v.accent}
+                    </span>
+                  </span>
+                </div>
+              </li>
+            );
+          })}
+          {!lista.length && <li className="text-sm text-muted-foreground">Nenhuma voz com esse filtro.</li>}
+        </ul>
+      </div>
+
+      <div>
+        <p className="mb-2 text-sm font-medium">Escolhidas pra você</p>
+        <div className="-mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+          {ESCOLHIDAS.map((e) => (
+            <button
+              key={e.titulo}
+              type="button"
+              onClick={() => motoresAtivos[VOICES.find((v) => v.id === e.voz)?.motor ?? "premium"] && setVoz(e.voz)}
+              className="group relative h-36 w-64 shrink-0 snap-start overflow-hidden rounded-[18px] text-left"
+              style={{ background: e.fundo }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={e.foto} alt="" loading="lazy" onError={(x) => ((x.target as HTMLImageElement).style.display = "none")} className="absolute inset-y-0 left-0 h-full w-[46%] object-cover [mask-image:linear-gradient(90deg,#000_70%,transparent)]" />
+              <span className="absolute inset-y-0 right-0 flex w-[58%] flex-col justify-center bg-gradient-to-l from-white/95 via-white/85 to-transparent pr-4 pl-6">
+                <span className="text-[1.0625rem] leading-tight font-semibold tracking-[-0.02em]">{e.titulo}</span>
+                <span className="mt-1 text-xs text-muted-foreground">Voz: {VOICES.find((v) => v.id === e.voz)?.name}</span>
+              </span>
+              <span className="absolute right-3 bottom-3 grid size-6 place-items-center rounded-full bg-foreground text-white">
+                <ArrowRight size={12} />
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

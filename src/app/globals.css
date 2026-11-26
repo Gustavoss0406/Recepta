@@ -293,3 +293,8 @@ body {
 @keyframes orb-fala { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
 .orb-falando { animation: orb-fala .9s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .orb-falando { animation: none; } }
+@keyframes faixa-flutua { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(4px) rotate(3deg); } }
+.faixa-flutua { animation: faixa-flutua 6s ease-in-out infinite; }
+@keyframes banner-entra { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.banner-entra { animation: banner-entra .6s cubic-bezier(.22,1,.36,1) both; }
+@media (prefers-reduced-motion: reduce) { .faixa-flutua, .banner-entra { animation: none; } }

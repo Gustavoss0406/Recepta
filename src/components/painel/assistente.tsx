@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { ArrowRight, Sparkles, TriangleAlert } from "lucide-react";
 import { acaoAplicarMudancas, acaoProporMudancas, type Resultado, type ResultadoAssistente } from "@/app/painel/actions";
 import { BOTAO } from "@/components/painel/page-header";
@@ -22,8 +22,8 @@ const EXEMPLOS = {
  * Configuration assistant: one plain-language request → changes proposed per section, each shown
  * as before/after and applied only when the business approves it.
  */
-export function Assistente({ agenteId, modo = "ajustar", className }: { agenteId: string; modo?: "criar" | "ajustar"; className?: string }) {
-  const [pedido, setPedido] = useState("");
+export function Assistente({ agenteId, modo = "ajustar", className, inicial }: { agenteId: string; modo?: "criar" | "ajustar"; className?: string; inicial?: string }) {
+  const [pedido, setPedido] = useState(inicial ?? "");
   const [r, setR] = useState<ResultadoAssistente>(undefined);
   const [escolhidas, setEscolhidas] = useState<string[]>([]);
   const [fim, setFim] = useState<Resultado>(undefined);
@@ -46,6 +46,14 @@ export function Assistente({ agenteId, modo = "ajustar", className }: { agenteId
         setPedido("");
       }
     });
+  const autoRodou = useRef(false);
+  useEffect(() => {
+    if (inicial && inicial.trim().length >= 8 && !autoRodou.current) {
+      autoRodou.current = true;
+      propor();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inicial]);
 
   return (
     <section className={cn("rounded-[18px] border border-border bg-background p-4", className)} aria-label="Assistente de configuração">

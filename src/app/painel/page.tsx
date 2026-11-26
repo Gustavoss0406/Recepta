@@ -1,3 +1,7 @@
+import { FaixaAnuncio, PromptRecepta, BannerRotativo } from "@/components/painel/inicio-vivo";
+import { foto } from "@/server/fotos";
+import { GRADIENTES, MODELOS } from "@/lib/fotos";
+import { AudioLines, Blocks, BookOpen, CalendarDays, Inbox, Mic, PhoneCall, Workflow } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
@@ -35,6 +39,20 @@ function diasAte(hoje: string, n: number): string[] {
   const base = new Date(`${hoje}T12:00:00Z`).getTime();
   return Array.from({ length: n }, (_, i) => new Date(base - (n - 1 - i) * 86_400_000).toISOString().slice(0, 10));
 }
+
+/** Photos already in the project, used while the CC0 set is still downloading. */
+const RESERVA = ["/fotos/clinica.jpg", "/fotos/restaurante.jpg", "/fotos/salao.jpg", "/fotos/imobiliaria.jpg", "/fotos/odontologia.jpg"];
+
+const ATALHOS = (agenteId?: string) => [
+  { rotulo: "Testar", href: agenteId ? `/painel/agentes/${agenteId}#testar` : "/painel/comecar", icone: AudioLines },
+  { rotulo: "Fluxo", href: agenteId ? `/painel/agentes/${agenteId}?aba=workflow` : "/painel/comecar", icone: Workflow },
+  { rotulo: "Vozes", href: agenteId ? `/painel/agentes/${agenteId}?aba=voz` : "/painel/comecar", icone: Mic },
+  { rotulo: "Agenda", href: "/painel/agenda", icone: CalendarDays },
+  { rotulo: "Ligações", href: "/painel/ligacoes", icone: PhoneCall },
+  { rotulo: "Pendências", href: "/painel/pendencias", icone: Inbox },
+  { rotulo: "Conhecimento", href: agenteId ? `/painel/agentes/${agenteId}?aba=conhecimento` : "/painel/comecar", icone: BookOpen },
+  { rotulo: "Integrações", href: "/painel/integracoes", icone: Blocks },
+];
 
 export default async function InicioPage({ searchParams }: { searchParams: Promise<{ publicado?: string; periodo?: string; m?: string }> }) {
   const s = await exigirSessao();
@@ -141,10 +159,70 @@ export default async function InicioPage({ searchParams }: { searchParams: Promi
 
   return (
     <div className="pb-16">
-      <header className={cn(COLUNA, "pt-7 sm:pt-10")}>
+      <FaixaAnuncio
+        id="me-ligue"
+        texto="Novo"
+        destaque="Teste sua recepcionista numa ligação de verdade"
+        href={agente ? `/painel/agentes/${agente.id}#testar` : "/painel/comecar"}
+        acao="Me ligue agora"
+        fotos={["atendimento", "headset", "clinica", "imobiliaria", "restaurante", "petshop"].map(foto).filter((x): x is string => Boolean(x))}
+      />
+      <section className={cn(COLUNA, "pt-8 sm:pt-12")}>
+        <PromptRecepta nome={s.usuario.nome.split(" ")[0]} agenteId={agente?.id ?? null} />
+        <nav aria-label="Atalhos" className="mx-auto mt-8 grid max-w-[820px] grid-cols-4 gap-y-5 sm:grid-cols-8">
+          {ATALHOS(agente?.id).map((a) => (
+            <Link key={a.rotulo} href={a.href} className="group flex flex-col items-center gap-2 text-center">
+              <span className="grid size-11 place-items-center rounded-[14px] border border-border bg-white shadow-[0_1px_2px_rgba(0,0,0,.04)] transition-transform group-hover:-translate-y-0.5">
+                <a.icone size={19} strokeWidth={1.6} className="text-foreground" />
+              </span>
+              <span className="text-[0.8125rem] text-foreground">{a.rotulo}</span>
+            </Link>
+          ))}
+        </nav>
+        <div className="mt-8">
+          <BannerRotativo
+            slides={[
+              { linha1: "Atende toda ligação,", linha2: "24 horas por dia", fotos: [foto("atendimento"), foto("cidade-noite"), foto("headset"), foto("recepcao")].map((x, k) => x ?? RESERVA[k % RESERVA.length]), href: agente ? `/painel/agentes/${agente.id}?aba=workflow` : "/painel/comecar" },
+              { linha1: "Do alô ao", linha2: "horário marcado na agenda", fotos: [foto("clinica"), foto("salao"), foto("academia"), foto("veterinaria")].map((x, k) => x ?? RESERVA[k % RESERVA.length]), href: "/painel/agenda" },
+              { linha1: "Na dúvida, passa o caso", linha2: "pronto pra sua equipe", fotos: [foto("equipe"), foto("advocacia"), foto("oficina"), foto("escola")].map((x, k) => x ?? RESERVA[k % RESERVA.length]), href: "/painel/pendencias" },
+              { linha1: "Conecte WhatsApp,", linha2: "CRM e agenda em 1 minuto", fotos: [foto("imobiliaria"), foto("restaurante"), foto("petshop"), foto("recepcao")].map((x, k) => x ?? RESERVA[k % RESERVA.length]), href: "/painel/integracoes" },
+            ]}
+          />
+        </div>
+      </section>
+
+      <section className={cn(COLUNA, "mt-12")}>
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-medium tracking-[-0.01em]">Modelos prontos</h2>
+            <p className="text-sm text-muted-foreground">Uma recepcionista sob medida pra cada tipo de negócio, montada numa conversa.</p>
+          </div>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {MODELOS.map((m, i) => {
+            const f = foto(m.slug);
+            return (
+              <Link
+                key={m.slug}
+                href={`/painel/comecar?conversa=1&negocio=${encodeURIComponent(m.negocio)}`}
+                className="group relative block aspect-[4/3] overflow-hidden rounded-[16px]"
+                style={{ background: GRADIENTES[i % GRADIENTES.length] }}
+              >
+                {f && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={f} alt="" loading="lazy" className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+                )}
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent px-3 pt-10 pb-2.5 text-sm font-medium text-white">{m.titulo}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <header className={cn(COLUNA, "pt-12")}>
         <p className="text-[0.8125rem] text-muted-foreground">{s.org.nome}</p>
         <div className="mt-1 flex flex-wrap items-end justify-between gap-4">
-          <h1 className="text-[1.75rem] leading-tight font-semibold tracking-[-0.03em] text-foreground">Olá, {s.usuario.nome.split(" ")[0]}</h1>
+          <h1 className="text-lg font-medium tracking-[-0.01em] text-foreground">Seu atendimento</h1>
           {agente && (
             <Link href={`/painel/agentes/${agente.id}`} className="group flex items-center gap-2.5 rounded-full border border-border py-1 pr-3 pl-1 transition-colors hover:bg-accent">
               <Orb tom="padrao" tamanho={28} />
