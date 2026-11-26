@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import { brand } from "@/config/brand";
 
 export const metadata = { title: "Política de privacidade" };
@@ -13,9 +14,10 @@ function S({ id, titulo, children }: { id: string; titulo: string; children: Rea
   );
 }
 
-export default function PrivacidadePage() {
+export default async function PrivacidadePage() {
   return (
-    <div className="container-page max-w-[760px] py-16 sm:py-24">
+    <div className="container-page relative isolate max-w-[760px] py-16 sm:py-24">
+      <div className="absolute inset-x-0 top-0 -z-10 h-56"><FundoFotos slugs={["advocacia", "recepcao", "equipe"]} /></div>
       <p className="eyebrow">LGPD · Lei 13.709/2018</p>
       <h1 className="display-section mt-3 text-ink">Política de privacidade</h1>
       <p className="mt-3 text-sm text-muted-foreground">Atualizada em {ATUALIZADA}.</p>

@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { and, asc, eq, sum } from "drizzle-orm";
@@ -64,7 +65,8 @@ export default async function LigacaoPage({ params, searchParams }: { params: Pr
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[1120px] px-4 pt-5 pb-16 sm:px-8 sm:pt-6">
+    <div className="relative isolate mx-auto w-full max-w-[1120px] px-4 pt-5 pb-16 sm:px-8 sm:pt-6">
+      <div className="absolute inset-x-0 top-0 -z-10 h-28"><FundoFotos slugs={["atendimento", "headset", "recepcao"]} /></div>
       <Link href="/painel/ligacoes" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         <ChevronLeft size={15} /> Ligações
       </Link>

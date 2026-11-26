@@ -56,6 +56,20 @@ import { ttsConfigurado } from "@/server/voice/tts";
 import { MotorIA } from "@/components/painel/motor-ia";
 import { PlaygroundVoz } from "@/components/painel/playground-voz";
 import { HeroFluxo } from "@/components/painel/hero-fluxo";
+import { BannerAba, FundoFotos } from "@/components/painel/capa";
+
+const BANNERS: Record<string, { titulo: string; texto: string; slugs: string[]; fundo: string }> = {
+  agente: { titulo: "Personalidade e regras", texto: "Como ela se apresenta, o tom, o que pode e o que nunca faz.", slugs: ["atendimento", "recepcao", "equipe"], fundo: "linear-gradient(120deg,#e0e7ff,#fce7f3)" },
+  conhecimento: { titulo: "Tudo o que ela sabe", texto: "Site, documentos e perguntas frequentes que ela consulta nas ligações.", slugs: ["escola", "advocacia", "recepcao"], fundo: "linear-gradient(120deg,#dcfce7,#e0f2fe)" },
+  acoes: { titulo: "O que ela faz por você", texto: "Agendar, transferir, mandar WhatsApp e consultar os seus sistemas.", slugs: ["clinica", "imobiliaria", "restaurante"], fundo: "linear-gradient(120deg,#fef3c7,#fde2e4)" },
+  motor: { titulo: "O cérebro das ligações", texto: "RecepIA grátis ou o seu provedor favorito, com troca automática se cair.", slugs: ["cidade-noite", "equipe", "headset"], fundo: "linear-gradient(120deg,#ede9fe,#dbeafe)" },
+  dados: { titulo: "O que ela anota de cada ligação", texto: "Os dados que viram relatório, resumo e análise.", slugs: ["equipe", "advocacia", "headset"], fundo: "linear-gradient(120deg,#e0f2fe,#f1f5f9)" },
+  testes: { titulo: "Teste antes de publicar", texto: "Clientes simulados ligam pro rascunho e cada conversa é avaliada.", slugs: ["headset", "atendimento", "recepcao"], fundo: "linear-gradient(120deg,#fce7f3,#fef3c7)" },
+  canais: { titulo: "Atenda também no seu site", texto: "Um botão de voz no site que conversa com a mesma recepcionista.", slugs: ["recepcao", "salao", "academia"], fundo: "linear-gradient(120deg,#ccfbf1,#e0e7ff)" },
+  seguranca: { titulo: "Proteção e privacidade", texto: "Temas proibidos, limites de duração e cuidados com a LGPD.", slugs: ["advocacia", "recepcao", "equipe"], fundo: "linear-gradient(120deg,#f1f5f9,#e2e8f0)" },
+  horarios: { titulo: "Horários e regras avançadas", texto: "Quando ela atende, feriados e o que fazer fora do horário.", slugs: ["cidade-noite", "clinica", "academia"], fundo: "linear-gradient(120deg,#e2e8f0,#c7d2fe)" },
+  versoes: { titulo: "Versões publicadas", texto: "Cada publicação fica guardada. Volte para qualquer uma quando quiser.", slugs: ["equipe", "recepcao", "headset"], fundo: "linear-gradient(120deg,#fae8ff,#e0e7ff)" },
+};
 import { chavesMotor } from "@/server/providers/motor-cliente";
 
 /** Same tab order as the ElevenAgents agent page (Agent, Voice, Knowledge, Tools, Analysis, Tests, Widget, Security, Advanced, Branches). */
@@ -134,7 +148,8 @@ export default async function AgentePage({
   return (
     <div className="flex min-h-dvh">
       <div className="min-w-0 flex-1">
-        <header className="px-4 pt-5 sm:px-8 sm:pt-6">
+        <header className="relative isolate px-4 pt-5 sm:px-8 sm:pt-6">
+          <FundoFotos slugs={agente.nicho === "imobiliaria" ? ["imobiliaria", "equipe", "recepcao"] : agente.nicho === "restaurante" ? ["restaurante", "equipe", "recepcao"] : ["clinica", "recepcao", "equipe"]} />
           <Link
             href="/painel/agentes"
             className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
@@ -239,6 +254,7 @@ export default async function AgentePage({
         <div
           className={`mx-auto w-full max-w-[720px] px-4 py-6 sm:px-8 ${editar ? "" : "pointer-events-none opacity-70"}`}
         >
+          {aba !== "voz" && aba !== "workflow" && BANNERS[aba] && <BannerAba {...BANNERS[aba]} />}
           {aba === "agente" && (
             <div className="space-y-3">
               <Assistente agenteId={id} inicial={sp.pedido?.slice(0, 600)} />

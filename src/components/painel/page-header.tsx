@@ -20,7 +20,7 @@ export function PageHeader({
   fundo?: React.ReactNode;
 }) {
   return (
-    <header className={cn(COLUNA, "relative pt-7 pb-1 sm:pt-10", fundo && "sm:pb-4")}>
+    <header className={cn(COLUNA, "relative isolate pt-7 pb-1 sm:pt-10", fundo && "sm:pb-4")}>
       {fundo}
       {voltar && <div className="mb-3 text-sm text-muted-foreground [&_a:hover]:text-foreground">{voltar}</div>}
       <div className="relative z-10 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">

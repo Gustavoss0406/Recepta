@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb, schema } from "@/db/client";
@@ -17,7 +18,7 @@ export default async function PagarPage({ params }: { params: Promise<{ id: stri
   if (!f) notFound();
   return (
     <>
-      <PageHeader titulo="Pagamento" descricao="Ambiente de testes: nenhum dinheiro é cobrado." />
+      <PageHeader fundo={<FundoFotos slugs={["equipe", "recepcao", "advocacia"]} />} titulo="Pagamento" descricao="Ambiente de testes: nenhum dinheiro é cobrado." />
       <Secao>
         <div className="panel max-w-md space-y-4 p-6">
           <p className="rounded-[10px] bg-[#fff6e5] px-3 py-2 text-xs text-[#8a5a00]">Simulador de pagamento. Em produção, este link abre a cobrança do Asaas (Pix, boleto ou cartão).</p>

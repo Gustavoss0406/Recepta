@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Check } from "lucide-react";
@@ -48,13 +49,14 @@ const ROWS: { label: string; get: (p: (typeof PLANS)[number]) => string }[] = [
   { label: "Usuários", get: (p) => (p.seats ? String(p.seats) : "Ilimitados") },
 ];
 
-export default function PrecosPage() {
+export default async function PrecosPage() {
   const cards = PLANS;
   const tablePlans = PLANS.filter((p) => p.id !== "teste");
 
   return (
     <div className="grid-frame">
-      <section className="container-page pt-16 pb-12 sm:pt-24">
+      <section className="container-page relative isolate pt-16 pb-12 sm:pt-24">
+        <FundoFotos slugs={["clinica", "restaurante", "salao"]} />
         <h1 className="display-hero max-w-2xl">Preço fixo em reais, com tudo incluso</h1>
         <p className="mt-6 lead max-w-xl text-body">
           Número, minutos, voz, transcrição e inteligência artificial num só valor. Sem dólar, sem IOF e sem conta de

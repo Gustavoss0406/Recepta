@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import Link from "next/link";
 import { and, eq } from "drizzle-orm";
 import { Check } from "lucide-react";
@@ -98,7 +99,8 @@ export default async function ComecarPage({ searchParams }: { searchParams: Prom
         </ol>
       </nav>
 
-      <main className="min-w-0 px-4 py-8 sm:px-10">
+      <main className="relative isolate min-w-0 px-4 py-8 sm:px-10">
+        <div className="absolute inset-x-0 top-0 -z-10 h-48"><FundoFotos slugs={["recepcao", "atendimento", "clinica"]} /></div>
         <p className="font-mono text-xs text-muted-foreground">
           Passo {passo} de 7
         </p>

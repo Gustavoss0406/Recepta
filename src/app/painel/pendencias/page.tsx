@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import Link from "next/link";
 import { and, desc, eq, isNull, sql, type SQL } from "drizzle-orm";
 import { ChevronDown, Plus, X } from "lucide-react";
@@ -83,8 +84,9 @@ export default async function PendenciasPage({ searchParams }: { searchParams: P
   const n = Object.fromEntries(contagem.map((c) => [c.status, c.n])) as Partial<Record<StatusRepasse, number>>;
 
   return (
-    <div className="mx-auto w-full max-w-[1040px] px-4 pt-8 pb-16 sm:px-8 sm:pt-10">
-      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+    <div className="relative isolate mx-auto w-full max-w-[1040px] px-4 pt-8 pb-16 sm:px-8 sm:pt-10">
+      <div className="relative -z-10 h-0"><div className="absolute inset-x-0 -top-8 h-40"><FundoFotos slugs={["equipe", "headset", "recepcao"]} /></div></div>
+      <div className="relative z-10 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
         <div className="min-w-0">
           <h1 className="text-[1.0625rem] font-semibold tracking-[-0.01em] text-foreground">Pendências</h1>
           <p className="mt-1 max-w-[560px] text-sm text-muted-foreground">

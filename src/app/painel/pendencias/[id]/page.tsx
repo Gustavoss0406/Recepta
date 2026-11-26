@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { and, eq } from "drizzle-orm";
@@ -61,7 +62,8 @@ export default async function PendenciaPage({ params }: { params: Promise<{ id: 
   const wa = tel?.replace(/^\+/, "");
 
   return (
-    <div className="mx-auto w-full max-w-[1040px] px-4 pt-6 pb-16 sm:px-8 sm:pt-8">
+    <div className="relative isolate mx-auto w-full max-w-[1040px] px-4 pt-6 pb-16 sm:px-8 sm:pt-8">
+      <div className="absolute inset-x-0 top-0 -z-10 h-36"><FundoFotos slugs={["equipe", "advocacia", "headset"]} /></div>
       <Link href="/painel/pendencias" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         <ChevronLeft size={15} /> Pendências
       </Link>
