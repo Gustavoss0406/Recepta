@@ -43,6 +43,7 @@ const comum = (nome: string, cidade = "") => ({
   voz: { vozId: "lia", velocidade: 1, ultra: false, pronuncias: [] as { termo: string; falar: string }[] },
   seguranca: SEGURANCA_PADRAO,
   modelo: "padrao" as const,
+  motor: { provedor: "recepia" as const, modelo: "" },
   widget: { cor: "#000000", texto: "Fale com a gente", ativo: true, dominios: [] },
   workflow: workflowPadrao(),
 });

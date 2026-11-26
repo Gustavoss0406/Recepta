@@ -51,6 +51,8 @@ import { Conhecimento } from "@/components/painel/conhecimento";
 import { PublicarForm } from "@/components/painel/publicar";
 import { acaoPausar, acaoRestaurar, salvarSecao } from "../../actions";
 import { ttsConfigurado } from "@/server/voice/tts";
+import { MotorIA } from "@/components/painel/motor-ia";
+import { chavesMotor } from "@/server/providers/motor-cliente";
 
 /** Same tab order as the ElevenAgents agent page (Agent, Voice, Knowledge, Tools, Analysis, Tests, Widget, Security, Advanced, Branches). */
 const ABAS = [
@@ -59,6 +61,7 @@ const ABAS = [
   ["voz", "Voz"],
   ["conhecimento", "Conhecimento"],
   ["acoes", "Ferramentas"],
+  ["motor", "Motor de IA"],
   ["dados", "Análise"],
   ["testes", "Testes"],
   ["canais", "Widget"],
@@ -280,6 +283,7 @@ export default async function AgentePage({
               }}
             />
           )}
+          {aba === "motor" && <MotorIA agenteId={agente.id} atual={cfg.motor ?? { provedor: "recepia", modelo: "" }} chaves={await chavesMotor(s.org.id)} />}
           {aba === "acoes" && (
             <div className="space-y-3">
               <SecaoAcoes

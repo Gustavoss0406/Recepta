@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { workflowPadrao, workflowSchema } from "./workflow";
 import { ferramentaApiSchema } from "./api-ferramenta";
+import { IDS_MOTOR } from "./motores";
 
 export const NICHOS = ["clinica", "imobiliaria", "restaurante"] as const;
 export type Nicho = (typeof NICHOS)[number];
@@ -86,6 +87,8 @@ export const agentConfigSchema = z.object({
     bloquearSpam: z.boolean(),
   }),
   modelo: z.enum(["padrao", "avancado"]),
+  /** AI engine for the calls: RecepIA (free, default) or a provider with the customer's own key. */
+  motor: z.object({ provedor: z.enum(IDS_MOTOR), modelo: z.string().max(80).default("") }).default({ provedor: "recepia", modelo: "" }),
   workflow: workflowSchema.default(workflowPadrao),
   widget: z.object({
     cor: z.string(),

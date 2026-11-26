@@ -8,6 +8,7 @@ import { mascarar } from "@/lib/agent/mask";
 import { billableMinutes, costCall } from "@/lib/pricing/ledger";
 import type { LlmModel } from "@/lib/pricing/rates";
 import { getLlm, textoDe } from "@/server/providers/llm";
+import { getLlmDoAgente } from "@/server/providers/motor-cliente";
 import { admitirChamada, deveAtenderSoRecado, liberarChamada, verificarAlertas } from "@/server/billing/limites";
 import { emitirEvento } from "@/server/integracoes/eventos";
 import { configParaConversa } from "./agentes";
@@ -79,7 +80,7 @@ export async function iniciarConversa(opts: {
     opts.agenteId,
     alvo === "publicado" ? { versaoId: await versaoParaNovaChamada(opts.orgId, opts.agenteId) } : "rascunho",
   );
-  const llm = await getLlm();
+  const llm = await getLlmDoAgente(opts.orgId, config);
   const modelo: LlmModel = llm.gratuito ? "gratuito" : config.modelo === "avancado" ? "claude-sonnet-5-5" : "claude-haiku-5-5";
   const db = getDb();
 
@@ -148,7 +149,7 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
   // After a hand-off between receptionists the colleague's config drives the rest of the call.
   const ativoId = estado.agenteAtivo ?? conv.agenteId;
   const { config, prompt } = await configDoAtivo(conv, ativoId);
-  const llm = await getLlm();
+  const llm = await getLlmDoAgente(conv.orgId, config);
   const agora = opts.agora ?? new Date();
   const mensagens = estado.mensagens as Anthropic.MessageParam[];
   const modelo = (estado.modelo ?? "claude-haiku-5-5") as LlmModel;
