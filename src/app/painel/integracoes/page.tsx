@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import { and, desc, eq } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
 import { exigirPermissao } from "@/server/auth/session";
@@ -32,7 +33,7 @@ export default async function IntegracoesPage({ searchParams }: { searchParams: 
 
   return (
     <>
-      <PageHeader titulo="Integrações" descricao="Conecte a recepcionista às ferramentas da sua empresa." />
+      <PageHeader fundo={<FundoFotos slugs={["equipe", "recepcao", "advocacia"]} />} titulo="Integrações" descricao="Conecte a recepcionista às ferramentas da sua empresa." />
       {sp.erro && (
         <Secao className="pb-0">
           <p className="rounded-[12px] bg-[#fdecec] px-4 py-3 text-sm text-[#b42318]">

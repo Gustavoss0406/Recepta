@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { exigirSessao } from "@/server/auth/session";
@@ -48,7 +49,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
 
   return (
     <>
-      <PageHeader
+      <PageHeader fundo={<FundoFotos slugs={["clinica", "salao", "academia"]} />}
         titulo="Agenda"
         descricao={
           google

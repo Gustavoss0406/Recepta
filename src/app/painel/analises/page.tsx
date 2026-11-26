@@ -1,3 +1,4 @@
+import { FundoFotos, PilhaFotos } from "@/components/painel/capa";
 import { and, eq, gte, sql } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
 import { exigirPermissao } from "@/server/auth/session";
@@ -73,7 +74,7 @@ export default async function AnalisesPage({ searchParams }: { searchParams: Pro
 
   return (
     <>
-      <PageHeader
+      <PageHeader fundo={<FundoFotos slugs={["equipe", "cidade-noite", "headset"]} />}
         titulo="Análises"
         descricao="O que a recepcionista fez pela sua empresa."
         acoes={
@@ -103,7 +104,7 @@ export default async function AnalisesPage({ searchParams }: { searchParams: Pro
       />
       {k.total === 0 ? (
         <Secao>
-          <Vazio titulo="Sem ligações no período" texto="As análises aparecem quando a recepcionista começar a atender ligações reais." />
+          <Vazio imagem={<PilhaFotos slugs={["equipe", "headset", "atendimento"]} />} titulo="Sem ligações no período" texto="As análises aparecem quando a recepcionista começar a atender ligações reais." />
         </Secao>
       ) : (
         <>

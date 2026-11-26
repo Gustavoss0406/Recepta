@@ -1,3 +1,4 @@
+import { FundoFotos, PilhaFotos } from "@/components/painel/capa";
 import Link from "next/link";
 import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { AtualizarEnquanto } from "@/components/painel/atualizar-enquanto";
@@ -22,9 +23,9 @@ export default async function TestesPage({ searchParams }: { searchParams: Promi
   if (!agente)
     return (
       <>
-        <PageHeader titulo="Testes" />
+        <PageHeader fundo={<FundoFotos slugs={["headset", "atendimento", "recepcao"]} />} titulo="Testes" />
         <Secao>
-          <Vazio titulo="Crie um agente primeiro" texto="A suíte de testes do seu nicho é criada junto com o agente." acao={<Link href="/painel/comecar" className="btn btn-sm btn-primary">Configurar</Link>} />
+          <Vazio imagem={<PilhaFotos slugs={["headset", "atendimento", "recepcao"]} />} titulo="Crie um agente primeiro" texto="A suíte de testes do seu nicho é criada junto com o agente." acao={<Link href="/painel/comecar" className="btn btn-sm btn-primary">Configurar</Link>} />
         </Secao>
       </>
     );
@@ -75,7 +76,7 @@ export default async function TestesPage({ searchParams }: { searchParams: Promi
   return (
     <>
       <AtualizarEnquanto ativo={emAndamento} />
-      <PageHeader
+      <PageHeader fundo={<FundoFotos slugs={["headset", "atendimento", "recepcao"]} />}
         titulo="Testes"
         descricao="Clientes simulados ligam para o rascunho e cada conversa é avaliada pelos critérios do teste. Cada teste roda várias vezes, porque as respostas variam: o que importa é a taxa de aprovação."
         acoes={

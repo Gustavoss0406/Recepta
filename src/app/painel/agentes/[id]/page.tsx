@@ -54,6 +54,8 @@ import { PublicarForm } from "@/components/painel/publicar";
 import { acaoPausar, acaoRestaurar, salvarSecao } from "../../actions";
 import { ttsConfigurado } from "@/server/voice/tts";
 import { MotorIA } from "@/components/painel/motor-ia";
+import { PlaygroundVoz } from "@/components/painel/playground-voz";
+import { HeroFluxo } from "@/components/painel/hero-fluxo";
 import { chavesMotor } from "@/server/providers/motor-cliente";
 
 /** Same tab order as the ElevenAgents agent page (Agent, Voice, Knowledge, Tools, Analysis, Tests, Widget, Security, Advanced, Branches). */
@@ -216,7 +218,8 @@ export default async function AgentePage({
         </nav>
         {aba === "workflow" && (
           <div className="px-4 pt-5 sm:px-6">
-            <p className="mb-3 max-w-[720px] text-sm text-muted-foreground">
+            <HeroFluxo agenteId={id} />
+            <p id="editor-fluxo" className="mb-3 max-w-[720px] scroll-mt-20 text-sm text-muted-foreground">
               Divida o atendimento em etapas. Cada etapa tem um objetivo, e a
               recepcionista segue para a próxima quando a condição do caminho
               acontecer. Desligado, ela atende só com as regras da aba Agente.
@@ -275,6 +278,7 @@ export default async function AgentePage({
               <SecaoEmpresa config={cfg} acao={acao("empresa")} />
             </div>
           )}
+          {aba === "voz" && <PlaygroundVoz vozInicial={cfg.voz.vozId} />}
           {aba === "voz" && (
             <SecaoVoz
               config={cfg}

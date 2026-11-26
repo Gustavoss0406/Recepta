@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import { eq } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
 import { exigirSessao } from "@/server/auth/session";
@@ -25,7 +26,7 @@ export default async function NumerosPage() {
       .catch(() => []);
   return (
     <>
-      <PageHeader titulo="Números e canais" descricao="Por onde seus clientes falam com a recepcionista." />
+      <PageHeader fundo={<FundoFotos slugs={["atendimento", "headset", "cidade-noite"]} />} titulo="Números e canais" descricao="Por onde seus clientes falam com a recepcionista." />
       <Secao className="grid gap-8 xl:grid-cols-[1.3fr_1fr]">
         <section>
           <h2 className="text-[0.9375rem] text-ink">Desviar o número atual</h2>

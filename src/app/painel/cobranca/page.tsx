@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import Link from "next/link";
 import { desc, eq } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
@@ -28,7 +29,7 @@ export default async function CobrancaPage({ searchParams }: { searchParams: Pro
 
   return (
     <>
-      <PageHeader
+      <PageHeader fundo={<FundoFotos slugs={["equipe", "advocacia", "recepcao"]} />}
         titulo="Uso e cobrança"
         descricao={trial ? `Teste grátis até ${fmt(a.fimCiclo)}` : `Plano ${r.plano.name} (${a.ciclo}) · ciclo de ${fmt(a.inicioCiclo)} a ${fmt(a.fimCiclo)}`}
       />

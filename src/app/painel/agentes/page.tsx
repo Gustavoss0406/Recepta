@@ -1,3 +1,4 @@
+import { FundoFotos, PilhaFotos } from "@/components/painel/capa";
 import Link from "next/link";
 import { ChevronRight, Plus, Search } from "lucide-react";
 import { exigirSessao, pode } from "@/server/auth/session";
@@ -27,7 +28,7 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
   const editar = pode(s.papel, "editarAgente");
   return (
     <>
-      <PageHeader
+      <PageHeader fundo={<FundoFotos slugs={["clinica", "imobiliaria", "restaurante"]} />}
         titulo="Agentes"
         descricao="Cada recepcionista tem sua voz, conhecimento, regras e número."
         acoes={
@@ -106,7 +107,7 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
             </div>
           </>
         ) : (
-          <Vazio
+          <Vazio imagem={<PilhaFotos slugs={["clinica", "imobiliaria", "restaurante"]} />}
             titulo="Nenhum agente"
             texto="Comece pelo assistente de configuração."
             acao={

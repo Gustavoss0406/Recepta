@@ -1,3 +1,4 @@
+import { FundoFotos } from "@/components/painel/capa";
 import { desc, eq, isNull, and } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
 import { exigirSessao, pode } from "@/server/auth/session";
@@ -27,7 +28,7 @@ export default async function ConfiguracoesPage() {
 
   return (
     <>
-      <PageHeader titulo="Configurações" descricao={`${org.nome}${org.cnpj ? ` · CNPJ ${org.cnpj}` : ""}`} />
+      <PageHeader fundo={<FundoFotos slugs={["recepcao", "equipe", "cidade-noite"]} />} titulo="Configurações" descricao={`${org.nome}${org.cnpj ? ` · CNPJ ${org.cnpj}` : ""}`} />
       <Secao className="space-y-12">
         <Grupo titulo="Equipe" ajuda="Dono: tudo. Gestor: agentes e testes. Atendente: ligações. Financeiro: cobrança.">
           <ul className="divide-y divide-hairline rounded-[12px] bg-white shadow-[var(--shadow-pill)]">

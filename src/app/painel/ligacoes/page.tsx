@@ -1,3 +1,4 @@
+import { FundoFotos, PilhaFotos } from "@/components/painel/capa";
 import Link from "next/link";
 import { and, desc, eq, gte, ilike, or, sql, type SQL } from "drizzle-orm";
 import { Flag, Search } from "lucide-react";
@@ -43,7 +44,7 @@ export default async function LigacoesPage({ searchParams }: { searchParams: Pro
 
   return (
     <>
-      <PageHeader titulo="Ligações" descricao="Todas as conversas da recepcionista, com transcrição, resumo, avaliação e resultado." />
+      <PageHeader fundo={<FundoFotos slugs={["atendimento", "headset", "recepcao"]} />} titulo="Ligações" descricao="Todas as conversas da recepcionista, com transcrição, resumo, avaliação e resultado." />
       <Secao className="space-y-3">
         <div className="flex flex-wrap items-center gap-1.5">
           <form className="relative mr-1 w-full sm:w-72">
@@ -138,7 +139,7 @@ export default async function LigacoesPage({ searchParams }: { searchParams: Pro
             </table>
           </div>
         ) : (
-          <Vazio titulo="Nenhuma ligação encontrada" texto="Ajuste os filtros, ou inclua os testes para ver conversas do painel Testar." />
+          <Vazio imagem={<PilhaFotos slugs={["atendimento", "headset", "recepcao"]} />} titulo="Nenhuma ligação encontrada" texto="Ajuste os filtros, ou inclua os testes para ver conversas do painel Testar." />
         )}
       </Secao>
     </>

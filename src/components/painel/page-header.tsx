@@ -9,17 +9,21 @@ export function PageHeader({
   acoes,
   voltar,
   selo,
+  fundo,
 }: {
   titulo: React.ReactNode;
   descricao?: React.ReactNode;
   acoes?: React.ReactNode;
   voltar?: React.ReactNode;
   selo?: React.ReactNode;
+  /** Decorative background (e.g. <FundoFotos />). */
+  fundo?: React.ReactNode;
 }) {
   return (
-    <header className={cn(COLUNA, "pt-7 pb-1 sm:pt-10")}>
+    <header className={cn(COLUNA, "relative pt-7 pb-1 sm:pt-10", fundo && "sm:pb-4")}>
+      {fundo}
       {voltar && <div className="mb-3 text-sm text-muted-foreground [&_a:hover]:text-foreground">{voltar}</div>}
-      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+      <div className="relative z-10 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-[1.375rem] leading-tight font-semibold tracking-[-0.02em] text-foreground">{titulo}</h1>
@@ -60,10 +64,11 @@ export function Linha({ rotulo, descricao, children }: { rotulo: React.ReactNode
   );
 }
 
-export function Vazio({ titulo, texto, acao, icone }: { titulo: string; texto: string; acao?: React.ReactNode; icone?: React.ReactNode }) {
+export function Vazio({ titulo, texto, acao, icone, imagem }: { titulo: string; texto: string; acao?: React.ReactNode; icone?: React.ReactNode; imagem?: React.ReactNode }) {
   return (
-    <div className="flex flex-col items-center rounded-[16px] border border-dashed border-border px-6 py-14 text-center">
-      {icone && <div className="mb-4 text-muted-foreground">{icone}</div>}
+    <div className="flex flex-col items-center rounded-[16px] border border-dashed border-border bg-[radial-gradient(ellipse_at_top,rgba(37,99,235,.05),transparent_60%)] px-6 py-14 text-center">
+      {imagem && <div className="mb-5">{imagem}</div>}
+      {!imagem && icone && <div className="mb-4 text-muted-foreground">{icone}</div>}
       <p className="text-[0.9375rem] font-medium text-foreground">{titulo}</p>
       <p className="mt-1 max-w-sm text-sm text-muted-foreground">{texto}</p>
       {acao && <div className="mt-5">{acao}</div>}
