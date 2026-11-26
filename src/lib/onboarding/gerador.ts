@@ -122,6 +122,7 @@ export function gerarFluxo(p: Perfil): FluxoGerado {
       liga(RECEP_FORA, FECH, "O pedido do cliente foi resolvido ou anotado");
       liga(FECH, RECEP_FORA, "O cliente tem outro assunto fora do horário");
     }
+    organizar(nos, arestas, secoes);
     return { workflow: { ativo: true, nos, arestas }, secoes };
   }
 
@@ -594,28 +595,81 @@ export function gerarFluxo(p: Perfil): FluxoGerado {
   for (const r of recepcoes) liga(r, FECH, "O cliente só queria uma informação rápida que você já respondeu");
   if (recepcoes.includes(RECEP_FORA)) liga(FECH, RECEP_FORA, "O cliente tem outro assunto e a empresa está fechada");
 
-  // the entry block sits centered above the lanes; closing goes below the tallest lane
-  const faixas = secoes.filter((s) => s.y === TOPO_FAIXAS && s.id !== "fechamento");
-  const centro = ((faixas.length - 1) * LARGURA) / 2;
-  const fundo = Math.max(TOPO_FAIXAS + 200, ...nos.filter((n) => faixas.some((s) => s.nos.includes(n.id))).map((n) => n.y)) + 220;
-  const ent = secoes.find((s) => s.id === "entrada")!;
-  for (const n of nos.filter((x) => ent.nos.includes(x.id))) n.x += centro;
-  ent.x = centro;
-  const fec = secoes.find((s) => s.id === "fechamento")!;
-  const dxF = centro - fec.x;
-  let yF = fundo;
-  for (const n of nos.filter((x) => fec.nos.includes(x.id))) {
-    n.x += dxF;
-    n.y = yF;
-    yF += PASSO_Y;
-  }
-  fec.x = centro;
-  fec.y = fundo - 40;
+  organizar(nos, arestas, secoes);
 
   // drop dangling edges (e.g. a lane that wasn't built) so the flow always validates
   const ids = new Set(nos.map((n) => n.id));
   const validas = arestas.filter((a) => ids.has(a.de) && ids.has(a.para));
   return { workflow: { ativo: true, nos, arestas: validas }, secoes };
+}
+
+const NO_W = 200;
+const GAP_X = 28;
+const GAP_Y = 44;
+const NO_H = 56;
+const POR_LINHA = 3;
+
+/**
+ * Layered layout per section: each lane is laid out as a small tree (depth = steps from the lane's
+ * first step), siblings side by side (wrapping after 3), lanes placed left to right with their own
+ * width, the entry centered on top and the closing centered below. No card overlaps another.
+ */
+export function organizar(nos: No[], arestas: Aresta[], secoes: Secao[]) {
+  const porId = new Map(nos.map((n) => [n.id, n]));
+  const layout = (s: Secao) => {
+    const dentro = new Set(s.nos);
+    const prof = new Map<string, number>();
+    const fila = [s.nos[0]];
+    prof.set(s.nos[0], 0);
+    while (fila.length) {
+      const id = fila.shift()!;
+      for (const a of arestas)
+        if (a.de === id && dentro.has(a.para) && !prof.has(a.para)) {
+          prof.set(a.para, prof.get(id)! + 1);
+          fila.push(a.para);
+        }
+    }
+    // steps only reachable from other lanes go right after their first in-lane predecessor, or at the end
+    let max = Math.max(0, ...prof.values());
+    for (const id of s.nos) if (!prof.has(id)) prof.set(id, ++max);
+    const camadas: string[][] = [];
+    for (const id of s.nos) (camadas[prof.get(id)!] ??= []).push(id);
+    const linhas = camadas.filter(Boolean).flatMap((c) => Array.from({ length: Math.ceil(c.length / POR_LINHA) }, (_, i) => c.slice(i * POR_LINHA, i * POR_LINHA + POR_LINHA)));
+    const largura = Math.max(...linhas.map((l) => l.length)) * (NO_W + GAP_X) - GAP_X;
+    return { linhas, largura, altura: linhas.length * (NO_H + GAP_Y) };
+  };
+  const posicionar = (s: Secao, x0: number, y0: number) => {
+    const l = layout(s);
+    l.linhas.forEach((linha, i) => {
+      const w = linha.length * (NO_W + GAP_X) - GAP_X;
+      linha.forEach((id, j) => {
+        const n = porId.get(id)!;
+        n.x = Math.round(x0 + (l.largura - w) / 2 + j * (NO_W + GAP_X));
+        n.y = Math.round(y0 + 40 + i * (NO_H + GAP_Y));
+      });
+    });
+    s.x = x0;
+    s.y = y0;
+    return l;
+  };
+  const faixas = secoes.filter((s) => s.id !== "entrada" && s.id !== "fechamento");
+  const ent = secoes.find((s) => s.id === "entrada");
+  const fec = secoes.find((s) => s.id === "fechamento");
+  const lEnt = ent ? layout(ent) : { largura: 0, altura: 0 };
+  const topo = lEnt.altura + 140;
+  let x = 0;
+  let fundo = topo;
+  for (const s of faixas) {
+    const l = posicionar(s, x, topo);
+    x += l.largura + 90;
+    fundo = Math.max(fundo, topo + 40 + l.altura);
+  }
+  const larguraTotal = Math.max(x - 90, NO_W);
+  if (ent) posicionar(ent, (larguraTotal - lEnt.largura) / 2, 0);
+  if (fec) {
+    const lf = layout(fec);
+    posicionar(fec, (larguraTotal - lf.largura) / 2, fundo + 120);
+  }
 }
 
 function proximaAbertura(semana: { aberto: boolean; inicio: string }[]): string {

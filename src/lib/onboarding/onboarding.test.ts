@@ -69,6 +69,17 @@ describe("onboarding em conversa", () => {
     expect(e.mensagens.at(-1)!.texto).toMatch(/etapas/);
   });
 
+  it("nenhum card fica em cima de outro", () => {
+    const { workflow } = gerarFluxo(conversar(IMOBILIARIA).e.perfil);
+    const ns = workflow.nos;
+    for (let i = 0; i < ns.length; i++)
+      for (let j = i + 1; j < ns.length; j++) {
+        const [a, b] = [ns[i], ns[j]];
+        const sobrepoe = Math.abs(a.x - b.x) < 200 && Math.abs(a.y - b.y) < 56;
+        expect(sobrepoe, `${a.id} x ${b.id}`).toBe(false);
+      }
+  });
+
   it("o mesmo perfil sempre gera o mesmo fluxo; negócios diferentes geram fluxos diferentes", () => {
     const a = gerarFluxo(conversar(IMOBILIARIA).e.perfil);
     const b = gerarFluxo(conversar(IMOBILIARIA).e.perfil);

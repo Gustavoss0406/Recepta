@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { AgentState } from "@/components/elevenlabs-ui/orb";
 import { cn } from "@/lib/utils";
 
@@ -59,6 +59,7 @@ export function Orb({
   estatico,
   className,
   children,
+  volumeSaida,
 }: {
   tom?: OrbTom;
   cores?: [string, string];
@@ -67,6 +68,8 @@ export function Orb({
   estatico?: boolean;
   className?: string;
   children?: React.ReactNode;
+  /** 0..1 loudness of what the orb is saying: drives the shader and a soft pulse. */
+  volumeSaida?: () => number;
 }) {
   const par = cores ?? ORB_CORES[tom];
   const pequeno = typeof tamanho === "number" && tamanho < 64;
@@ -83,11 +86,25 @@ export function Orb({
     setAnimar(!mq.matches && ok());
   }, []);
 
+  const pulso = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!volumeSaida) return;
+    let raf = 0;
+    let atual = 0;
+    const passo = () => {
+      atual += (Math.min(1, volumeSaida()) - atual) * 0.25;
+      if (pulso.current) pulso.current.style.transform = `scale(${1 + atual * 0.14})`;
+      raf = requestAnimationFrame(passo);
+    };
+    raf = requestAnimationFrame(passo);
+    return () => cancelAnimationFrame(raf);
+  }, [volumeSaida]);
+
   if (pequeno || estatico) return <OrbEstatico cores={par} tamanho={tamanho} className={className} />;
   return (
-    <div className={cn("relative grid shrink-0 place-items-center", className)} style={{ width: tamanho, height: tamanho }}>
+    <div ref={pulso} className={cn("relative grid shrink-0 place-items-center will-change-transform", estado === "talking" && !volumeSaida && "orb-falando", className)} style={{ width: tamanho, height: tamanho }}>
       <OrbEstatico cores={par} tamanho="100%" className={cn("absolute inset-0 transition-opacity duration-700", animar && "opacity-0")} />
-      {animar && <OrbWebGL colors={par} agentState={estado} className="absolute inset-0" />}
+      {animar && <OrbWebGL colors={par} agentState={estado} className="absolute inset-0" {...(volumeSaida ? { volumeMode: "manual" as const, getOutputVolume: volumeSaida, getInputVolume: () => 0.15 } : {})} />}
       {children && <div className="relative z-10">{children}</div>}
     </div>
   );

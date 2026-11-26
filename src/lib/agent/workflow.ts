@@ -238,10 +238,12 @@ export function contextoEtapa(wf: Workflow, atual: string): string | null {
   if (!n || n.tipo !== "subagente") return null;
   const s = saidas(wf, atual);
   return [
+    "ROTEIRO DA EMPRESA — siga à risca, uma etapa de cada vez.",
     `Etapa atual do atendimento: ${n.titulo}.`,
-    `Objetivo desta etapa: ${n.texto}`,
+    `Faça SOMENTE isto agora: ${n.texto}`,
+    "Não adiante assuntos, perguntas ou ações de outras etapas e não invente passos que não estão aqui.",
     s.length
-      ? `Quando uma destas situações acontecer, use a ferramenta seguir_fluxo com o caminho correspondente (não fale do fluxo com o cliente):\n${s.map((a) => `- ${a.id}: ${a.condicao}`).join("\n")}`
+      ? `Assim que uma destas situações acontecer, chame seguir_fluxo com o caminho correspondente ANTES de responder ao cliente, na mesma resposta (nunca fale do roteiro com o cliente). Enquanto nenhuma acontecer, continue nesta etapa:\n${s.map((a) => `- ${a.id}: ${a.condicao}`).join("\n")}`
       : "",
   ]
     .filter(Boolean)

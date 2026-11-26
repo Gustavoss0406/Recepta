@@ -90,7 +90,8 @@ for (const tela of ["desktop", "celular"] as const) {
       await fotos("inicio");
       await conversar(page, PERSONAS[process.env.E2E_PERSONA ?? "imobiliaria"], fotos);
       await expect(page.getByTestId("onboarding-pronto")).toBeVisible();
-      const etapas = Number(await page.getByTestId("contador-etapas").innerText());
+      const etapas = Number(await page.getByTestId("contador-etapas").getAttribute("data-total"));
+      await expect(page.getByTestId("fluxo-vivo")).toHaveAttribute("data-construindo", "nao", { timeout: 60_000 });
       expect(etapas).toBeGreaterThanOrEqual(100);
       await page.waitForTimeout(2500);
       await fotos("pronto");

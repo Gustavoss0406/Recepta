@@ -32,7 +32,7 @@ Sua tarefa agora é só INTERPRETAR a resposta do dono e devolver JSON. Regras:
 - "campos": preencha as chaves da pergunta atual e QUALQUER outra informação que ele tenha dado de passagem, usando só as chaves da lista. Normalize como a descrição pede. Não invente: se não foi dito, não inclua.
 - "regra": só na pergunta de situações específicas: { "quando": situação, "fazer": o que fazer }.
 - "duvida": true se o dono fez uma pergunta ou não entendeu (em vez de responder); então "explicacao" responde a dúvida em 1-2 frases informais com um exemplo.
-- "reacao": UMA frase curta, informal e calorosa (até 14 palavras), reagindo ao conteúdo do que ele disse, em português do Brasil. Sem pergunta, sem emoji, sem repetir a resposta inteira. Varie (não comece sempre com "Show" ou "Perfeito").`;
+- "reacao": UMA frase curta, informal e calorosa (até 14 palavras), reagindo ao conteúdo do que ele disse, em português do Brasil. Sem pergunta, sem emoji, sem repetir a resposta inteira. Varie (não comece sempre com "Show" ou "Perfeito"). Esta frase será FALADA: comece com UMA marcação de emoção em inglês entre colchetes que combine com o momento — [excited], [happy], [warmly], [laughs softly], [chuckles], [thoughtful], [curious], [sighs] ou [relieved] — e use reticências para pausas naturais.`;
 
 /** Model interpretation of one answer; null when no engine is available (the local parser is used). */
 export async function interpretar(p: Perfil, perguntaId: string, texto: string): Promise<Interpretacao | null> {
@@ -69,7 +69,9 @@ export async function concluirOnboarding(orgId: string, e: EstadoOnboarding) {
     .update(schema.organizacoes)
     .set({ nome: config.empresa.nome, nicho, cidade: f.cidade || null, onboardingPasso: 5, onboardingConversa: e })
     .where(eq(schema.organizacoes.id, orgId));
-  // reading the site can take a while: it fills the knowledge base in the background
-  if (f.site && !/^n(a|ã)o$/i.test(f.site)) void indexarSite(orgId, agente.id, f.site.startsWith("http") ? f.site : `https://${f.site}`).catch(() => {});
+  // reading the site and sweeping the web take a while: both fill the knowledge base in the background
+  const site = f.site && !/^n(a|ã)o$/i.test(f.site) ? f.site : undefined;
+  if (site) void indexarSite(orgId, agente.id, site).catch(() => {});
+  await db.insert(schema.jobs).values({ tipo: "empresa.rastrear", payload: { orgId, agenteId: agente.id, nome: config.empresa.nome, cidade: f.cidade, site, instagram: f.instagram } });
   return agente.id;
 }

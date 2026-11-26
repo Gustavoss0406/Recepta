@@ -59,6 +59,7 @@ export async function onboardingSite(_: Resultado, fd: FormData): Promise<Result
   try {
     if (url) {
       const r = await indexarSite(s.org.id, agente.id, url);
+      await getDb().insert(schema.jobs).values({ tipo: "empresa.rastrear", payload: { orgId: s.org.id, agenteId: agente.id, nome: s.org.nome, site: url } });
       const perfil = await extrairPerfilEmpresa(r);
       await salvarRascunho(s.org.id, agente.id, { empresa: aplicarPerfilExtraido(agente.rascunho.empresa, perfil) });
     } else if (texto) {
@@ -174,6 +175,7 @@ export async function acaoReindexarSite(agenteId: string, _: Resultado, fd: Form
   await obterAgente(s.org.id, agenteId);
   try {
     const r = await indexarSite(s.org.id, agenteId, String(fd.get("url") ?? ""));
+    await getDb().insert(schema.jobs).values({ tipo: "empresa.rastrear", payload: { orgId: s.org.id, agenteId, nome: s.org.nome, site: String(fd.get("url") ?? "") } });
     revalidatePath(`/painel/agentes/${agenteId}`);
     return { ok: true, mensagem: `${r.paginas} páginas lidas` };
   } catch (e) {

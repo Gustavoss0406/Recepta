@@ -28,7 +28,7 @@ export interface Interpretacao {
 }
 
 export const ABERTURA =
-  "Oi! Eu sou a Recepta 👋 Vou montar a recepcionista virtual da sua empresa numa conversa rápida — e você vai ver o fluxo de atendimento se construindo aqui do lado.";
+  "[excited] Oi! Eu sou a Recepta 👋 Vou montar a recepcionista virtual da sua empresa numa conversa rápida — e você vai ver o fluxo de atendimento se construindo aqui do lado.";
 
 export function iniciar(): EstadoOnboarding {
   const p = perfilVazio();
@@ -60,7 +60,7 @@ function fecharSeAcabou(e: EstadoOnboarding, prefixo: string): EstadoOnboarding 
       ...e.mensagens.slice(0, -1),
       {
         ...e.mensagens.at(-1)!,
-        texto: `${prefixo} Pronto! Montei um fluxo só seu, com ${c.nos} etapas e ${c.arestas} conexões — do "alô" à despedida, dentro e fora do horário. Bora testar a ${nome}?`.trim(),
+        texto: `${prefixo} [excited] Pronto! Montei um fluxo só seu, com ${c.nos} etapas e ${c.arestas} conexões — do "alô" à despedida, dentro e fora do horário. Bora testar a ${nome}?`.trim(),
       },
     ],
   };
@@ -115,7 +115,7 @@ export function pularPergunta(e: EstadoOnboarding): EstadoOnboarding {
   const q = e.perguntaAtual ? pergunta(e.perguntaAtual) : null;
   if (!q || e.concluido) return e;
   const p = pular(e.perfil, q);
-  const msg = "Tranquilo, deixo no padrão e você muda depois se quiser.";
+  const msg = "[chuckles] Tranquilo, deixo no padrão e você muda depois se quiser.";
   return fecharSeAcabou({ ...e, perfil: p, mensagens: [...e.mensagens, { papel: "dono", texto: "Pular" }, { papel: "recepta", texto: msg }] }, msg);
 }
 
@@ -123,7 +123,7 @@ export function pularPergunta(e: EstadoOnboarding): EstadoOnboarding {
 export function finalizar(e: EstadoOnboarding): EstadoOnboarding {
   let p = e.perfil;
   for (let q = proximaPergunta(p); q; q = proximaPergunta(p)) p = pular(p, q);
-  const msg = "Fechado! Completei o resto com o padrão que funciona pra maioria.";
+  const msg = "[warmly] Fechado! Completei o resto com o padrão que funciona pra maioria.";
   return fecharSeAcabou({ ...e, perfil: p, mensagens: [...e.mensagens, { papel: "dono", texto: "Pode finalizar" }, { papel: "recepta", texto: msg }] }, msg);
 }
 

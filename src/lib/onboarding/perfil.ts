@@ -40,6 +40,7 @@ export const CAMPOS: Record<string, string> = {
   pessoa: "quando pedem para falar com alguém: transferir ou recado",
   transferir_numero: "telefone para transferir ligações",
   site: "endereço do site, ou nao",
+  instagram: "perfil do Instagram (@usuario), se disser",
   recep_nome: "nome da recepcionista virtual",
   tom: "formal, equilibrado ou descontraido",
   operacao: "imobiliária: venda, locacao ou ambos",

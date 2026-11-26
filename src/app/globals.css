@@ -290,3 +290,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .fluxo-no-novo, .fluxo-aresta-nova, .onb-msg { animation: none; }
 }
+@keyframes orb-fala { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+.orb-falando { animation: orb-fala .9s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .orb-falando { animation: none; } }

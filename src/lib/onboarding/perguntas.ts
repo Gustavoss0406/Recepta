@@ -187,12 +187,14 @@ export const PERGUNTAS: Pergunta[] = [
     id: "site",
     camada: "base",
     chaves: ["site"],
-    texto: () => "Vocês têm site? Se tiver, me passa que eu leio tudo e aprendo sozinha.",
+    texto: () => "Vocês têm site ou Instagram? Me passa que eu leio tudo e pesquiso a empresa na internet sozinha.",
     ajuda: "Eu leio as páginas (serviços, preços, endereço, perguntas frequentes) e uso pra responder os clientes.",
-    chips: () => ["Não temos site"],
+    chips: () => ["Não temos site", "Só Instagram"],
     extrair: (t) => {
-      const m = /((?:https?:\/\/)?(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/\S*)?)/i.exec(t);
-      return { site: m ? m[1] : "nao" };
+      const insta = /instagram\.com\/([\w.]{2,30})/i.exec(t)?.[1] ?? /(?:^|\s)@([\w.]{2,30})/.exec(t)?.[1];
+      const sem = t.replace(/\S*instagram\.com\S*|(?:^|\s)@[\w.]+/gi, " ");
+      const m = /((?:h?t+p+s?:?\/*)?(?:www\.)?[a-z0-9-]+(?:\s?\.[a-z0-9-]{2,})+(?:\/\S*)?)/i.exec(sem);
+      return { site: m ? m[1].replace(/\s/g, "") : "nao", ...(insta ? { instagram: `@${insta.replace(/\.$/, "")}` } : {}) };
     },
     padrao: () => ({ site: "nao" }),
   },
@@ -625,17 +627,17 @@ export function reacaoLocal(q: Pergunta, p: Perfil): string {
   const v = (k: string) => p.campos[k];
   switch (q.id) {
     case "negocio":
-      return `${v("segmento") ? `${v("segmento").replace(/^./, (x) => x.toUpperCase())}, que legal!` : "Que legal!"} Já tô montando a base do seu fluxo aqui do lado.`;
+      return `${v("segmento") ? `[excited] ${v("segmento").replace(/^./, (x) => x.toUpperCase())}, que legal!` : "Que legal!"} Já tô montando a base do seu fluxo aqui do lado.`;
     case "empresa":
-      return v("empresa_nome") ? `Prazer, ${v("empresa_nome")}!` : "Anotado!";
+      return v("empresa_nome") ? `[warmly] Prazer, ${v("empresa_nome")}!` : "Anotado!";
     case "horario":
       return "Perfeito, já separei o que acontece dentro e fora desse horário.";
     case "imob_alto_padrao":
       return v("alto_valor") && v("alto_valor") !== "nao" ? `Fechado: acima de ${brl(Number(v("alto_valor")))} vira caminho de alto padrão.` : "Beleza, trato todo mundo igual.";
     case "recepcionista":
-      return v("recep_nome") ? `Adorei, pode me chamar de ${v("recep_nome")}!` : "Combinado!";
+      return v("recep_nome") ? `[laughs softly] Adorei, pode me chamar de ${v("recep_nome")}!` : "Combinado!";
     default:
-      return ["Show!", "Boa, anotado.", "Perfeito.", "Entendi!", "Fechado.", "Ótimo!"][Math.abs(hash(q.id)) % 6];
+      return ["[excited] Show!", "Boa, anotado.", "[warmly] Perfeito.", "[thoughtful] Entendi!", "Fechado.", "[happy] Ótimo!"][Math.abs(hash(q.id)) % 6];
   }
 }
 

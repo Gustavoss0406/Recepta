@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { ArrowUp, ChevronDown, ChevronUp, Mic, RotateCcw, SkipForward, Volume2, VolumeX } from "lucide-react";
 import { Orb } from "@/components/ui/orb";
 import { Logo } from "@/components/ui/logo";
@@ -11,6 +11,7 @@ import { resumo, type EstadoOnboarding } from "@/lib/onboarding/conversa";
 import { gerarFluxo } from "@/lib/onboarding/gerador";
 import { pergunta } from "@/lib/onboarding/perguntas";
 import { cn } from "@/lib/utils";
+import { tirarTags } from "@/lib/voz/tags";
 
 type Reconhecedor = { lang: string; interimResults: boolean; continuous: boolean; start(): void; stop(): void; onresult: ((e: { results: ArrayLike<ArrayLike<{ transcript: string }> & { isFinal: boolean }> }) => void) | null; onend: (() => void) | null; onerror: (() => void) | null };
 
@@ -34,7 +35,7 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
   const [pendente, iniciar] = useTransition();
   const [ouvindo, setOuvindo] = useState(false);
   const [falando, setFalando] = useState(false);
-  const [voz, setVoz] = useState(false);
+  const [voz, setVoz] = useState(true);
   const [canvasAberto, setCanvasAberto] = useState(false);
   const [temMic, setTemMic] = useState(false);
   const rec = useRef<Reconhecedor | null>(null);
@@ -56,11 +57,27 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
     lista.current?.scrollTo({ top: lista.current.scrollHeight, behavior: "smooth" });
   }, [estado.mensagens.length, enviando]);
 
-  // read the Recepta's replies aloud when the owner turned voice on
-  const falar = (t: string) => {
-    if (!voz || typeof speechSynthesis === "undefined") return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(t.replace(/[👋✨]/gu, ""));
+  // the Recepta speaks with her ElevenLabs voice (best model, audio tags); browser voice only as fallback
+  const audio = useRef<HTMLAudioElement | null>(null);
+  const analisador = useRef<AnalyserNode | null>(null);
+  const ctxAudio = useRef<AudioContext | null>(null);
+  const amostras = useRef<Uint8Array<ArrayBuffer> | null>(null);
+  const volumeSaida = useCallback(() => {
+    const a = analisador.current;
+    if (!a || !amostras.current) return 0;
+    a.getByteTimeDomainData(amostras.current);
+    let soma = 0;
+    for (const v of amostras.current) soma += ((v - 128) / 128) ** 2;
+    return Math.min(1, Math.sqrt(soma / amostras.current.length) * 4);
+  }, []);
+  const calar = () => {
+    audio.current?.pause();
+    if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+    setFalando(false);
+  };
+  const falarNavegador = (t: string) => {
+    if (typeof speechSynthesis === "undefined") return;
+    const u = new SpeechSynthesisUtterance(t);
     u.lang = "pt-BR";
     u.rate = 1.05;
     const v = speechSynthesis.getVoices().find((x) => x.lang.startsWith("pt-BR"));
@@ -69,6 +86,49 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
     u.onend = () => setFalando(false);
     speechSynthesis.speak(u);
   };
+  const falar = async (t: string) => {
+    if (!voz) return;
+    calar();
+    try {
+      const r = await fetch("/api/onboarding/voz", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ texto: t }) });
+      if (!r.ok) throw new Error(String(r.status));
+      const url = URL.createObjectURL(await r.blob());
+      const el = audio.current ?? new Audio();
+      audio.current = el;
+      if (!ctxAudio.current) {
+        const C = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        ctxAudio.current = new C();
+        const fonte = ctxAudio.current.createMediaElementSource(el);
+        analisador.current = ctxAudio.current.createAnalyser();
+        analisador.current.fftSize = 512;
+        amostras.current = new Uint8Array(analisador.current.fftSize);
+        fonte.connect(analisador.current);
+        analisador.current.connect(ctxAudio.current.destination);
+      }
+      await ctxAudio.current.resume();
+      el.src = url;
+      el.onplay = () => setFalando(true);
+      el.onended = () => {
+        setFalando(false);
+        URL.revokeObjectURL(url);
+      };
+      await el.play();
+    } catch {
+      falarNavegador(tirarTags(t));
+    }
+  };
+  // the opening line plays on the owner's first interaction (browsers block autoplay before that)
+  const abriu = useRef(false);
+  useEffect(() => {
+    const primeira = () => {
+      if (abriu.current) return;
+      abriu.current = true;
+      if (estado.mensagens.length === 1) void falar(estado.mensagens[0].texto);
+    };
+    window.addEventListener("pointerdown", primeira, { once: true });
+    return () => window.removeEventListener("pointerdown", primeira);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const aplicar = (acao: () => Promise<{ estado: EstadoOnboarding; agenteId?: string; erro?: string }>, otimista?: string) => {
     setErro(null);
@@ -79,7 +139,7 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
         setEstado(res.estado);
         if (res.agenteId) setAgenteId(res.agenteId);
         const ultima = res.estado.mensagens.at(-1);
-        if (ultima?.papel === "recepta") falar(ultima.texto);
+        if (ultima?.papel === "recepta") void falar(ultima.texto);
       } catch {
         setErro("Não consegui falar com o servidor. Tenta de novo?");
       } finally {
@@ -118,7 +178,7 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
     x.onerror = () => setOuvindo(false);
     rec.current = x;
     setOuvindo(true);
-    speechSynthesis?.cancel();
+    calar();
     x.start();
   };
 
@@ -144,7 +204,10 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
         <header className="flex items-center justify-between gap-3 px-4 pt-3 lg:px-6 lg:pt-5">
           <Logo className="h-5 w-auto" />
           <div className="flex items-center gap-1">
-            <button type="button" onClick={() => setVoz((v) => !v)} aria-pressed={voz} title={voz ? "Desligar voz" : "Ouvir a Recepta"} className="grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-accent">
+            <button type="button" onClick={() => {
+                if (voz) calar();
+                setVoz((v) => !v);
+              }} aria-pressed={voz} title={voz ? "Desligar voz" : "Ouvir a Recepta"} className="grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-accent">
               {voz ? <Volume2 size={16} /> : <VolumeX size={16} />}
             </button>
             <button type="button" onClick={() => aplicar(onboardingRecomecar)} title="Recomeçar" className="grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-accent">
@@ -154,7 +217,7 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
         </header>
 
         <div className="flex items-center gap-3 px-4 pt-2 lg:flex-col lg:gap-2 lg:px-6 lg:pt-4">
-          <Orb tamanho={88} estado={estadoOrb} className="shrink-0 max-lg:!size-12" />
+          <Orb tamanho={88} estado={estadoOrb} volumeSaida={falando ? volumeSaida : undefined} className="shrink-0 max-lg:!size-12" />
           <div className="min-w-0 flex-1 lg:w-full lg:text-center">
             <p className="text-sm font-medium">Recepta</p>
             <ol className="mt-1.5 flex gap-1.5 lg:justify-center" aria-label="Progresso">
@@ -177,7 +240,7 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
                   m.papel === "dono" ? "rounded-br-[6px] bg-foreground text-white" : "rounded-bl-[6px] bg-muted text-foreground",
                 )}
               >
-                {m.texto}
+                {tirarTags(m.texto)}
               </p>
               {m.mudancas && m.mudancas.nos > 0 && (
                 <span className="mt-1 ml-1 text-[11px] text-[#2563eb]">

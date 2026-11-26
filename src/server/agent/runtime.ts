@@ -217,14 +217,19 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
     (m) => m.role === "assistant" && Array.isArray(m.content) && m.content.some((b) => b.type === "tool_use" && ["agendar", "repassar_para_equipe", "transferir_para_humano"].includes(b.name)),
   );
   let tools = definirFerramentas(config, { foraDoHorario: !dentroDoHorario(config.horarios, agora) });
-  // A workflow step that names its tools only gets those (+ the essentials): fewer tokens, fewer mix-ups.
+  // Inside the flow the receptionist only gets the tools of the current step: the ones it names, the
+  // ones of the action steps right after it (reached through seguir_fluxo) and the safety net. Every
+  // booking, transfer or message happens at its own step, so the flow is followed to the letter.
   const passo = fluxo && estado.no ? noDoFluxo(fluxo, estado.no) : undefined;
   if (passo?.tipo === "subagente") {
-    // the step can move on mid-answer (seguir_fluxo): include the tools of the steps it leads to
-    const textos = [passo.texto, ...saidas(fluxo!, passo.id).map((a) => noDoFluxo(fluxo!, a.para)?.texto ?? "")].join(" ");
-    const citadas = tools.filter((t) => textos.includes(t.name)).map((t) => t.name);
-    if (citadas.length) tools = tools.filter((t) => citadas.includes(t.name) || ESSENCIAIS.includes(t.name));
-  }
+    const seguintes = saidas(fluxo!, passo.id).map((a) => noDoFluxo(fluxo!, a.para));
+    const textos = [passo.texto, ...seguintes.filter((x) => x?.tipo === "subagente").map((x) => x!.texto)].join(" ");
+    const daEtapa = new Set([
+      ...tools.filter((t) => textos.includes(t.name)).map((t) => t.name),
+      ...seguintes.filter((x) => x?.tipo === "acao").map((x) => x!.texto.trim()),
+    ]);
+    tools = tools.filter((t) => daEtapa.has(t.name) || ESSENCIAIS_FLUXO.includes(t.name));
+  } else if (passo?.tipo === "acao") tools = tools.filter((t) => t.name === passo.texto.trim() || ESSENCIAIS_FLUXO.includes(t.name));
   if (fluxo && estado.no && noDoFluxo(fluxo, estado.no)?.tipo === "subagente" && saidas(fluxo, estado.no).length)
     tools.push({
       name: "seguir_fluxo",
@@ -473,6 +478,8 @@ async function configDoAtivo(conv: { orgId: string; agenteId: string; versaoId: 
 }
 
 /** Always available inside a workflow step. */
+/** Always available inside a flow: knowledge lookup, hand-off safety net and hanging up (guarded). */
+const ESSENCIAIS_FLUXO = ["consultar_conhecimento", "consultar_cadastro_cliente", "repassar_para_equipe", "passar_para_colega", "encerrar_ligacao"];
 const ESSENCIAIS = ["repassar_para_equipe", "consultar_conhecimento", "consultar_cadastro_cliente", "encerrar_ligacao", "transferir_para_humano", "passar_para_colega"];
 
 const PREFIXO_CONHECIMENTO = "Conhecimento (trechos do site e documentos da empresa):";

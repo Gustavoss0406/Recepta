@@ -15,6 +15,8 @@ export interface TtsRequest {
   tier?: "padrao" | "ultra";
   formato?: FormatoAudio;
   velocidade?: number;
+  /** Overrides for expressive moments (e.g. the onboarding): lower stability + more style = more emotion. */
+  expressao?: { estabilidade?: number; estilo?: number };
   signal?: AbortSignal;
 }
 
@@ -68,9 +70,9 @@ class PremiumTtsEngine implements TtsEngine {
         language_code: "pt",
         // Lower stability + some style = more natural intonation on phone calls (defaults sound flat).
         voice_settings: {
-          stability: Number(process.env.TTS_STABILITY ?? 0.38),
+          stability: req.expressao?.estabilidade ?? Number(process.env.TTS_STABILITY ?? 0.38),
           similarity_boost: 0.8,
-          style: Number(process.env.TTS_STYLE ?? 0.3),
+          style: req.expressao?.estilo ?? Number(process.env.TTS_STYLE ?? 0.3),
           use_speaker_boost: true,
           ...(req.velocidade ? { speed: req.velocidade } : {}),
         },
