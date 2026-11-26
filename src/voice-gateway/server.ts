@@ -32,7 +32,7 @@ export interface Transporte {
 export interface Sessao {
   orgId: string;
   agenteId: string;
-  canal: "teste_voz" | "simulador" | "telefone" | "widget";
+  canal: "teste_voz" | "simulador" | "telefone" | "me_ligue" | "widget";
   de?: string;
 }
 
@@ -114,7 +114,7 @@ export async function rodarPipeline(sessao: Sessao, t: Transporte) {
     falando?.abort();
     await registrarUsoVoz(conversaId, {
       sttSegundos: stt?.segundos() ?? 0,
-      telefoniaSegundos: sessao.canal === "telefone" ? (Date.now() - inicio) / 1000 : 0,
+      telefoniaSegundos: sessao.canal === "telefone" || sessao.canal === "me_ligue" ? (Date.now() - inicio) / 1000 : 0,
     });
     const c = await encerrarConversa(conversaId, { duracaoS: (Date.now() - inicio) / 1000 });
     if (gravador && gravador.duracaoS > 0.5) {

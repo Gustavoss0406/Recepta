@@ -74,7 +74,9 @@ export async function iniciarConversa(opts: {
   alvo?: "publicado" | "rascunho";
 }) {
   const teste = CANAIS_TESTE.includes(opts.canal);
-  const alvo = opts.alvo ?? (teste ? "rascunho" : "publicado");
+  // "Me ligue agora": a real call with real actions, but on the draft and outside the plan's limits
+  const meLigue = opts.canal === "me_ligue";
+  const alvo = opts.alvo ?? (teste || meLigue ? "rascunho" : "publicado");
   const { config, versaoId } = await configParaConversa(
     opts.orgId,
     opts.agenteId,
@@ -84,7 +86,7 @@ export async function iniciarConversa(opts: {
   const modelo: LlmModel = llm.gratuito ? "gratuito" : config.modelo === "avancado" ? "claude-sonnet-5-5" : "claude-haiku-5-5";
   const db = getDb();
 
-  const modoRecado = !teste && (await deveAtenderSoRecado(opts.orgId));
+  const modoRecado = !teste && !meLigue && (await deveAtenderSoRecado(opts.orgId));
   const [conv] = await db
     .insert(schema.conversas)
     .values({
@@ -100,7 +102,7 @@ export async function iniciarConversa(opts: {
     })
     .returning();
 
-  if (!teste) {
+  if (!teste && !meLigue) {
     const adm = await admitirChamada(opts.orgId, conv.id);
     if (!adm.admitida) {
       await db.delete(schema.conversas).where(eq(schema.conversas.id, conv.id));
@@ -514,7 +516,7 @@ export async function encerrarConversa(conversaId: string, opts: { duracaoS?: nu
   if (conv.status === "encerrada") return conv;
   const agora = opts.agora ?? new Date();
   const duracaoS = Math.max(1, Math.round(opts.duracaoS ?? (agora.getTime() - conv.iniciadaEm.getTime()) / 1000));
-  const cobraMinutos = !["teste_texto", "simulacao"].includes(conv.canal);
+  const cobraMinutos = !["teste_texto", "simulacao", "me_ligue"].includes(conv.canal);
   const minutosCobrados = cobraMinutos ? billableMinutes(duracaoS) : 0;
 
   const turnos = await db
@@ -575,7 +577,7 @@ export async function encerrarConversa(conversaId: string, opts: { duracaoS?: nu
   await db.insert(schema.registroCusto).values({
     orgId: conv.orgId,
     conversaId,
-    tipo: conv.canal === "simulacao" ? "simulacao" : conv.teste ? "teste" : "chamada",
+    tipo: conv.canal === "simulacao" ? "simulacao" : conv.teste || conv.canal === "me_ligue" ? "teste" : "chamada",
     detalhes: { ...custo.usd, minutos: minutosCobrados },
     custoUsd: custo.usd.total,
     custoBrl: custo.brl,

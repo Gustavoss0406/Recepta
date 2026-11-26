@@ -43,8 +43,8 @@ export async function aceitarTwilio(ws: WebSocket, _req: IncomingMessage) {
     if (m.event === "start" && m.start) {
       streamSid = m.start.streamSid;
       const token = verificarTokenVoz(m.start.customParameters?.token ?? "");
-      if (!token || token.canal !== "telefone") return ws.close(4401, "token inválido");
-      pipeline = await rodarPipeline({ orgId: token.orgId, agenteId: token.agenteId, canal: "telefone", de: token.de }, t);
+      if (!token || (token.canal !== "telefone" && token.canal !== "me_ligue")) return ws.close(4401, "token inválido");
+      pipeline = await rodarPipeline({ orgId: token.orgId, agenteId: token.agenteId, canal: token.canal, de: token.de }, t);
     } else if (m.event === "media" && m.media && pipeline) {
       pipeline.aoAudio(Buffer.from(m.media.payload, "base64"));
     } else if (m.event === "stop") {

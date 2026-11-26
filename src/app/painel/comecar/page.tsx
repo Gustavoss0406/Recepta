@@ -12,6 +12,9 @@ import { Desvio } from "@/components/painel/desvio";
 import { PublicarForm } from "@/components/painel/publicar";
 import { Assistente } from "@/components/painel/assistente";
 import { OnboardingConversa } from "@/components/onboarding/conversa";
+import { MeLigue } from "@/components/painel/me-ligue";
+import { LIGACOES_POR_DIA, ligacoesHoje } from "@/server/telefonia/me-ligue";
+import { or } from "drizzle-orm";
 import { iniciar } from "@/lib/onboarding/conversa";
 
 export const metadata = { title: "Começar" };
@@ -44,7 +47,7 @@ export default async function ComecarPage({ searchParams }: { searchParams: Prom
     ? (await db
         .select({ id: schema.conversas.id })
         .from(schema.conversas)
-        .where(and(eq(schema.conversas.agenteId, agente.id), eq(schema.conversas.teste, true)))
+        .where(and(eq(schema.conversas.agenteId, agente.id), or(eq(schema.conversas.teste, true), eq(schema.conversas.canal, "me_ligue"))))
         .limit(1)).length > 0
     : false;
 
@@ -134,6 +137,7 @@ export default async function ComecarPage({ searchParams }: { searchParams: Prom
                 <TestPanel agenteId={agente.id} />
               </div>
               <div className="space-y-3 text-sm text-body">
+                <MeLigue agenteId={agente.id} telefone={org.telefoneContato} restantes={Math.max(0, LIGACOES_POR_DIA - (await ligacoesHoje(s.org.id)))} className="mb-4 max-w-md" />
                 <p className="text-ink">Ideias para testar:</p>
                 <ul className="list-disc space-y-1 pl-5">
                   <li>Peça para agendar um horário</li>

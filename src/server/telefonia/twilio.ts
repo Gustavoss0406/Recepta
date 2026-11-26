@@ -152,3 +152,11 @@ export async function registrarNumero(orgId: string, agenteId: string | null, n:
   if (existe) await db.update(schema.numeros).set(valores).where(eq(schema.numeros.id, existe.id));
   else await db.insert(schema.numeros).values({ orgId, e164: n.numero, ...valores });
 }
+
+/** Places an outbound call; Twilio fetches the TwiML at `url` once the person answers. */
+export async function criarChamada(conta: ContaTwilio, c: { para: string; de: string; url: string; limiteS?: number }): Promise<{ sid: string }> {
+  const j = await api<{ sid: string }>(conta, "/Calls.json", {
+    form: { To: c.para, From: c.de, Url: c.url, Method: "POST", TimeLimit: String(c.limiteS ?? 600), Timeout: "30" },
+  });
+  return { sid: j.sid };
+}

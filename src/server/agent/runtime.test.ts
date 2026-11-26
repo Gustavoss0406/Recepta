@@ -124,6 +124,30 @@ describe("Runtime do agente", () => {
     expect(custo.custoBrl).toBeGreaterThan(0);
   });
 
+  it("Me ligue agora: ligação de verdade no rascunho — agenda e repasse reais, sem minutos do plano", async () => {
+    const antes = (await resumoCobranca(orgId)).uso.minutos;
+    const ini = await iniciarConversa({ orgId, agenteId, canal: "me_ligue", de: "+5511987654321" });
+    expect(ini.teste).toBe(false);
+    expect(ini.versaoId).toBeNull(); // the draft, even before publishing
+    await responder(ini.conversaId, "quero marcar uma consulta");
+    const r2 = await responder(ini.conversaId, "pode ser");
+    expect(r2.acoes[0]).toMatchObject({ nome: "agendar" });
+    expect(r2.acoes[0].resultado.ok).toBe(true);
+    const r3 = await responder(ini.conversaId, "e consegue um desconto?");
+    expect(r3.acoes.map((x) => x.nome)).toContain("repassar_para_equipe");
+    const fim = await encerrarConversa(ini.conversaId, { duracaoS: 240 });
+    expect(fim.minutosCobrados).toBe(0);
+    // real effects: the booking is a real agenda item and the hand-off a real pending case
+    const [ev] = await db.select().from(schema.agendaEventos).where(eq(schema.agendaEventos.conversaId, ini.conversaId));
+    expect(ev.simulado).toBe(false);
+    const repasses = await db.select().from(schema.repasses).where(eq(schema.repasses.conversaId, ini.conversaId));
+    expect(repasses).toHaveLength(1);
+    const [custo] = await db.select().from(schema.registroCusto).where(eq(schema.registroCusto.conversaId, ini.conversaId));
+    expect(custo.tipo).toBe("teste");
+    expect((await resumoCobranca(orgId)).uso.minutos).toBe(antes);
+    expect(await db.select().from(schema.chamadasAtivas)).toHaveLength(0);
+  });
+
   it("ligação real exige versão publicada, cobra minutos e entra no uso do ciclo", async () => {
     await expect(iniciarConversa({ orgId, agenteId, canal: "telefone" })).rejects.toThrow(/publicado/);
     await salvarRascunho(orgId, agenteId, { acoes: { transferir: { ativo: true, numero: "+5511333344444", somenteHorarioComercial: false } } });

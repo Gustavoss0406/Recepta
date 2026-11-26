@@ -4,7 +4,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 export interface TokenVoz {
   orgId: string;
   agenteId: string;
-  canal: "teste_voz" | "simulador" | "telefone" | "widget";
+  canal: "teste_voz" | "simulador" | "telefone" | "me_ligue" | "widget";
   de?: string;
   exp: number; // epoch ms
 }

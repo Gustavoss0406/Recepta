@@ -37,6 +37,8 @@ import {
 } from "@/server/agent/experimentos";
 import { obterAssinatura } from "@/server/billing/assinaturas";
 import { TestPanel } from "@/components/painel/test-panel";
+import { MeLigue } from "@/components/painel/me-ligue";
+import { LIGACOES_POR_DIA, ligacoesHoje } from "@/server/telefonia/me-ligue";
 import {
   SecaoAcoes,
   SecaoCanais,
@@ -486,7 +488,12 @@ export default async function AgentePage({
         >
           ✕
         </a>
-        <TestPanel agenteId={id} vozDisponivel />
+        <div className="flex h-full flex-col">
+          <div className="min-h-0 flex-1">
+            <TestPanel agenteId={id} vozDisponivel />
+          </div>
+          <MeLigue agenteId={id} telefone={(await getDb().select({ t: schema.organizacoes.telefoneContato }).from(schema.organizacoes).where(eq(schema.organizacoes.id, s.org.id)))[0]?.t} restantes={Math.max(0, LIGACOES_POR_DIA - (await ligacoesHoje(s.org.id)))} className="m-3" />
+        </div>
       </aside>
     </div>
   );

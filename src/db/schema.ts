@@ -177,7 +177,8 @@ export interface UsoConversa {
   telefoniaSegundos: number;
 }
 
-export type Canal ="teste_texto" | "teste_voz" | "simulador" | "telefone" | "whatsapp" | "widget" | "simulacao";
+/** me_ligue: a real phone call to the owner to try the draft — real actions, no minutes charged. */
+export type Canal = "teste_texto" | "teste_voz" | "simulador" | "telefone" | "me_ligue" | "whatsapp" | "widget" | "simulacao";
 export type Resultado = "resolvido" | "repassado" | "transferido" | "recado" | "nao_resolvido";
 
 export const conversas = pgTable(
