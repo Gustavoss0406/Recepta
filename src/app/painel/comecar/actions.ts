@@ -40,3 +40,14 @@ export async function onboardingRecomecar(): Promise<Res> {
   await salvarOnboarding(s.org.id, e);
   return { estado: e };
 }
+
+/** Site/Instagram fields: analyses the company right now and lets it drive the next questions and the flow. */
+export async function onboardingAnalisar(site: string, instagram: string): Promise<Res> {
+  const s = await exigirPermissao("editarAgente");
+  let e = await carregarOnboarding(s.org.id);
+  if (e.concluido) e = iniciar();
+  const { analisarEmpresa } = await import("@/server/onboarding/analise");
+  const { aplicarAnalise } = await import("@/lib/onboarding/conversa");
+  const r = await analisarEmpresa(e.perfil, { site: site.slice(0, 300), instagram: instagram.slice(0, 200) });
+  return fim(s.org.id, aplicarAnalise(e, r));
+}

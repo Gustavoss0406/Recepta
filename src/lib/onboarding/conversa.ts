@@ -132,3 +132,45 @@ export function resumo(e: EstadoOnboarding) {
 }
 
 const juntar = (xs: string[]) => (xs.length <= 1 ? `"${xs[0]}"` : `${xs.slice(0, -1).map((x) => `"${x}"`).join(", ")} e "${xs.at(-1)}"`);
+
+/** Facts a site/Instagram can answer for the owner (preferences like tone or transfers stay with them). */
+export const CAMPOS_DA_ANALISE = ["empresa_nome", "cidade", "servicos", "motivos", "horario", "agenda", "regioes", "operacao", "especialidades", "convenios", "delivery", "eventos", "atende_local", "orcamento", "garantia", "captacao"];
+
+export interface ResultadoAnalise {
+  site?: string;
+  instagram?: string;
+  /** Facts found (normalized like the conversation's fields). */
+  campos: Record<string, string>;
+  /** Short human list of what was found ("Horário: seg a sex 9h às 18h"). */
+  achados: string[];
+}
+
+/**
+ * The owner filled the site/Instagram fields: what the analysis found fills every question it can
+ * answer (only empty ones — what the owner already said wins), those questions are skipped, and the
+ * flow and the next questions follow the business that was found.
+ */
+export function aplicarAnalise(e: EstadoOnboarding, r: ResultadoAnalise): EstadoOnboarding {
+  if (e.concluido) return e;
+  const antes = contar(e.perfil);
+  const campos: Record<string, string> = { ...e.perfil.campos, site: r.site?.trim() || "nao", ...(r.instagram ? { instagram: r.instagram } : {}) };
+  const preenchidos: string[] = [];
+  for (const [k, v] of Object.entries(r.campos)) {
+    if (!CAMPOS_DA_ANALISE.includes(k) || !v?.trim() || campos[k]) continue;
+    campos[k] = v.trim().slice(0, 400);
+    preenchidos.push(k);
+  }
+  const p = { ...e.perfil, campos };
+  const depois = contar(p);
+  const novas = depois.secoes.filter((s) => !antes.secoes.includes(s));
+  const fala = [r.site && `Site: ${r.site}`, r.instagram && `Instagram: ${r.instagram}`].filter(Boolean).join(" · ") || "Não tenho site nem Instagram";
+  const texto = !r.site && !r.instagram
+    ? "[warmly] Sem problema, a gente monta tudo conversando mesmo."
+    : r.achados.length
+      ? `[excited] Olha só o que eu achei: ${r.achados.slice(0, 5).join("; ")}. Já deixei tudo anotado${preenchidos.length ? ", então vou pular o que já sei" : ""}.${novas.length ? ` Abri os caminhos ${novas.map((s) => `"${s}"`).join(", ")}.` : ""}`
+      : "[thoughtful] Dei uma olhada, mas não achei muita coisa pública ainda. Sem problema, sigo perguntando.";
+  return fecharSeAcabou(
+    { ...e, perfil: p, mensagens: [...e.mensagens, { papel: "dono", texto: fala }, { papel: "recepta", texto, mudancas: { secoes: novas, nos: depois.nos - antes.nos, arestas: depois.arestas - antes.arestas } }] },
+    texto,
+  );
+}

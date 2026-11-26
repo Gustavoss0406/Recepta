@@ -47,7 +47,14 @@ async function conversar(page: Page, persona: Record<string, string[]>, fotos: (
     const id = (await raiz.getAttribute("data-pergunta")) ?? "";
     const antes = await page.locator('[data-testid="mensagens"] > div').count();
     const resposta = fila[id]?.shift();
-    if (resposta) {
+    if (id === "site") {
+      // the site/Instagram fields open above the text box and the company is analysed right away
+      await expect(page.getByTestId("campos-empresa")).toBeVisible();
+      await page.getByLabel("Site").fill(resposta ?? "");
+      await page.getByLabel("Instagram").fill("@imobiliarialar");
+      await fotos("campos-empresa");
+      await page.getByRole("button", { name: "Analisar minha empresa" }).click();
+    } else if (resposta) {
       const campo = page.getByLabel("Sua resposta");
       await campo.click();
       await campo.pressSequentially(resposta, { delay: 18 });

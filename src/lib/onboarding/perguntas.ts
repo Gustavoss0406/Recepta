@@ -80,6 +80,21 @@ export const PERGUNTAS: Pergunta[] = [
     padrao: () => ({ empresa_nome: "Minha empresa", cidade: "" }),
   },
   {
+    id: "site",
+    camada: "base",
+    chaves: ["site"],
+    texto: () => "Agora o pulo do gato: me passa o site e o Instagram de vocês (o que tiver) que eu analiso a empresa na hora e já monto o resto a partir disso.",
+    ajuda: "Eu leio as páginas (serviços, preços, endereço, perguntas frequentes) e uso pra responder os clientes.",
+    chips: () => ["Não temos site", "Só Instagram"],
+    extrair: (t) => {
+      const insta = /instagram\.com\/([\w.]{2,30})/i.exec(t)?.[1] ?? /(?:^|\s)@([\w.]{2,30})/.exec(t)?.[1];
+      const sem = t.replace(/\S*instagram\.com\S*|(?:^|\s)@[\w.]+/gi, " ");
+      const m = /((?:h?t+p+s?:?\/*)?(?:www\.)?[a-z0-9-]+(?:\s?\.[a-z0-9-]{2,})+(?:\/\S*)?)/i.exec(sem);
+      return { site: m ? m[1].replace(/\s/g, "") : "nao", ...(insta ? { instagram: `@${insta.replace(/\.$/, "")}` } : {}) };
+    },
+    padrao: () => ({ site: "nao" }),
+  },
+  {
     id: "servicos",
     camada: "base",
     chaves: ["servicos"],
@@ -182,21 +197,6 @@ export const PERGUNTAS: Pergunta[] = [
     chips: () => ["Depois eu configuro"],
     extrair: (t) => ({ transferir_numero: telefone(t) ?? "nao" }),
     padrao: () => ({ transferir_numero: "nao" }),
-  },
-  {
-    id: "site",
-    camada: "base",
-    chaves: ["site"],
-    texto: () => "Vocês têm site ou Instagram? Me passa que eu leio tudo e pesquiso a empresa na internet sozinha.",
-    ajuda: "Eu leio as páginas (serviços, preços, endereço, perguntas frequentes) e uso pra responder os clientes.",
-    chips: () => ["Não temos site", "Só Instagram"],
-    extrair: (t) => {
-      const insta = /instagram\.com\/([\w.]{2,30})/i.exec(t)?.[1] ?? /(?:^|\s)@([\w.]{2,30})/.exec(t)?.[1];
-      const sem = t.replace(/\S*instagram\.com\S*|(?:^|\s)@[\w.]+/gi, " ");
-      const m = /((?:h?t+p+s?:?\/*)?(?:www\.)?[a-z0-9-]+(?:\s?\.[a-z0-9-]{2,})+(?:\/\S*)?)/i.exec(sem);
-      return { site: m ? m[1].replace(/\s/g, "") : "nao", ...(insta ? { instagram: `@${insta.replace(/\.$/, "")}` } : {}) };
-    },
-    padrao: () => ({ site: "nao" }),
   },
   {
     id: "recepcionista",

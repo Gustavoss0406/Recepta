@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { ArrowUp, ChevronDown, ChevronUp, Mic, RotateCcw, SkipForward, Volume2, VolumeX } from "lucide-react";
+import { AtSign, Globe, ArrowUp, ChevronDown, ChevronUp, Mic, RotateCcw, SkipForward, Volume2, VolumeX } from "lucide-react";
 import { Orb } from "@/components/ui/orb";
 import { Logo } from "@/components/ui/logo";
 import { FluxoVivo } from "./fluxo-vivo";
-import { onboardingFinalizar, onboardingMensagem, onboardingPular, onboardingRecomecar } from "@/app/painel/comecar/actions";
+import { onboardingAnalisar, onboardingFinalizar, onboardingMensagem, onboardingPular, onboardingRecomecar } from "@/app/painel/comecar/actions";
 import { resumo, type EstadoOnboarding } from "@/lib/onboarding/conversa";
 import { gerarFluxo } from "@/lib/onboarding/gerador";
 import { pergunta } from "@/lib/onboarding/perguntas";
@@ -45,7 +45,33 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
   const fluxo = useMemo(() => gerarFluxo(estado.perfil), [estado.perfil]);
   const r = useMemo(() => resumo(estado), [estado]);
   const atual = estado.perguntaAtual ? pergunta(estado.perguntaAtual) : null;
-  const chips = atual && !pendente ? atual.chips(estado.perfil) : [];
+  const pedindoSite = estado.perguntaAtual === "site" && !estado.concluido;
+  const chips = atual && !pendente && !pedindoSite ? atual.chips(estado.perfil) : [];
+  const [site, setSite] = useState("");
+  const [insta, setInsta] = useState("");
+  const [analisando, setAnalisando] = useState(false);
+  const [etapaAnalise, setEtapaAnalise] = useState(0);
+  useEffect(() => {
+    if (!analisando) return;
+    setEtapaAnalise(0);
+    const t = setInterval(() => setEtapaAnalise((x) => Math.min(x + 1, 3)), 3500);
+    return () => clearInterval(t);
+  }, [analisando]);
+  const analisar = (comDados: boolean) => {
+    if (ocupado) return;
+    const [s1, i1] = comDados ? [site.trim(), insta.trim()] : ["", ""];
+    setAnalisando(Boolean(s1 || i1));
+    aplicar(
+      async () => {
+        try {
+          return await onboardingAnalisar(s1, i1);
+        } finally {
+          setAnalisando(false);
+        }
+      },
+      [s1 && `Site: ${s1}`, i1 && `Instagram: ${i1}`].filter(Boolean).join(" · ") || "Não tenho site nem Instagram",
+    );
+  };
   const ocupado = pendente || Boolean(enviando);
 
   useEffect(() => {
@@ -287,6 +313,46 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
 
         {!estado.concluido && (
           <div className="border-t border-border px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:px-5">
+            {pedindoSite && (
+              <div className="mb-2 rounded-[18px] border border-border bg-white p-3" data-testid="campos-empresa">
+                {analisando ? (
+                  <ol className="space-y-1.5 py-1 text-sm" aria-live="polite">
+                    {["Lendo o seu site", "Abrindo o Instagram", "Pesquisando a empresa na internet", "Montando seu fluxo com o que achei"].map((x, i) => (
+                      <li key={x} className={cn("flex items-center gap-2 transition-opacity", i > etapaAnalise && "opacity-35")}>
+                        <span className={cn("size-1.5 rounded-full", i < etapaAnalise ? "bg-[#22a35a]" : i === etapaAnalise ? "animate-pulse bg-[#2563eb]" : "bg-strong")} />
+                        {x}
+                        {i === etapaAnalise && "…"}
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      analisar(true);
+                    }}
+                    className="space-y-2"
+                  >
+                    <label className="flex items-center gap-2 rounded-[12px] border border-border px-3 focus-within:border-foreground/30">
+                      <Globe size={15} className="shrink-0 text-muted-foreground" />
+                      <input value={site} onChange={(e) => setSite(e.target.value)} placeholder="suaempresa.com.br" aria-label="Site" inputMode="url" autoCapitalize="none" className="h-10 min-w-0 flex-1 bg-transparent text-base outline-none lg:text-sm" />
+                    </label>
+                    <label className="flex items-center gap-2 rounded-[12px] border border-border px-3 focus-within:border-foreground/30">
+                      <AtSign size={15} className="shrink-0 text-muted-foreground" />
+                      <input value={insta} onChange={(e) => setInsta(e.target.value)} placeholder="instagram da empresa" aria-label="Instagram" autoCapitalize="none" className="h-10 min-w-0 flex-1 bg-transparent text-base outline-none lg:text-sm" />
+                    </label>
+                    <div className="flex items-center justify-between gap-2 pt-0.5">
+                      <button type="button" onClick={() => analisar(false)} disabled={ocupado} className="text-xs text-muted-foreground hover:text-foreground">
+                        Não tenho nenhum dos dois
+                      </button>
+                      <button type="submit" disabled={ocupado || (!site.trim() && !insta.trim())} className="btn btn-primary btn-sm">
+                        Analisar minha empresa
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            )}
             {chips.length > 0 && (
               <div className="-mx-1 mb-2 flex gap-1.5 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none]">
                 {chips.map((c) => (

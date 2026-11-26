@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { validarWorkflow, workflowSchema } from "@/lib/agent/workflow";
-import { finalizar, iniciar, pularPergunta, responder, type EstadoOnboarding } from "./conversa";
+import { aplicarAnalise, finalizar, iniciar, pularPergunta, responder, type EstadoOnboarding } from "./conversa";
 import { gerarFluxo } from "./gerador";
 import { lerHorario, valorEmReais } from "./perfil";
 import { categoriaDe, PERGUNTAS, roteiro } from "./perguntas";
@@ -105,6 +105,37 @@ describe("onboarding em conversa", () => {
     })();
     expect(perguntas).not.toContain("horario");
     expect(perguntas).toContain("cli_convenios");
+  });
+
+  it("site e Instagram analisados na hora: preenchem as respostas, pulam perguntas e mudam o fluxo", () => {
+    let e = responder(iniciar(), "Tenho uma imobiliária");
+    e = responder(e, "Lar Imóveis, Campinas");
+    expect(e.perguntaAtual).toBe("site");
+    const antes = gerarFluxo(e.perfil).workflow.nos.length;
+    e = aplicarAnalise(e, {
+      site: "larimoveis.com.br",
+      instagram: "@lar.imoveis",
+      campos: { horario: "seg a sex 9h às 18h, sábado 9 às 13", operacao: "ambos", regioes: "Cambuí; Taquaral", servicos: "Apartamentos; Casas", recep_nome: "Invasora", empresa_nome: "Outro Nome" },
+      achados: ["atendem Cambuí e Taquaral", "abrem de seg a sex das 9h às 18h"],
+    });
+    expect(e.perfil.campos).toMatchObject({ site: "larimoveis.com.br", instagram: "@lar.imoveis", horario: "seg a sex 9h às 18h, sábado 9 às 13", operacao: "ambos" });
+    expect(e.perfil.campos.recep_nome).toBeUndefined(); // preferences stay with the owner
+    expect(e.perfil.campos.empresa_nome).toBe("Lar Imóveis"); // what the owner said wins
+    const resto: string[] = [];
+    for (let x = e; !x.concluido; x = pularPergunta(x)) resto.push(x.perguntaAtual!);
+    expect(resto).not.toEqual(expect.arrayContaining(["horario"]));
+    expect(resto).not.toContain("imob_operacao");
+    expect(resto).not.toContain("imob_regioes");
+    expect(resto).not.toContain("servicos");
+    expect(gerarFluxo(e.perfil).workflow.nos.length).toBeGreaterThan(antes);
+    expect(e.mensagens.at(-1)!.texto).toMatch(/achei/);
+  });
+
+  it("sem site nem Instagram segue a conversa normalmente", () => {
+    let e = responder(responder(iniciar(), "Pizzaria"), "Forno, BH");
+    e = aplicarAnalise(e, { campos: {}, achados: [] });
+    expect(e.perfil.campos.site).toBe("nao");
+    expect(e.perguntaAtual).toBe("servicos");
   });
 
   it("dúvida do dono: explica e repete a pergunta sem avançar", () => {
