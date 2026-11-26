@@ -64,7 +64,7 @@ async function conversar(page: Page, persona: Record<string, string[]>, fotos: (
     await expect.poll(async () => page.locator('[data-testid="mensagens"] > div').count(), { timeout: 90_000 }).toBeGreaterThan(antes + 1);
     await expect(page.getByLabel("Recepta está pensando")).toHaveCount(0, { timeout: 90_000 });
     await page.waitForTimeout(1600); // let the canvas animate
-    if (["negocio", "horario", "imob_alto_padrao", "vip"].includes(id)) await fotos(id);
+    if (["negocio", "horario", "imob_alto_padrao", "vip", "confirmacao", "sistemas"].includes(id)) await fotos(id);
   }
 }
 
