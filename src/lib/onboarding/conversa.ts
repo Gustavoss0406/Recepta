@@ -93,7 +93,7 @@ export function responder(e: EstadoOnboarding, texto: string, ia: Interpretacao 
   const depois = contar(p);
   const novas = depois.secoes.filter((s) => !antes.secoes.includes(s));
   const mudancas = { secoes: novas, nos: depois.nos - antes.nos, arestas: depois.arestas - antes.arestas };
-  const reacao = (ia.reacao?.trim() || reacaoLocal(q, p)).replace(/\?+\s*$/, ".").replace(/([^.!…])\s*$/, "$1.");
+  const reacao = (ia.reacao?.trim().replace(/^((\[[a-z ]+\])?\s*)[.…\s]+/i, "$1") || reacaoLocal(q, p)).replace(/\?+\s*$/, ".").replace(/([^.!…])\s*$/, "$1.");
   const comentario = novas.length ? ` Acabei de criar ${novas.length === 1 ? "o caminho" : "os caminhos"} ${juntar(novas)}.` : "";
   return fecharSeAcabou({ ...e, perfil: p, mensagens: [...mensagens, { papel: "recepta", texto: `${reacao}${comentario}`, mudancas }] }, `${reacao}${comentario}`);
 }
