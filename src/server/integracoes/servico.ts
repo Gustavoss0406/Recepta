@@ -151,9 +151,13 @@ export async function enviarSaida(orgId: string, m: { canal: "whatsapp" | "email
       m.canal === "whatsapp"
         ? await enviarWhatsAppReal(orgId, m.destino, m.corpo)
         : await enviarGmail(orgId, m.destino, m.assunto ?? "Recepta", m.corpo);
-    if (id) await db.update(schema.caixaSaida).set({ status: "enviado" }).where(eq(schema.caixaSaida.id, linha.id));
+    if (id) {
+      await db.update(schema.caixaSaida).set({ status: "enviado" }).where(eq(schema.caixaSaida.id, linha.id));
+      return { ...linha, status: "enviado" as const };
+    }
   } catch {
     await db.update(schema.caixaSaida).set({ status: "erro" }).where(eq(schema.caixaSaida.id, linha.id));
+    return { ...linha, status: "erro" as const };
   }
   return linha;
 }

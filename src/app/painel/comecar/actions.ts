@@ -51,3 +51,15 @@ export async function onboardingAnalisar(site: string, instagram: string): Promi
   const r = await analisarEmpresa(e.perfil, { site: site.slice(0, 300), instagram: instagram.slice(0, 200) });
   return fim(s.org.id, aplicarAnalise(e, r));
 }
+
+/** Integrations already connected (the onboarding re-checks when the owner comes back from an OAuth tab). */
+export async function onboardingConexoes(): Promise<string[]> {
+  const s = await exigirPermissao("editarAgente");
+  const { getDb, schema } = await import("@/db/client");
+  const { and, eq } = await import("drizzle-orm");
+  const linhas = await getDb()
+    .select({ tipo: schema.integracoes.tipo })
+    .from(schema.integracoes)
+    .where(and(eq(schema.integracoes.orgId, s.org.id), eq(schema.integracoes.status, "conectado")));
+  return linhas.map((l) => (l.tipo === "google_agenda" ? "google" : l.tipo));
+}

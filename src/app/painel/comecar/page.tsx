@@ -12,6 +12,9 @@ import { Desvio } from "@/components/painel/desvio";
 import { PublicarForm } from "@/components/painel/publicar";
 import { Assistente } from "@/components/painel/assistente";
 import { OnboardingConversa } from "@/components/onboarding/conversa";
+import { CONECTORES } from "@/lib/integracoes/catalogo";
+import { googleConfigurado } from "@/server/integracoes/google";
+import { oauthConfigurado } from "@/server/integracoes/oauth";
 import { MeLigue } from "@/components/painel/me-ligue";
 import { LIGACOES_POR_DIA, ligacoesHoje } from "@/server/telefonia/me-ligue";
 import { or } from "drizzle-orm";
@@ -30,7 +33,11 @@ export default async function ComecarPage({ searchParams }: { searchParams: Prom
   // first access: the onboarding is a conversation with the Recepta while the flow builds itself
   if ((!agente && sp.modo !== "formulario") || sp.conversa) {
     const estado = sp.conversa && org.onboardingConversa?.concluido ? iniciar() : (org.onboardingConversa ?? iniciar());
-    return <OnboardingConversa inicial={estado} agenteInicial={agente?.id ?? null} />;
+    const conectadas = (await db.select({ tipo: schema.integracoes.tipo, status: schema.integracoes.status }).from(schema.integracoes).where(eq(schema.integracoes.orgId, s.org.id)))
+      .filter((l) => l.status === "conectado")
+      .map((l) => (l.tipo === "google_agenda" ? "google" : l.tipo));
+    const oauthDisponiveis = CONECTORES.filter((c) => (c.id === "google" ? googleConfigurado() : c.oauthEnv && oauthConfigurado(c.id))).map((c) => c.id);
+    return <OnboardingConversa inicial={estado} agenteInicial={agente?.id ?? null} conectadasIniciais={conectadas} oauthDisponiveis={oauthDisponiveis} />;
   }
   const maximo = agente ? Math.max(org.onboardingPasso, 2) : 1;
   const passo = Math.min(Math.max(1, Number(sp.passo ?? org.onboardingPasso) || 1), maximo, 7);

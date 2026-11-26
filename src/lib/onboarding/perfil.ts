@@ -72,6 +72,7 @@ export const CAMPOS: Record<string, string> = {
   confirmacao: "sim ou nao: confirmar e lembrar horários por WhatsApp",
   sistemas: "sistemas/CRM usados, ou nao",
   aviso: "whatsapp, email ou ambos",
+  aviso_numero: "número de WhatsApp que recebe os avisos dos casos",
   nunca: "o que nunca falar ou prometer, separado por ';'",
   vendedores: "sim (dispensar vendedores/telemarketing) ou nao",
   extra_fim: "sim quando o dono disser que não tem mais situações específicas",

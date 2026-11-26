@@ -67,7 +67,15 @@ export async function concluirOnboarding(orgId: string, e: EstadoOnboarding) {
   await salvarRascunho(orgId, agente.id, config, `Recepção ${config.empresa.nome}`.slice(0, 80));
   await db
     .update(schema.organizacoes)
-    .set({ nome: config.empresa.nome, nicho, cidade: f.cidade || null, onboardingPasso: 5, onboardingConversa: e })
+    .set({
+      nome: config.empresa.nome,
+      nicho,
+      cidade: f.cidade || null,
+      onboardingPasso: 5,
+      onboardingConversa: e,
+      // where the case reports go on WhatsApp
+      ...(f.aviso_numero && /^\d{10,13}$/.test(f.aviso_numero.replace(/\D/g, "")) ? { telefoneContato: `+${f.aviso_numero.replace(/\D/g, "").replace(/^(?!55)/, "55")}` } : {}),
+    })
     .where(eq(schema.organizacoes.id, orgId));
   // reading the site and sweeping the web take a while: both fill the knowledge base in the background
   const site = f.site && !/^n(a|ã)o$/i.test(f.site) ? f.site : undefined;

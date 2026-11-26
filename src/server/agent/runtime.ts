@@ -220,6 +220,8 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
     (m) => m.role === "assistant" && Array.isArray(m.content) && m.content.some((b) => b.type === "tool_use" && ["agendar", "repassar_para_equipe", "transferir_para_humano"].includes(b.name)),
   );
   let tools = definirFerramentas(config, { foraDoHorario: !dentroDoHorario(config.horarios, agora) });
+  // tools this receptionist really has (an integration not connected yet means its action step is skipped)
+  const disponiveis = new Set(tools.map((t) => t.name));
   // Inside the flow the receptionist only gets the tools of the current step: the ones it names, the
   // ones of the action steps right after it (reached through seguir_fluxo) and the safety net. Every
   // booking, transfer or message happens at its own step, so the flow is followed to the letter.
@@ -255,7 +257,11 @@ export async function responder(conversaId: string, textoCliente: string, opts: 
         falas.push(e.texto);
         ditas.push(e.texto);
       } else if (e.tipo === "estado") estado.vars = { ...(estado.vars ?? {}), [e.chave]: e.valor };
-      else if (e.tipo === "acao") proximo = `Agora use a ferramenta ${e.ferramenta}.`;
+      else if (e.tipo === "acao") {
+        // the step's tool isn't available (e.g. WhatsApp not connected): follow its "falha" path instead of stalling
+        if (!disponiveis.has(e.ferramenta)) return aplicarEfeitos(retomarAposAcao(fluxo!, e.noId, false, varsFluxo()));
+        proximo = `Agora use a ferramenta ${e.ferramenta}.`;
+      }
       else if (e.tipo === "transferir") {
         transferirPara = e.numero || config.acoes.transferir.numero || undefined;
         encerrar = true;

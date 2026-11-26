@@ -1,4 +1,5 @@
 import { gerarFluxo } from "./gerador";
+import { conexoesDoPerfil, type ConexaoNecessaria } from "./integracoes";
 import { CAMPOS, perfilVazio, type Perfil, type RegraLivre } from "./perfil";
 import { aplicarCampos, lerRegra, pergunta, progresso, proximaPergunta, pular, reacaoLocal, type Pergunta } from "./perguntas";
 
@@ -7,6 +8,8 @@ export interface Mensagem {
   texto: string;
   /** What the answer changed in the flow (shown as a chip under the message). */
   mudancas?: { secoes: string[]; nos: number; arestas: number };
+  /** Integrations this answer depends on: shown as connect cards right under the message. */
+  conectar?: ConexaoNecessaria[];
 }
 
 export interface EstadoOnboarding {
@@ -95,7 +98,9 @@ export function responder(e: EstadoOnboarding, texto: string, ia: Interpretacao 
   const mudancas = { secoes: novas, nos: depois.nos - antes.nos, arestas: depois.arestas - antes.arestas };
   const reacao = (ia.reacao?.trim().replace(/^((\[[a-z ]+\])?\s*)[.…\s]+/i, "$1") || reacaoLocal(q, p)).replace(/\?+\s*$/, ".").replace(/([^.!…])\s*$/, "$1.");
   const comentario = novas.length ? ` Acabei de criar ${novas.length === 1 ? "o caminho" : "os caminhos"} ${juntar(novas)}.` : "";
-  return fecharSeAcabou({ ...e, perfil: p, mensagens: [...mensagens, { papel: "recepta", texto: `${reacao}${comentario}`, mudancas }] }, `${reacao}${comentario}`);
+  const { conectar, aviso } = novasConexoes(e.perfil, p);
+  const prefixo = `${reacao}${comentario}${aviso}`;
+  return fecharSeAcabou({ ...e, perfil: p, mensagens: [...mensagens, { papel: "recepta", texto: prefixo, mudancas, ...(conectar.length ? { conectar } : {}) }] }, prefixo);
 }
 
 function aplicarResposta(p: Perfil, q: Pergunta, t: string, ia: Interpretacao): Perfil {
@@ -170,7 +175,21 @@ export function aplicarAnalise(e: EstadoOnboarding, r: ResultadoAnalise): Estado
       ? `[excited] Olha só o que eu achei: ${r.achados.slice(0, 5).join("; ")}. Já deixei tudo anotado${preenchidos.length ? ", então vou pular o que já sei" : ""}.${novas.length ? ` Abri os caminhos ${novas.map((s) => `"${s}"`).join(", ")}.` : ""}`
       : "[thoughtful] Dei uma olhada, mas não achei muita coisa pública ainda. Sem problema, sigo perguntando.";
   return fecharSeAcabou(
-    { ...e, perfil: p, mensagens: [...e.mensagens, { papel: "dono", texto: fala }, { papel: "recepta", texto, mudancas: { secoes: novas, nos: depois.nos - antes.nos, arestas: depois.arestas - antes.arestas } }] },
-    texto,
+    { ...e, perfil: p, mensagens: [...e.mensagens, { papel: "dono", texto: fala }, { papel: "recepta", texto: texto + novasConexoes(e.perfil, p).aviso, mudancas: { secoes: novas, nos: depois.nos - antes.nos, arestas: depois.arestas - antes.arestas }, ...(novasConexoes(e.perfil, p).conectar.length ? { conectar: novasConexoes(e.perfil, p).conectar } : {}) }] },
+    texto + novasConexoes(e.perfil, p).aviso,
   );
+}
+
+/** Integrations that became necessary with this answer, and the sentence asking to connect them. */
+function novasConexoes(antes: Perfil, depois: Perfil): { conectar: ConexaoNecessaria[]; aviso: string } {
+  const ja = new Set(conexoesDoPerfil(antes).map((c) => c.id));
+  const conectar = conexoesDoPerfil(depois).filter((c) => !ja.has(c.id));
+  if (!conectar.length) return { conectar, aviso: "" };
+  const essencial = conectar.some((c) => c.essencial);
+  return {
+    conectar,
+    aviso: essencial
+      ? " Pra isso funcionar de verdade, conecta aqui embaixo, leva um minutinho. Se preferir, deixa pra depois que eu te lembro no final."
+      : " Se quiser, dá pra conectar aqui embaixo agora, mas é opcional.",
+  };
 }

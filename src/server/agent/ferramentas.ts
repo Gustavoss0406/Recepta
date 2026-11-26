@@ -290,8 +290,12 @@ export async function executarFerramenta(nome: string, input: Record<string, unk
     case "sinalizar_revisao":
       return executarFerramenta("repassar_para_equipe", { motivo: String(input.motivo ?? "Revisão"), o_que_o_cliente_quer: String(input.motivo ?? "Revisar a conversa"), urgencia: "baixa" }, ctx);
     case "enviar_whatsapp": {
-      await enviarSaida(ctx.orgId, { canal: "whatsapp", destino: String(input.telefone ?? ctx.de ?? ""), corpo: String(input.mensagem ?? "") }, { real: !ctx.teste });
-      return { resultado: { ok: true } };
+      const l = await enviarSaida(ctx.orgId, { canal: "whatsapp", destino: String(input.telefone ?? ctx.de ?? ""), corpo: String(input.mensagem ?? "") }, { real: !ctx.teste });
+      if (ctx.teste) return { resultado: { ok: true, simulado: true } };
+      // never claim a message was sent when WhatsApp isn't connected or the send failed
+      return l.status === "enviado"
+        ? { resultado: { ok: true } }
+        : { resultado: { ok: false, nota: "A mensagem não pôde ser enviada pelo WhatsApp agora. Não diga que mandou; diga que a equipe confirma com o cliente." } };
     }
     case "consultar_conhecimento": {
       const q = String(input.pergunta ?? "").trim();

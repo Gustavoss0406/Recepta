@@ -138,6 +138,16 @@ describe("onboarding em conversa", () => {
     expect(e.perguntaAtual).toBe("servicos");
   });
 
+  it("pede pra conectar o que as respostas exigem (WhatsApp, CRM) bem na hora", () => {
+    const { e } = conversar({ ...IMOBILIARIA, aviso: "WhatsApp", aviso_numero: "(19) 99876-5432", confirmacao: "Sim, manda", sistemas: "Kommo" });
+    const pedidos = e.mensagens.flatMap((m) => m.conectar?.map((c) => c.id) ?? []);
+    expect(pedidos).toEqual(expect.arrayContaining(["whatsapp", "kommo", "google"]));
+    expect(new Set(pedidos).size).toBe(pedidos.length); // each one asked once
+    const msgKommo = e.mensagens.find((m) => m.conectar?.some((c) => c.id === "kommo"))!;
+    expect(msgKommo.texto).toMatch(/conecta aqui embaixo/);
+    expect(e.perfil.campos.aviso_numero).toBe("19998765432");
+  });
+
   it("dúvida do dono: explica e repete a pergunta sem avançar", () => {
     let e = responder(iniciar(), "Restaurante japonês");
     const atual = e.perguntaAtual;

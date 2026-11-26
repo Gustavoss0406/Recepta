@@ -537,6 +537,17 @@ export const PERGUNTAS: Pergunta[] = [
     padrao: () => ({ aviso: "ambos" }),
   },
   {
+    id: "aviso_numero",
+    camada: "avancada",
+    chaves: ["aviso_numero"],
+    quando: (p) => p.campos.aviso === "whatsapp" || p.campos.aviso === "ambos",
+    texto: () => "E qual WhatsApp recebe esses avisos? Pode ser o seu.",
+    ajuda: "É pra onde eu mando o relatório de cada caso: quem ligou, o que quer e a urgência.",
+    chips: () => [],
+    extrair: (t) => ({ aviso_numero: telefone(t) ?? "nao" }),
+    padrao: () => ({ aviso_numero: "nao" }),
+  },
+  {
     id: "nunca",
     camada: "avancada",
     chaves: ["nunca"],

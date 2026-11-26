@@ -6,7 +6,9 @@ import { AtSign, Globe, ArrowUp, ChevronDown, ChevronUp, Mic, RotateCcw, SkipFor
 import { Orb } from "@/components/ui/orb";
 import { Logo } from "@/components/ui/logo";
 import { FluxoVivo } from "./fluxo-vivo";
-import { onboardingAnalisar, onboardingFinalizar, onboardingMensagem, onboardingPular, onboardingRecomecar } from "@/app/painel/comecar/actions";
+import { ConectarInline } from "./conectar";
+import { conexoesDoPerfil } from "@/lib/onboarding/integracoes";
+import { onboardingConexoes, onboardingAnalisar, onboardingFinalizar, onboardingMensagem, onboardingPular, onboardingRecomecar } from "@/app/painel/comecar/actions";
 import { resumo, type EstadoOnboarding } from "@/lib/onboarding/conversa";
 import { gerarFluxo } from "@/lib/onboarding/gerador";
 import { pergunta } from "@/lib/onboarding/perguntas";
@@ -26,7 +28,25 @@ const CAMADAS = [
  * service flow assembles itself on the canvas. Desktop: chat left, canvas right. Phone: canvas
  * strip on top (expandable), chat below.
  */
-export function OnboardingConversa({ inicial, agenteInicial }: { inicial: EstadoOnboarding; agenteInicial?: string | null }) {
+export function OnboardingConversa({
+  inicial,
+  agenteInicial,
+  conectadasIniciais = [],
+  oauthDisponiveis = [],
+}: {
+  inicial: EstadoOnboarding;
+  agenteInicial?: string | null;
+  conectadasIniciais?: string[];
+  oauthDisponiveis?: string[];
+}) {
+  const [conectadas, setConectadas] = useState<string[]>(conectadasIniciais);
+  // coming back from a provider's login tab: re-check what's connected
+  useEffect(() => {
+    const ver = () => void onboardingConexoes().then(setConectadas).catch(() => {});
+    window.addEventListener("focus", ver);
+    return () => window.removeEventListener("focus", ver);
+  }, []);
+  const marcarConectada = (id: string) => setConectadas((c) => [...new Set([...c, id])]);
   const [estado, setEstado] = useState(inicial);
   const [enviando, setEnviando] = useState<string | null>(null);
   const [agenteId, setAgenteId] = useState<string | null>(agenteInicial ?? null);
@@ -268,6 +288,9 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
               >
                 {tirarTags(m.texto)}
               </p>
+              {m.conectar?.map((c) => (
+                <ConectarInline key={c.id} conexao={c} conectada={conectadas.includes(c.id)} oauth={oauthDisponiveis.includes(c.id)} aoConectar={marcarConectada} compacto={i !== estado.mensagens.length - 1} />
+              ))}
               {m.mudancas && m.mudancas.nos > 0 && (
                 <span className="mt-1 ml-1 text-[11px] text-[#2563eb]">
                   +{m.mudancas.nos} etapas · +{m.mudancas.arestas} conexões
@@ -293,6 +316,19 @@ export function OnboardingConversa({ inicial, agenteInicial }: { inicial: Estado
               <p className="mt-1 text-2xl font-medium tracking-[-0.02em]">
                 {fluxo.workflow.nos.length} etapas · {fluxo.workflow.arestas.length} conexões
               </p>
+              {conexoesDoPerfil(estado.perfil).length > 0 && (
+                <div className="mt-3 space-y-1" data-testid="checklist-conexoes">
+                  <p className="text-xs text-muted-foreground">
+                    {conexoesDoPerfil(estado.perfil).filter((c) => c.essencial && !conectadas.includes(c.id)).length
+                      ? "Para tudo funcionar como você pediu, falta conectar:"
+                      : "Conexões do seu fluxo:"}
+                  </p>
+                  {conexoesDoPerfil(estado.perfil).map((c) => (
+                    <ConectarInline key={c.id} conexao={c} conectada={conectadas.includes(c.id)} oauth={oauthDisponiveis.includes(c.id)} aoConectar={marcarConectada} compacto />
+                  ))}
+                  <p className="text-[11px] text-muted-foreground">Enquanto não conectar, a recepcionista segue sem essa parte (por exemplo, a equipe confirma o horário em vez do WhatsApp).</p>
+                </div>
+              )}
               <div className="mt-3 flex flex-wrap gap-2">
                 {agenteId ? (
                   <>
