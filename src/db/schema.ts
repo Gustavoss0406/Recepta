@@ -496,6 +496,13 @@ export const entregasWebhook = pgTable("entregas_webhook", {
 
 /* ───────────── Jobs ───────────── */
 
+/** Photos picked from Unsplash per interface slot (hotlinked, with the photographer's credit). */
+export const fotosCache = pgTable("fotos_cache", {
+  slug: text("slug").primaryKey(),
+  dados: jsonb("dados").$type<{ url: string; autor: string; autorUrl: string; pagina: string; alt: string } | null>(),
+  atualizadoEm: ts("atualizado_em").notNull().defaultNow(),
+});
+
 export const jobs = pgTable(
   "jobs",
   {

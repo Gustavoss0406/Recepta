@@ -1,5 +1,6 @@
 import { FaixaAnuncio, PromptRecepta, BannerRotativo } from "@/components/painel/inicio-vivo";
-import { foto } from "@/server/fotos";
+import { fotos } from "@/server/fotos";
+import { BUSCAS_UNSPLASH } from "@/server/fotos/unsplash";
 import { GRADIENTES, MODELOS } from "@/lib/fotos";
 import { AudioLines, Blocks, BookOpen, CalendarDays, Inbox, Mic, PhoneCall, Workflow } from "lucide-react";
 import { redirect } from "next/navigation";
@@ -59,6 +60,9 @@ export default async function InicioPage({ searchParams }: { searchParams: Promi
   if (!s.org.onboardingConcluido && !(await primeiroAgente(s.org.id))) redirect("/painel/comecar");
   const sp = await searchParams;
   const db = getDb();
+  const F = await fotos(Object.keys(BUSCAS_UNSPLASH));
+  const foto = (slug: string) => F[slug]?.src ?? null;
+  const creditosBanner = [...new Map(["atendimento", "cidade-noite", "headset", "recepcao", "clinica", "salao", "academia", "veterinaria", "equipe", "advocacia", "oficina", "escola", "imobiliaria", "restaurante", "petshop"].map((x) => F[x]?.credito).filter((c): c is NonNullable<typeof c> => Boolean(c)).map((c) => [c.autor, c])).values()];
   const periodo = PERIODOS.some((p) => p.v === sp.periodo) ? (sp.periodo as "7" | "30" | "90") : "7";
   const metrica = METRICAS.find((m) => m.id === sp.m) ?? METRICAS[0];
   const n = Number(periodo);
@@ -188,6 +192,23 @@ export default async function InicioPage({ searchParams }: { searchParams: Promi
               { linha1: "Conecte WhatsApp,", linha2: "CRM e agenda em 1 minuto", fotos: [foto("imobiliaria"), foto("restaurante"), foto("petshop"), foto("recepcao")].map((x, k) => x ?? RESERVA[k % RESERVA.length]), href: "/painel/integracoes" },
             ]}
           />
+          {creditosBanner.length > 0 && (
+            <p className="mt-2 text-center text-[11px] text-muted-foreground">
+              Fotos:{" "}
+              {creditosBanner.slice(0, 6).map((c, k) => (
+                <span key={c.autor}>
+                  {k > 0 && ", "}
+                  <a href={c.autorUrl} target="_blank" rel="noopener" className="hover:underline">
+                    {c.autor}
+                  </a>
+                </span>
+              ))}{" "}
+              no{" "}
+              <a href={creditosBanner[0].pagina} target="_blank" rel="noopener" className="hover:underline">
+                Unsplash
+              </a>
+            </p>
+          )}
         </div>
       </section>
 
@@ -213,6 +234,11 @@ export default async function InicioPage({ searchParams }: { searchParams: Promi
                   <img src={f} alt="" loading="lazy" className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
                 )}
                 <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent px-3 pt-10 pb-2.5 text-sm font-medium text-white">{m.titulo}</span>
+                {F[m.slug]?.credito && (
+                  <span className="absolute top-2 right-2 rounded-full bg-black/45 px-2 py-0.5 text-[10px] text-white/90 opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+                    Foto: {F[m.slug]!.credito!.autor} · Unsplash
+                  </span>
+                )}
               </Link>
             );
           })}
